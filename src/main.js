@@ -510,4 +510,5 @@ export function renderToString(el) {
 // OK : nested components
 // OK : refs to get DOM nodes
 
+// TODO : ref for root
 // TODO : webcomponents
