@@ -187,6 +187,7 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
     props.children = children;
     props.key = key;
     props.namespace = namespace;
+    // TODO : hook global resfesh on nested state
     return name(attrs).renderTo();
   }
 
@@ -206,8 +207,7 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
   return nodeMaker(name, finalAttrs, children, attrs.key, namespace);
 }
 
-export function svg(name, attrs, children) {
-  attrs.namespace = svgNS;
+export function svg(name, attrs = {}, children = []) {
   if (!children) {
     return el(name, svgNS, {}, attrs);
   }
@@ -428,6 +428,20 @@ export function component(comp) {
     let instance = _.extend(_.clone(blueprint), comp);
     return {
       isElemComponent: true,
+      renderToString() {
+        instance.props = instance.defaultProps.bind(instance)();
+        instance.state = State(instance.initialState.bind(instance)());
+        instance.setState = instance.state.set;
+        instance.replaceState = instance.state.replace;
+        _.each(_.keys(instance), k => {
+          if (k !== 'state' && _.isFunction(instance[k])) {
+            instance[k] = instance[k].bind(instance);
+          }
+        });
+        instance.init();
+        let tree = instance.render();
+        return renderToString(tree);
+      },
       renderTo(node) {
         instance.props = instance.defaultProps.bind(instance)();
         instance.state = State(instance.initialState.bind(instance)());
