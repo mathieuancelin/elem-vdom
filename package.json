@@ -33,6 +33,6 @@
   "scripts": {
     "build": "webpack --colors -p",
     "dev": "webpack --watch --colors -d",
-    "start": "webpack-dev-server --colors --hot"
+    "start": "webpack-dev-server --colors --hot --inline"
   }
 }

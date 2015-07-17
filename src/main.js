@@ -403,7 +403,8 @@ export function renderToJson(el) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
-    tree = tree(componentContext);
+    let thisContext = {...componentContext, props: arguments[1] || {}};
+    tree = tree.bind(thisContext)(componentContext, arguments[1] || {});
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createJsonDocument() });
   let str = rootNode.render();
@@ -418,7 +419,8 @@ export function renderToString(el) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
-    tree = tree(componentContext);
+    let thisContext = {...componentContext, props: arguments[1] || {}};
+    tree = tree.bind(thisContext)(componentContext, arguments[1] || {});
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createStringDocument() });
   let str = rootNode.render();
