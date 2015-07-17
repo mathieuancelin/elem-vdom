@@ -53,10 +53,6 @@ function classToArray(attrs) {
   return attrsArray;
 }
 
-function asAttribute(key, value) {
-  return { key, value };
-}
-
 function transformAttrs(attrs, attributesHash, handlersHash) {
   if (!attrs) return [];
   let context = {

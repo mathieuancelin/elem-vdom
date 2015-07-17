@@ -35,7 +35,7 @@ function registerWebComponent(tag, elemTree) {
       props[item.name] = item.value;
     }
     this.props = props;
-    this.fragment = document.createElement('content');
+    this.fragment = thatDoc.createElement('content');
     this.fragment.setAttribute('id', uuid());
     this.appendChild(this.fragment);
     this.renderedElement = renderElemTree(props, this.fragment);
