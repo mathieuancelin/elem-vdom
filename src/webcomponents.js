@@ -24,7 +24,7 @@ function registerWebComponent(tag, elemTree) {
     if (elemTree.isElemComponentFactory) {
       return elemTree(attrs).renderTo(node);
     } else {
-      return Elem.render(elemTree, node);
+      return Elem.render(elemTree, node, attrs);
     }
   }
 

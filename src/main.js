@@ -19,76 +19,70 @@ function NotSupported() {
 }
 
 function styleToString(attrs) {
-  if (_.isUndefined(attrs)) return '';
-  let attrsArray = _.map(_.keys(attrs), key => {
-    if (key === 'extend') {
-      return undefined;
+  if (!attrs) return '';
+  let attrsArray = [];
+  for (var key in attrs) {
+    if (key !== 'extend') {
+      let keyName = Utils.dasherize(key);
+      if (key === 'className') {
+        keyName = 'class';
+      }
+      let value = attrs[key];
+      if (value) {
+        if (_.isFunction(value)) {
+          value = value();
+        }
+        if (value) {
+          attrsArray.push(keyName + ': ' + value + ';');
+        }
+      }
     }
-    let keyName = Utils.dasherize(key);
-    if (key === 'className') {
-      keyName = 'class';
-    }
-    let value = attrs[key];
-    if (!_.isUndefined(value) && _.isFunction(value)) {
-      value = value();
-    }
-    if (!_.isUndefined(value)) {
-      return keyName + ': ' + value + ';';
-    } else {
-      return undefined;
-    }
-  });
-  attrsArray = _.filter(attrsArray, item => !_.isUndefined(item));
+  }
   return attrsArray.join(' ');
 }
 
-function classToArray(attrs) { /* Handle class as object with boolean values */
-  if (_.isUndefined(attrs)) return [];
-  let attrsArray = _.map(_.keys(attrs), key => {
+function classToArray(attrs) {
+  if (!attrs) return [];
+  let attrsArray = [];
+  for (var key in attrs) {
     let value = attrs[key];
-    if (!_.isUndefined(value) && value === true) {
-      return Utils.dasherize(key);
-    } else {
-      return undefined;
+    if (value === true) {
+      attrsArray.push(Utils.dasherize(key));
     }
-  });
-  attrsArray = _.filter(attrsArray, item => !_.isUndefined(item));
+  }
   return attrsArray;
 }
 
 function asAttribute(key, value) {
-  return {
-    key,
-    value
-  };
+  return { key, value };
 }
 
 function transformAttrs(attrs) {
-  if (_.isUndefined(attrs)) return [];
+  if (!attrs) return [];
   let context = {
     ref: undefined,
     handlers: [],
     attrs: []
   };
   let attrsArray = [];
-  _.each(_.keys(attrs), key => {
+  for (var key in attrs) {
     let keyName = Utils.dasherize(key);
     if (key === 'className') {
       keyName = 'class';
     }
     if (_.startsWith(keyName, 'on')) {
       context.handlers.push({
-        key: key,
+        key,
         value: attrs[key]
       });
     } else if (keyName === 'ref') {
       context.ref = attrs[key];
     } else {
       let value = attrs[key];
-      if (!_.isUndefined(value) && _.isFunction(value)) {
+      if (value && _.isFunction(value)) {
         value = value();
       }
-      if (!_.isUndefined(value)) {
+      if (value) {
         if (_.isObject(value) && keyName === 'style') {
           attrsArray.push(asAttribute('style', styleToString(value)));
         } else if (_.isArray(value) && keyName === 'class') {
@@ -100,7 +94,7 @@ function transformAttrs(attrs) {
         }
       }
     }
-  });
+  }
   context.attrs = attrsArray;
   return context;
 }
@@ -172,25 +166,25 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
   let innerHTML = undefined;
   attrs = attrs || {};
   children = children || [];
-  children = _.chain(children)
-    .map(child => {
-      if (_.isFunction(child)) {
-        return child();
-      } else {
-        return child;
+  let newChildren = [];
+  for (var i in children) {
+    let item = children[i];
+    if (item) {
+      if (_.isFunction(item)) {
+        item = item();
       }
-    })
-    .filter(item => !_.isUndefined(item))
-    .map(item => {
-      if (item instanceof VNode) {
-        return item;
-      } else if (_.isObject(item) && item.__asHtml) {
-        innerHTML = item.__asHtml;
-        return textMaker('');
-      } else {
-        return textMaker(item + '');
+      if (item) {
+        if (item instanceof VNode) newChildren.push(item);
+        else if (_.isObject(item) && item.__asHtml) {
+          innerHTML = item.__asHtml;
+          newChildren.push(textMaker(''));
+        } else {
+          newChildren.push(textMaker(item + ''));
+        }
       }
-    }).value();
+    }
+  }
+  children = newChildren;
 
   if (_.isFunction(name) && name.isElemComponentFactory) {
     let props = _.clone(attrs);
@@ -252,7 +246,7 @@ export function render(el, node) {
     Perf.markStart('Elem.render.tree');
     try {
       currentComponentContext = createComponentContext(() => render(el, node), node, refs);
-      tree = tree(currentComponentContext);
+      tree = tree(currentComponentContext, arguments[2]);
     } finally {
       currentComponentContext = undefined;
     }
@@ -310,7 +304,6 @@ function createComponentContext(refresh, renderNode, refs) {
   state.onChange(refresh);
   return {
     refs: refs || {},
-    props: {},
     state,
     refresh,
     redraw: refresh,

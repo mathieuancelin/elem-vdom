@@ -3,6 +3,16 @@
     <head>
         <title>DEMO</title>
         <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <style>
+          .Query {
+            position: relative;
+          }
+          .Query:hover .popover {
+            left: -100%;
+            width: 100%;
+            display: block;
+          }
+        </style>
     </head>
     <body>
         <div class="container-fluid">
@@ -17,7 +27,7 @@
         <script src="./js/monitor.js"></script>
         <script type="text/javascript">
 
-          Elem.Perf.start();
+          //Elem.Perf.start();
           var counter = 0;
 
           var DBMon = Elem.component({
@@ -32,23 +42,23 @@
             },
 
             loadSamples: function() {
-              var startdb = Date.now();
+              //var startdb = Date.now();
               var db = ENV.generateData().toArray();
-              var stopdb = Date.now();
-              var start = Date.now();
+              //var stopdb = Date.now();
+              //var start = Date.now();
               this.setState({ databases: db });
-              var stop = Date.now();
-              console.log((stopdb - startdb) + ' ms. - ' + (stop - start) + ' ms.');
+              //var stop = Date.now();
+              //console.log((stopdb - startdb) + ' ms. - ' + (stop - start) + ' ms.');
               Monitoring.renderRate.ping();
-              Elem.Perf.printMeasures();
-              counter += 1;
-              if (counter < 10) {
+              //Elem.Perf.printMeasures();
+              //counter += 1;
+              //if (counter < 10) {
                 setTimeout(this.loadSamples, ENV.timeout);
-              }
+              //}
             },
 
             render: function() {
-              var startRows = Date.now();
+              //var startRows = Date.now();
               var rows = this.state.get('databases').map(function(database) {
                 var base = [
                   Elem.el('td', { className: "dbname" }, [database.dbname]),
@@ -69,14 +79,14 @@
                 );
                 return Elem.el('tr', { key: database.dbname }, base);
               });
-              console.log('rows ' + (Date.now() - startRows) + ' ms.');
-              startRows = Date.now();
+              //console.log('rows ' + (Date.now() - startRows) + ' ms.');
+              //startRows = Date.now();
               var finalElem = Elem.el('div', [
                 Elem.el('table', { className: "table table-striped latest-data" }, [
                   Elem.el('tbody', rows)
                 ])
               ]);
-              console.log('final ' + (Date.now() - startRows) + ' ms.');
+              //console.log('final ' + (Date.now() - startRows) + ' ms.');
               return finalElem;
             }
           });
