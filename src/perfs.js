@@ -44,7 +44,7 @@ export function markStart(name) {
       Performances.mark(ElemMeasureStart);
     }
   }
-};
+}
 
 export function markStop(name) {
   if (perfs) {
@@ -57,7 +57,7 @@ export function markStop(name) {
       Performances.measure(ElemMeasure, ElemMeasureStart, ElemMeasureStop);
     }
   }
-};
+}
 
 export function collectMeasures() {
   if (!perfs) return [];
@@ -69,7 +69,7 @@ export function collectMeasures() {
   Performances.clearMeasures();
   names = [ElemMeasure];
   return results;
-};
+}
 
 export function printMeasures() {
   if (!perfs) return;
@@ -81,4 +81,13 @@ export function printMeasures() {
       startTime: item.startTime
     };
   }));
-};
+}
+
+export function mark(name, func) {
+  markStart(name);
+  try {
+    func();
+  } finally {
+    markStop(name);
+  }
+}

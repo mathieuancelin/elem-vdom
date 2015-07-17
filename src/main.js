@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Utils = require('./utils');
 const State = require('./state');
+const Docs = require('./docs');
 const diff = require('virtual-dom/diff');
 const patch = require('virtual-dom/patch');
 const VDOMCreateElement = require('virtual-dom/create-element');
@@ -110,6 +111,10 @@ export function el(tagName) {
   let attrs = undefined;
   let children = undefined;
   let name = _.isString(tagName) ? (_.escape(tagName) || 'unknown') : tagName;
+  // 1 args
+  if (argsLength === 0) {
+    return el(name, undefined, {}, []);
+  }
   // 2 args
   if (argsLength === 1 && _.isFunction(args[0])) {
     return el(name, args[0]());
@@ -182,13 +187,20 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
       }
     }).value();
 
-  if (name.isElemComponentFactory) {
+  if (_.isFunction(name) && name.isElemComponentFactory) {
     let props = _.clone(attrs);
     props.children = children;
     props.key = key;
     props.namespace = namespace;
     // TODO : hook global resfesh on nested state
     return name(attrs).renderTo();
+  }
+  if (_.isFunction(name) && !name.isElemComponentFactory) {
+    let props = _.clone(attrs);
+    props.children = children;
+    props.key = key;
+    props.namespace = namespace;
+    return name(attrs);
   }
 
   let finalAttrs = {};
@@ -232,7 +244,9 @@ export function render(el, node) {
   if (_.isFunction(tree)) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
+    Perf.markStart('Elem.render.tree');
     tree = tree(createComponentContext(() => render(el, node), refs));
+    Perf.markStop('Elem.render.tree');
   }
   let doc = document;
   if (node.ownerDocument) {
@@ -249,19 +263,25 @@ export function render(el, node) {
     }
     let oldDom = treeCache[rootId];
     if (!oldDom) {
+      Perf.markStart('Elem.render.create');
       let rootNode = VDOMCreateElement(tree);
       node.appendChild(rootNode);
       treeCache[rootId] = {
         tree: tree,
         rootNode: rootNode
       };
+      Perf.markStop('Elem.render.create');
     } else {
+      Perf.markStart('Elem.render.diff');
       let patches = diff(oldDom.tree, tree);
+      Perf.markStop('Elem.render.diff');
+      Perf.markStart('Elem.render.patch');
       let rootNode = patch(oldDom.rootNode, patches);
       treeCache[rootId] = {
         tree: tree,
         rootNode: rootNode
       };
+      Perf.markStop('Elem.render.patch');
     }
   }
   Perf.markStop('Elem.render');
@@ -274,127 +294,6 @@ export function render(el, node) {
     }
   };
 };
-
-function createStringDocument() {
-
-  function node(name, attrs, ns) {
-    var attrs = attrs || [];
-    let children = [];
-    return {
-      setAttribute(name, value) {
-        attrs.push({
-          key: name,
-          value
-        });
-      },
-      removeAttribute(name) {
-        attrs = _.filter(attrs, item => item.key !== name);
-      },
-      appendChild(child) {
-        children.push(child);
-      },
-      render() {
-        if (this.innerHTML) {
-          let html = this.innerHTML;
-          children.push({
-            render() {
-              return html;
-            }
-          });
-        }
-        attrs = _.map(attrs, (attr) => {
-          let key = attr.key;
-          let value = attr.value;
-          return key + '="' + value + '"';
-        });
-        let selfCloseTag = children.length === 0;
-        if (selfCloseTag) return '<' + name + ' ' + attrs.join(' ') + ' />';
-        return '<' + name + ' ' + attrs.join(' ') + '>' + _.map(children, child => child.render()).join('') + '</' + name + '>';
-      }
-    }
-  }
-
-  function createElementNS(ns, name, attrs) {
-    return node(name, attrs, ns);
-  }
-
-  function createElement(name, attrs) {
-    return node(name, attrs);
-  }
-
-  function createTextNode(str) {
-    return {
-      render() {
-        return str;
-      }
-    };
-  }
-
-  return {
-    createTextNode,
-    createElementNS,
-    createElement
-  };
-}
-
-function createJsonDocument() {
-
-  function node(name, attrs, ns) {
-    var attrs = attrs || [];
-    let children = [];
-    return {
-      setAttribute(name, value) {
-        attrs.push({
-          key: name,
-          value
-        });
-      },
-      removeAttribute(name) {
-        attrs = _.filter(attrs, item => item.key !== name);
-      },
-      appendChild(child) {
-        children.push(child);
-      },
-      render() {
-        if (this.innerHTML) {
-          let html = this.innerHTML;
-          children = [{
-            render() {
-              return html;
-            }
-          }];
-        }
-        return {
-          name,
-          attrs,
-          children: _.map(children, child => child.render())
-        };
-      }
-    }
-  }
-
-  function createElementNS(ns, name, attrs) {
-    return node(name, attrs, ns);
-  }
-
-  function createElement(name, attrs) {
-    return node(name, attrs);
-  }
-
-  function createTextNode(str) {
-    return {
-      render() {
-        return str;
-      }
-    };
-  }
-
-  return {
-    createTextNode,
-    createElementNS,
-    createElement
-  };
-}
 
 function createComponentContext(refresh, refs) {
   let state = State();
@@ -484,7 +383,7 @@ export function renderToJson(el) {
     globalRefs = {};
     tree = tree(createComponentContext(() => {}, refs));
   }
-  let rootNode = VDOMCreateElement(tree, { document: createJsonDocument() });
+  let rootNode = VDOMCreateElement(tree, { document: Docs.createJsonDocument() });
   let str = rootNode.render();
   Perf.markStop('Elem.renderToJson');
   return str;
@@ -498,7 +397,7 @@ export function renderToString(el) {
     globalRefs = {};
     tree = tree(createComponentContext(() => {}, refs));
   }
-  let rootNode = VDOMCreateElement(tree, { document: createStringDocument() });
+  let rootNode = VDOMCreateElement(tree, { document: Docs.createStringDocument() });
   let str = rootNode.render();
   Perf.markStop('Elem.renderToString');
   return str;
@@ -510,5 +409,6 @@ export function renderToString(el) {
 // OK : nested components
 // OK : refs to get DOM nodes
 
+// TODO : more perf measures
 // TODO : ref for root
 // TODO : webcomponents
