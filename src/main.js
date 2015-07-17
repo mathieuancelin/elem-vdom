@@ -128,6 +128,9 @@ export function el(tagName) {
   if (argsLength === 1 && _.isObject(args[0])) {
     return el(name, undefined, args[0], []);
   }
+  if (argsLength === 1 && _.isString(args[0])) {
+    return el(name, undefined, {}, [args[0]]);
+  }
   // 3 args
   if (argsLength === 2 && _.isFunction(args[1])) {
     return el(name, args[0], args[1]());
@@ -342,6 +345,7 @@ export function component(comp) {
         return renderToString(tree);
       },
       renderTo(node) {
+        Perf.markStart('Elem.component.init');
         instance.props = instance.defaultProps.bind(instance)();
         instance.state = State(instance.initialState.bind(instance)());
         instance.setState = instance.state.set;
@@ -353,14 +357,20 @@ export function component(comp) {
         });
         instance.init();
         instance.refresh = () => {
+          Perf.markStart('Elem.component.tree');
           let tree = instance.render();
+          Perf.markStop('Elem.component.tree');
           if (!_.isUndefined(node)) {
-            return render(tree, node);
+            Perf.markStart('Elem.component.render');
+            let r = render(tree, node);
+            Perf.markStop('Elem.component.render');
+            return r;
           } else {
             return tree;
           }
         };
         instance.state.onChange(instance.refresh);
+        Perf.markStop('Elem.component.init');
         return instance.refresh();
       }
     };

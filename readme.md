@@ -1,7 +1,7 @@
 elem-vdom
 ================
 
-Simple and idiotic lib to build UI components. It's a templating library promoting functionnal composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates and string concat when modifying the DOM.
+Simple and idiotic lib to build UI components. It's a component library promoting functionnal composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates and string concat when modifying the DOM.
 
 Install
 -------
@@ -22,6 +22,7 @@ API
 * `Elem.text(value)` : creates a `<span>value</span>`
 * `Elem.render(elem, container)` : render an element to a container in the DOM
 * `Elem.renderToString(elem)` : render an element as an HTML string
+* `Elem.renderToJson(elem)` : render an element as JSON object
 * `Elem.component(options)` : render a component and return its state. Return a factory function if opts does not contains a container. See the component section for options
 * `Elem.predicate(predicate, elem)` : return element if predicate is true or undefined if false. Predicate can be a function
 * `Elem.state(defaultValues)` : create a state object. Similar to Backbone models
