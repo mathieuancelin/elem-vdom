@@ -23,7 +23,7 @@ API
 * `Elem.render(elem, container)` : render an element to a container in the DOM
 * `Elem.renderToString(elem)` : render an element as an HTML string
 * `Elem.renderToJson(elem)` : render an element as JSON object
-* `Elem.component(options)` : render a component and return its state. Return a factory function if opts does not contains a container. See the component section for options
+* `Elem.component(options)` : Return a factory function for simple component model. See the component section for options
 * `Elem.predicate(predicate, elem)` : return element if predicate is true or undefined if false. Predicate can be a function
 * `Elem.style(obj)` : create an extendable set of CSS inline styles
 * `Elem.Perf` : performance measurement tools
