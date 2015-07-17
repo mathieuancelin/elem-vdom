@@ -28,7 +28,7 @@ function registerWebComponent(tag, elemTree) {
     }
   }
 
-  ElementProto.createdCallback = () => {
+  ElementProto.createdCallback = function() {
     let props = {};
     for (var i in this.attributes) {
       let item = this.attributes[i];
@@ -37,10 +37,10 @@ function registerWebComponent(tag, elemTree) {
     this.props = props;
     this.fragment = document.createElement('content');
     this.fragment.setAttribute('id', uuid());
-    this.appendChild(fragment);
+    this.appendChild(this.fragment);
     this.renderedElement = renderElemTree(props, this.fragment);
   };
-  ElementProto.attributeChangedCallback = function (attr, oldVal, newVal) {
+  ElementProto.attributeChangedCallback = function(attr, oldVal, newVal) {
     this.props[attr] = newVal;
     renderElemTree(this.props, this.fragment);
   };
