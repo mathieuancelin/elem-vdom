@@ -47,18 +47,18 @@ How can I use elem-vdom ?
 First imports `Elem.min.js` in your page. Then you will be able to build your first node
 
 ```javascript
-var MyAwesomeNode = Elem.el('h1', 'Hello World!');
+const MyAwesomeNode = Elem.el('h1', 'Hello World!');
 Elem.render(MyAwesomeNode, '#container');
 ```
 
 Of course, you can build much more complicated nodes
 
 ```javascript
-var node = Elem.el('div', { className: 'col-md-6' }, [
+const node = Elem.el('div', { className: 'col-md-6' }, [
   Elem.el('h3', 'Hello World!'),
   Elem.el('p', { style: { backgroundColor: 'red' } }, "Lorem ipsum ....")
 ]);
-Elem.render(MyAwesomeNode, '#container');
+Elem.render(node, '#container');
 ```
 
 As you construct the node tree with functions and arrays, it is pretty easy to map and filter model objects to render your components easily (see the Todo List example above).
@@ -66,8 +66,8 @@ As you construct the node tree with functions and arrays, it is pretty easy to m
 Attributes use camel case shaped keys, so something like `backgroundColor` will be rendered as `background-color`. Also, you can notice that the `class` attribute is named `className`. Also, you can provide an object for `className` value with boolean as values. Every key with a false value will not be rendered.
 
 ```javascript
-var shouldDisplayDarkBackground = true;
-var shouldDisplayBrightBackground = !shouldDisplayDarkBackground;
+const shouldDisplayDarkBackground = true;
+const shouldDisplayBrightBackground = !shouldDisplayDarkBackground;
 Elem.el('div', {
   className: {
     withBackground: true,
@@ -94,7 +94,7 @@ function saySomething() {
     alert("Something !");
 }
 
-var node = Elem.el('div', { className: 'col-md-6' }, [
+const node = Elem.el('div', { className: 'col-md-6' }, [
   Elem.el('h3', 'Hello World!'),
   Elem.el('button', {
       className: ['btn', 'btn-primary'],
@@ -102,7 +102,7 @@ var node = Elem.el('div', { className: 'col-md-6' }, [
     }, 'Say something'),
   Elem.el('p', { style: { backgroundColor: 'red' } }, "Lorem ipsum ....")
 ]);
-Elem.render(MyAwesomeNode, '#container');
+Elem.render(node, '#container');
 ```
 
 And no, the output _WILL NOT BE_
@@ -158,9 +158,9 @@ I just want functions everywhere man ...
 Pretty easy actually, Elem is made for that :-)
 
 ```javascript
-var interval = null;
+let interval = null;
 
-function DateField(props, ctx) { 
+function DateField(props, ctx) {
   return Elem.el('div', [
     Elem.el('h1', moment().format(props.format))
   ]);
@@ -173,10 +173,10 @@ function TimeField(props, ctx) {
 }
 
 function GraphicalClock(props, ctx) {
-  var hoursRotation = 'rotate(' + (30 * moment().hours()) + (moment().minutes() / 2) + ')';
-  var minutesRotation = 'rotate(' + (6 * moment().minutes()) + (moment().seconds() / 10) + ')';
-  var secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
-  return Elem.el('div', { className: "clock", style: { width: props.width + 'px', height: props.height + 'px' } }, [
+  const hoursRotation = 'rotate(' + (30 * moment().hours()) + (moment().minutes() / 2) + ')';
+  const minutesRotation = 'rotate(' + (6 * moment().minutes()) + (moment().seconds() / 10) + ')';
+  const secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
+  return Elem.el('div', { className: "clock", style: { width: `${props.width}px`, height: `${props.height}px` } }, [
     Elem.svg('svg', { xmlns: Elem.svgNS, version: "1.1", viewBox: "0 0 100 100"}, [
       Elem.svg('g', { transform: "translate(50,50)" }, [
         Elem.svg('circle', { className: "clock-face", r: "48", fill: 'white', stroke: '#333' }),
@@ -224,15 +224,13 @@ But can I also create reusable components ?
 Of course you can. You just need to to something like
 
 ```javascript
-var Timer = Elem.component({
-    init: function() {
+const Timer = Elem.component({
+    init() {
         this.setState({time: 0});
-        setInterval(function() {
-            this.setState({time: state().time + 1});
-        }.bind(this), 1000);
+        setInterval(() => this.setState({ time: state().time + 1 }), 1000);
     },
-    render: function() {
-        return Elem.el('span', 'Elapsed : ' + this.state().time));
+    render() {
+      return Elem.el('span', 'Elapsed : ' + this.state().time));
     }
 });
 Timer().renderTo('#timer'); // render inside #timer div
@@ -252,25 +250,23 @@ when creating a component, you can define
 You can access a lot of pretty interesting stuff inside `Elem.component` like :
 
 ```javascript
-this.state
-this.props
-this.setState({ state diff });
-this.replaceState({ new state });
-this.getDOMNode();
+this.state: 'the state of the component'
+this.props: 'props of the component'
+this.setState({ state diff }); 'mutate the state with a diff'
+this.replaceState({ new state }); 'change the state'
+this.getDOMNode(); 'return root DOM node of the component'
 ```
 
 Don't worry about `this`, every function in `Elem.component` is bound to the component object.
 
 ```javascript
 
-var Hello = Elem.component({
-    render: function() {
-        return Elem.el('div',
-            [
-                Elem.el('h3', "Hello " + this.props.name + "!")
-            ]
-        );
-    }
+const Hello = Elem.component({
+  render() {
+    return Elem.el('div', [
+      Elem.el('h3', "Hello " + this.props.name + "!")
+    ]);
+  }
 });
 
 Hello({ name: "World" }).renderTo('#hello'); // pass name: '...' as this.props
@@ -282,25 +278,24 @@ You can also use a component into a tree of elements by using a component factor
 
 ```javascript
 
-var InnerComponent = Elem.component({
-    // it's a factory because no container is provided
-    render: function() {
-        return Elem.el('div',
-            [
-                Elem.el('h3', "Hello " + this.props.name + "!")
-            ]
-        );
-    }
+const InnerComponent = Elem.component({
+  render() {
+    return Elem.el('div', [
+      Elem.el('h3', "Hello " + this.props.name + "!")
+    ]);
+  }
 });
 
-Elem.component({
-    render: function() {
-        return Elem.el('div', [
-            Elem.el('h3', 'Inner component demo'),
-            Elem.el(InnerComponent, { name: 'World'})
-        ]);
-    }
+const CompositeComponent = Elem.component({
+  render() {
+    return Elem.el('div', [
+      Elem.el('h3', 'Inner component demo'),
+      Elem.el(InnerComponent, { name: 'World'})
+    ]);
+  }
 });
+
+CompositeComponent().renderTo(container);
 
 ```
 
@@ -327,65 +322,62 @@ function MyComponent() {
   ]);
 }
 
-Elem.component({
-  render: MyComponent
-});
+Elem.render(MyComponent, container);
 ```
 
-But you can't render that stuff server side (isomorphic apps), right ?
+But you can't render that stuff server side (universal apps), right ?
 ---------------------------------------------
 
 Actually you can and it's pretty easy.
 
-First you can use `Elem.renderToString` or `Elem.renderToStaticHtml` on any `Elem.el` node you want.
+First you can use `Elem.renderToString` on any `Elem.el` node you want.
 
 But you can also do the same on components, let's write a funny clock component;
 
 ```javascript
-module.exports = Elem.component({
-    init: function() {
-      this.update();
-      setInterval(update, 1000);
-    },
-    update: function() {
-      this.setState({
-        seconds: (moment().seconds() % 60) * 6,
-        minutes: (moment().minutes() % 60) * 6,
-        hours: (moment().hours() % 12) * 30,
-      });
-    },
-    render: function() {
-        return Elem.el('div', { className: 'circle'}, [
-                Elem.el('div', { className: 'hour',
-                    style: { transform: 'rotate(' + this.state().hours + 'deg)' }}, ''),
-                Elem.el('div', { className: 'minute',
-                    style: { transform: 'rotate(' + this.state().minutes + 'deg)' }}, ''),
-                Elem.el('div', { className: 'second',
-                    style: { transform: 'rotate(' + this.state().seconds + 'deg)' }}, ''),
-                Elem.el('span', { className: 'centered' },
-                    moment().hours() + ' h ' + moment().minutes() + ' m ' + moment().seconds() + ' s')
-            ]
-        );
-    }
+export default Elem.component({
+  init() {
+    this.update();
+    setInterval(update, 1000);
+  },
+  update() {
+    this.setState({
+      seconds: (moment().seconds() % 60) * 6,
+      minutes: (moment().minutes() % 60) * 6,
+      hours: (moment().hours() % 12) * 30,
+    });
+  },
+  render() {
+    return Elem.el('div', { className: 'circle'}, [
+      Elem.el('div', { className: 'hour',
+          style: { transform: 'rotate(' + this.state().hours + 'deg)' }}, ''),
+      Elem.el('div', { className: 'minute',
+          style: { transform: 'rotate(' + this.state().minutes + 'deg)' }}, ''),
+      Elem.el('div', { className: 'second',
+          style: { transform: 'rotate(' + this.state().seconds + 'deg)' }}, ''),
+      Elem.el('span', { className: 'centered' },
+          moment().hours() + ' h ' + moment().minutes() + ' m ' + moment().seconds() + ' s')
+    ]);
+  }
 });
 ```
 
 Now we can instanciate it on the server side, and render it as an HTML string :
 
 ```javascript
-var express = require('express');
-var app = express();
-var Clock = require('./clock');
+const express = require('express');
+const app = express();
+const Clock = require('./clock');
 
-app.get('/clock.html', function (req, res) {
-  var clock = Clock(); // instanciate a component
+app.get('/clock.html', (req, res) => {
+  const clock = Clock(); // instanciate a component
   res.send(clock.renderToString());
 });
 
-var server = app.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-  console.log('Clock app listening at http://%s:%s', host, port);
+const server = app.listen(3000, () => {
+  const host = server.address().address;
+  const port = server.address().port;
+  console.log(`Clock app listening at http://${host}:${port}`);
 });
 ```
 
