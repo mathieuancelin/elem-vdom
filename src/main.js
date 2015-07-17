@@ -190,7 +190,8 @@ function internalEl(name, attrs, children, key, namespace) {
     props.children = children;
     props.key = key;
     props.namespace = namespace;
-    return name(attrs, currentComponentContext);
+    let thisContext = {...currentComponentContext, props: attrs};
+    return name.bind(thisContext)(attrs, currentComponentContext);
   }
 
   let finalAttrs = {
@@ -233,7 +234,8 @@ export function render(el, node) {
     Perf.markStart('Elem.render.tree');
     try {
       currentComponentContext = createComponentContext(() => render(el, node), node, refs);
-      tree = tree(currentComponentContext, arguments[2]);
+      let thisContext = {...currentComponentContext, props: arguments[2] || {}};
+      tree = tree.bind(thisContext)(currentComponentContext, arguments[2] || {});
     } finally {
       currentComponentContext = undefined;
     }
@@ -400,7 +402,8 @@ export function renderToJson(el) {
   if (_.isFunction(tree)) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
-    tree = tree(createComponentContext(() => {}, null, refs));
+    let componentContext = createComponentContext(() => {}, null, refs);
+    tree = tree(componentContext);
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createJsonDocument() });
   let str = rootNode.render();
@@ -414,7 +417,8 @@ export function renderToString(el) {
   if (_.isFunction(tree)) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
-    tree = tree(createComponentContext(() => {}, null, refs));
+    let componentContext = createComponentContext(() => {}, null, refs);
+    tree = tree(componentContext);
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createStringDocument() });
   let str = rootNode.render();
