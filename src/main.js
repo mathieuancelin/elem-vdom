@@ -57,12 +57,10 @@ function asAttribute(key, value) {
   return { key, value };
 }
 
-function transformAttrs(attrs) {
+function transformAttrs(attrs, attributesHash, handlersHash) {
   if (!attrs) return [];
   let context = {
-    ref: undefined,
-    handlers: [],
-    attrs: []
+    ref: undefined
   };
   let attrsArray = [];
   for (var key in attrs) {
@@ -71,10 +69,7 @@ function transformAttrs(attrs) {
       keyName = 'class';
     }
     if (_.startsWith(keyName, 'on')) {
-      context.handlers.push({
-        key,
-        value: attrs[key]
-      });
+      handlersHash[key] = attrs[key];
     } else if (keyName === 'ref') {
       context.ref = attrs[key];
     } else {
@@ -84,18 +79,17 @@ function transformAttrs(attrs) {
       }
       if (value) {
         if (_.isObject(value) && keyName === 'style') {
-          attrsArray.push(asAttribute('style', styleToString(value)));
+          attributesHash.style = styleToString(value);
         } else if (_.isArray(value) && keyName === 'class') {
-          attrsArray.push(asAttribute(keyName, value.join(' ')));
+          attributesHash[keyName] = value.join(' ');
         } else if (_.isObject(value) && keyName === 'class') {
-          attrsArray.push(asAttribute(keyName, classToArray(value).join(' ')));
+          attributesHash[keyName] = classToArray(value).join(' ');
         } else {
-          attrsArray.push(asAttribute(keyName, value));
+          attributesHash[keyName] = value;
         }
       }
     }
   }
-  context.attrs = attrsArray;
   return context;
 }
 
@@ -103,55 +97,65 @@ export function el(tagName) {
   let args = Array.slice(arguments);
   args = args.slice(1);
   let argsLength = args.length;
-  let namespace = undefined;
-  let attrs = undefined;
-  let children = undefined;
   let name = _.isString(tagName) ? (_.escape(tagName) || 'unknown') : tagName;
   // 1 args
   if (argsLength === 0) {
-    return el(name, undefined, {}, []);
+    // el('div', undefined, {}, []);
+    return internalEl(name, {}, [], undefined, undefined, vdomNodeMaker, vdomTextMaker);
   }
   // 2 args
   if (argsLength === 1 && _.isFunction(args[0])) {
+    // el('div', function)
     return el(name, args[0]());
   }
   if (argsLength === 1 && _.isArray(args[0])) {
-    return el(name, undefined, {}, args[0]);
+    // el('div', [...])
+    return internalEl(name, {}, args[0], undefined, undefined, vdomNodeMaker, vdomTextMaker);
   }
   if (argsLength === 1 && _.isObject(args[0]) && args[0].__asHtml) {
-    return el(name, undefined, {}, [args[0]]);
+    // el('div', { __asHtml: '...' })
+    return internalEl(name, {}, [args[0]], undefined, undefined, vdomNodeMaker, vdomTextMaker);
   }
   if (argsLength === 1 && _.isObject(args[0])) {
-    return el(name, undefined, args[0], []);
+    // el('div', {...})
+    return internalEl(name, args[0], [], undefined, undefined, vdomNodeMaker, vdomTextMaker);
   }
   if (argsLength === 1 && _.isString(args[0])) {
-    return el(name, undefined, {}, [args[0]]);
+    // el('div', 'Lorem Ipsum')
+    return internalEl(name, {}, [args[0]], undefined, undefined, vdomNodeMaker, vdomTextMaker);
   }
   // 3 args
   if (argsLength === 2 && _.isFunction(args[1])) {
+    // el('div', {...}, function)
     return el(name, args[0], args[1]());
   }
   if (argsLength === 2 && _.isObject(args[0]) && !_.isArray(args[1])) {
-    return el(name, undefined, args[0], [args[1]]);
+    // el('div', {...}, 'lorem ipsum')
+    return internalEl(name, args[0], [args[1]], args[0].key, undefined, vdomNodeMaker, vdomTextMaker);
   }
   if (argsLength === 2 && _.isObject(args[0]) && _.isArray(args[1])) {
-    // attrs and array children
-    return el(name, undefined, args[0], args[1]);
+    // el('div', {...}, [...])
+    return internalEl(name, args[0],  args[1], args[0].key, undefined, vdomNodeMaker, vdomTextMaker);
   }
   if (argsLength === 2 && _.isString(args[0]) && _.isObject(args[1])) {
-    return el(name, undefined, args[0], args[1], []);
+    // el('div', ns, {...})
+    return internalEl(name, args[1], [], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
+  }
+  if (argsLength === 2 && _.isString(args[0]) && !_.isObject(args[1]) && !_.isArray(args[1])) {
+    // el('div', ns, 'Lorem ipsum}')
+    return internalEl(name, {}, [args[1]], undefined, args[0], vdomNodeMaker, vdomTextMaker);
   }
   // 4 args
   if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && !_.isArray(args[2])) {
-    return el(name, args[0], args[1], [args[2]]);
+    // el('div', ns, {...}, 'lorem ipsum')
+    return internalEl(name, args[1], [args[2]], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
   }
   if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && _.isArray(args[2])) {
-    // namespace, attrs and array children
-    namespace = args[0];
-    attrs = args[1];
-    children = args[2];
+    // el('div', ns, {...}, [...])
+    return internalEl(name, args[1], args[2], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
   }
-  return internalEl(name, attrs, children, args.key, namespace, vdomNodeMaker, vdomTextMaker);
+  console.warn('Unknown el expression ...', arguments)
+  return internalEl(name, args[1], args[2], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
 }
 
 function vdomTextMaker(str) {
@@ -202,28 +206,24 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
     return name(attrs, currentComponentContext);
   }
 
-  let finalAttrs = {};
-  finalAttrs.attributes = {};
-  let ctx = transformAttrs(attrs);
+  let finalAttrs = {
+    attributes: {}
+  };
+  let ctx = transformAttrs(attrs, finalAttrs.attributes, finalAttrs);
   if (ctx.ref) {
     let refId = Utils.uniqueId('elemref-');
     finalAttrs.attributes['data-elemref'] = refId;
     globalRefs[ctx.ref] = refId;
   }
-  ctx.attrs.forEach(item => finalAttrs.attributes[item.key] = item.value);
-  ctx.handlers.forEach(item => finalAttrs[item.key] = item.value);
   if (innerHTML) {
       finalAttrs.innerHTML = innerHTML;
   }
   return nodeMaker(name, finalAttrs, children, attrs.key, namespace);
 }
 
-export function svg(name, attrs = {}, children = []) {
-  if (!children) {
-    return el(name, svgNS, {}, attrs);
-  }
-  return el(name, svgNS, attrs, children);
-};
+export function svg(name) {
+  return el.apply(null, [name, svgNS].concat(Array.slice(arguments).slice(1)));
+}
 
 export function nbsp(times) {
   return el('span', {
@@ -231,11 +231,11 @@ export function nbsp(times) {
       return '&nbsp;';
     })
   });
-};
+}
 
 export function text(text) {
   return el('span', {}, text);
-};
+}
 
 export function render(el, node) {
   Perf.markStart('Elem.render');
@@ -297,7 +297,7 @@ export function render(el, node) {
       delete treeCache[rootId];
     }
   };
-};
+}
 
 function createComponentContext(refresh, renderNode, refs) {
   let state = State();
@@ -443,5 +443,6 @@ export function renderToString(el) {
 // OK : more perf measures
 // OK : ref for root
 // OK : webcomponents
+// OK : optimize
 
 // TODO : context per tree ??
