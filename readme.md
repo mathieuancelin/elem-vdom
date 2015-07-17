@@ -95,10 +95,13 @@ function saySomething() {
 
 const node = Elem.el('div', { className: 'col-md-6' }, [
   Elem.el('h3', 'Hello World!'),
-  Elem.el('button', {
-      className: ['btn', 'btn-primary'],
-      onclick: saySomething
-    }, 'Say something'),
+    Elem.el('button',
+      {
+        className: ['btn', 'btn-primary'],
+        onclick: saySomething
+      },
+      'Say something'
+    ),
   Elem.el('p', { style: { backgroundColor: 'red' } }, "Lorem ipsum ....")
 ]);
 Elem.render(node, '#container');
@@ -229,7 +232,7 @@ const Timer = Elem.component({
     setInterval(() => this.setState({ time: state().time + 1 }), 1000);
   },
   render() {
-    return Elem.el('span', 'Elapsed : ' + this.state().time));
+    return Elem.el('span', `Elapsed : ${this.state().time}`));
   }
 });
 Timer().renderTo('#timer'); // render inside #timer div
@@ -349,13 +352,13 @@ export default Elem.component({
   render() {
     return Elem.el('div', { className: 'circle'}, [
       Elem.el('div', { className: 'hour',
-          style: { transform: 'rotate(' + this.state().hours + 'deg)' }}, ''),
+          style: { transform: `rotate(${this.state().hours}deg)` }}, ''),
       Elem.el('div', { className: 'minute',
-          style: { transform: 'rotate(' + this.state().minutes + 'deg)' }}, ''),
+          style: { transform: `rotate(${this.state().minutes}deg)` }}, ''),
       Elem.el('div', { className: 'second',
-          style: { transform: 'rotate(' + this.state().seconds + 'deg)' }}, ''),
+          style: { transform: `rotate(${this.state().seconds}deg)` }}, ''),
       Elem.el('span', { className: 'centered' },
-          moment().hours() + ' h ' + moment().minutes() + ' m ' + moment().seconds() + ' s')
+          `${moment().hours()} h ${moment().minutes()} m ${moment().seconds()} s`)
     ]);
   }
 });
