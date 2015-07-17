@@ -25,7 +25,6 @@ API
 * `Elem.renderToJson(elem)` : render an element as JSON object
 * `Elem.component(options)` : render a component and return its state. Return a factory function if opts does not contains a container. See the component section for options
 * `Elem.predicate(predicate, elem)` : return element if predicate is true or undefined if false. Predicate can be a function
-* `Elem.state(defaultValues)` : create a state object. Similar to Backbone models
 * `Elem.style(obj)` : create an extendable set of CSS inline styles
 * `Elem.Perf` : performance measurement tools
   * `Elem.Perf.start` : enable performance measures
@@ -225,13 +224,13 @@ Of course you can. You just need to to something like
 
 ```javascript
 const Timer = Elem.component({
-    init() {
-        this.setState({time: 0});
-        setInterval(() => this.setState({ time: state().time + 1 }), 1000);
-    },
-    render() {
-      return Elem.el('span', 'Elapsed : ' + this.state().time));
-    }
+  init() {
+    this.setState({time: 0});
+    setInterval(() => this.setState({ time: state().time + 1 }), 1000);
+  },
+  render() {
+    return Elem.el('span', 'Elapsed : ' + this.state().time));
+  }
 });
 Timer().renderTo('#timer'); // render inside #timer div
 ```
@@ -240,10 +239,10 @@ when creating a component, you can define
 
 ```javascript
 {
-    init: 'init function that receive the state and props as parameters'
-    initialState: 'function that returns the initial state state of the component. If undefined, an empty one will be created'
-    defaultProps: 'function that returns the initial properties for the component, can be passed at instanciation if factory mode'
-    render: 'function that will return an Elem node'
+  init: 'init function that receive the state and props as parameters'
+  initialState: 'function that returns the initial state state of the component. If undefined, an empty one will be created'
+  defaultProps: 'function that returns the initial properties for the component, can be passed at instanciation if factory mode'
+  render: 'function that will return an Elem node'
 }
 ```
 
