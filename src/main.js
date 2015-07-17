@@ -248,7 +248,7 @@ export function render(el, node) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
     Perf.markStart('Elem.render.tree');
-    tree = tree(createComponentContext(() => render(el, node), refs));
+    tree = tree(createComponentContext(() => render(el, node), node, refs));
     Perf.markStop('Elem.render.tree');
   }
   let doc = document;
@@ -298,7 +298,7 @@ export function render(el, node) {
   };
 };
 
-function createComponentContext(refresh, refs) {
+function createComponentContext(refresh, renderNode, refs) {
   let state = State();
   state.onChange(refresh);
   return {
@@ -307,7 +307,17 @@ function createComponentContext(refresh, refs) {
     state,
     refresh,
     setState: state.set,
-    replaceState: state.replace
+    replaceState: state.replace,
+    getDOMNode: function() {
+      let doc = document;
+      if (renderNode.ownerDocument) {
+        doc = renderNode.ownerDocument;
+      }
+      if (_.isString(renderNode)) {
+        return doc.querySelector(renderNode);
+      }
+      return renderNode;
+    }
   };
 }
 
@@ -335,6 +345,7 @@ export function component(comp) {
         instance.state = State(instance.initialState.bind(instance)());
         instance.setState = instance.state.set;
         instance.replaceState = instance.state.replace;
+        instance.getDOMNode = () => null;
         _.each(_.keys(instance), k => {
           if (k !== 'state' && _.isFunction(instance[k])) {
             instance[k] = instance[k].bind(instance);
@@ -350,6 +361,16 @@ export function component(comp) {
         instance.state = State(instance.initialState.bind(instance)());
         instance.setState = instance.state.set;
         instance.replaceState = instance.state.replace;
+        instance.getDOMNode = () => {
+          let doc = document;
+          if (node.ownerDocument) {
+            doc = node.ownerDocument;
+          }
+          if (_.isString(node)) {
+            return doc.querySelector(node);
+          }
+          return node;
+        };
         _.each(_.keys(instance), k => {
           if (k !== 'state' && _.isFunction(instance[k])) {
             instance[k] = instance[k].bind(instance);
@@ -391,7 +412,7 @@ export function renderToJson(el) {
   if (_.isFunction(tree)) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
-    tree = tree(createComponentContext(() => {}, refs));
+    tree = tree(createComponentContext(() => {}, null, refs));
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createJsonDocument() });
   let str = rootNode.render();
@@ -405,7 +426,7 @@ export function renderToString(el) {
   if (_.isFunction(tree)) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
-    tree = tree(createComponentContext(() => {}, refs));
+    tree = tree(createComponentContext(() => {}, null, refs));
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createStringDocument() });
   let str = rootNode.render();
@@ -418,7 +439,8 @@ export function renderToString(el) {
 // OK : SVG
 // OK : nested components
 // OK : refs to get DOM nodes
+// OK : more perf measures
+// OK : ref for root
 
-// TODO : more perf measures
-// TODO : ref for root
+// TODO : context per tree ??
 // TODO : webcomponents

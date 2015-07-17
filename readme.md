@@ -157,7 +157,7 @@ Can I create reusable components ?
 Of course you can. You just need to to something like
 
 ```javascript
-var timer = Elem.component({
+var Timer = Elem.component({
     init: function() {
         this.setState({time: 0});
         setInterval(function() {
@@ -168,6 +168,7 @@ var timer = Elem.component({
         return Elem.el('span', 'Elapsed : ' + this.state().time));
     }
 });
+Timer().renderTo('#timer'); // render inside #timer div
 ```
 
 when creating a component, you can define
@@ -181,12 +182,21 @@ when creating a component, you can define
 }
 ```
 
-You can use `Elem.component` as a component factory like :
+You can access a lot of pretty interesting stuff inside `Elem.component` like :
+
+```javascript
+this.state
+this.props
+this.setState({ state diff });
+this.replaceState({ new state });
+this.getDOMNode();
+```
+
+Don't worry about `this`, every function in `Elem.component` is bound to the component object.
 
 ```javascript
 
 var Hello = Elem.component({
-    // it's a factory because no container is provided
     render: function() {
         return Elem.el('div',
             [
@@ -196,7 +206,7 @@ var Hello = Elem.component({
     }
 });
 
-Hello({ name: "World" }).renderTo('#hello'); // render inside #hello div
+Hello({ name: "World" }).renderTo('#hello'); // pass name: '...' as this.props
 Hello({ name: "World" }).renderToString();
 
 ```
@@ -207,10 +217,10 @@ You can also use a component into a tree of elements by using a component factor
 
 var InnerComponent = Elem.component({
     // it's a factory because no container is provided
-    render: function(state, props) {
+    render: function() {
         return Elem.el('div',
             [
-                Elem.el('h3', "Hello " + props.name + "!")
+                Elem.el('h3', "Hello " + this.props.name + "!")
             ]
         );
     }
@@ -318,3 +328,69 @@ What about webcomponents ?
 ----------------------------
 
 WIP
+
+I just want functions everywhere man ...
+------------------------------
+
+Pretty easy actually, Elem is made for that :-)
+
+```javascript
+var interval = null;
+
+function DateField(props) {
+  return Elem.el('div', [
+    Elem.el('h1', moment().format(props.format))
+  ]);
+}
+
+function TimeField(props) {
+  return Elem.el('div', [
+    Elem.el('h2', moment().format(props.format))
+  ]);
+}
+
+function GraphicalClock(props) {
+  var hoursRotation = 'rotate(' + (30 * moment().hours()) + (moment().minutes() / 2) + ')';
+  var minutesRotation = 'rotate(' + (6 * moment().minutes()) + (moment().seconds() / 10) + ')';
+  var secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
+  return Elem.el('div', { className: "clock", style: { width: props.width + 'px', height: props.height + 'px' } }, [
+    Elem.svg('svg', { xmlns: Elem.svgNS, version: "1.1", viewBox: "0 0 100 100"}, [
+      Elem.svg('g', { transform: "translate(50,50)" }, [
+        Elem.svg('circle', { className: "clock-face", r: "48", fill: 'white', stroke: '#333' }),
+        Elem.svg('line', { className: "hour", y1: "2", y2: "-20", transform: hoursRotation }),
+        Elem.svg('line', { className: "minute", y1: "4", y2: "-30", transform: minutesRotation }),
+        Elem.svg('g', { transform: secondsRotation }, [
+          Elem.svg('line', { className: "second", y1: "10", y2: "-38" }),
+          Elem.svg('line', { className: "second-counterweight", y1: "10", y2: "2" })
+        ])
+      ])
+    ])
+  ]);
+}
+
+function Clock(ctx) {
+  if (interval === null) {
+    interval = setInterval(ctx.refresh, 1000);
+  }
+  return Elem.el('div', { style: { display: 'flex' } }, [
+    Elem.el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
+      Elem.el(DateField, { format: 'DD/MM/YYYY' }),
+      Elem.el(TimeField, { format: 'HH:mm:ss' })
+    ]),
+    Elem.el(GraphicalClock, { width: 120, height: 120 })
+  ]);
+}
+
+Elem.render(Clock, container);
+```
+
+The context of function `Clock` contains :
+
+```javascript
+refs: 'refs of DOM nodes inside the current render tree'
+state: 'mutable state where every change will trigger a refresh'
+refresh: 'rerender the current function at the same place'
+setState: 'mutate the state with diff'
+replaceState: 'mutatle the whole state'
+getDOMNode: 'return root DOM node of the current render tree'
+```
