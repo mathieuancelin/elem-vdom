@@ -58,13 +58,12 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
   let context = {
     ref: undefined
   };
-  let attrsArray = [];
   for (var key in attrs) {
     let keyName = Utils.dasherize(key);
     if (key === 'className') {
       keyName = 'class';
     }
-    if (_.startsWith(keyName, 'on')) {
+    if (Utils.startsWith(keyName, 'on')) {
       handlersHash[key] = attrs[key];
     } else if (keyName === 'ref') {
       context.ref = attrs[key];
@@ -97,72 +96,64 @@ export function el(tagName) {
   // 1 args
   if (argsLength === 0) {
     // el('div', undefined, {}, []);
-    return internalEl(name, {}, [], undefined, undefined, vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, {}, [], undefined, undefined);
   }
   // 2 args
   if (argsLength === 1 && _.isFunction(args[0])) {
     // el('div', function)
-    return el(name, args[0]());
+    return el(name, args[0]()); // forced to recurse
   }
   if (argsLength === 1 && _.isArray(args[0])) {
     // el('div', [...])
-    return internalEl(name, {}, args[0], undefined, undefined, vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, {}, args[0], undefined, undefined);
   }
   if (argsLength === 1 && _.isObject(args[0]) && args[0].__asHtml) {
     // el('div', { __asHtml: '...' })
-    return internalEl(name, {}, [args[0]], undefined, undefined, vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, {}, [args[0]], undefined, undefined);
   }
   if (argsLength === 1 && _.isObject(args[0])) {
     // el('div', {...})
-    return internalEl(name, args[0], [], undefined, undefined, vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, args[0], [], undefined, undefined);
   }
   if (argsLength === 1 && _.isString(args[0])) {
     // el('div', 'Lorem Ipsum')
-    return internalEl(name, {}, [args[0]], undefined, undefined, vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, {}, [args[0]], undefined, undefined);
   }
   // 3 args
   if (argsLength === 2 && _.isFunction(args[1])) {
     // el('div', {...}, function)
-    return el(name, args[0], args[1]());
+    return el(name, args[0], args[1]()); // forced to recurse
   }
   if (argsLength === 2 && _.isObject(args[0]) && !_.isArray(args[1])) {
     // el('div', {...}, 'lorem ipsum')
-    return internalEl(name, args[0], [args[1]], args[0].key, undefined, vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, args[0], [args[1]], args[0].key, undefined);
   }
   if (argsLength === 2 && _.isObject(args[0]) && _.isArray(args[1])) {
     // el('div', {...}, [...])
-    return internalEl(name, args[0],  args[1], args[0].key, undefined, vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, args[0],  args[1], args[0].key, undefined);
   }
   if (argsLength === 2 && _.isString(args[0]) && _.isObject(args[1])) {
     // el('div', ns, {...})
-    return internalEl(name, args[1], [], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, args[1], [], args[1].key, args[0]);
   }
   if (argsLength === 2 && _.isString(args[0]) && !_.isObject(args[1]) && !_.isArray(args[1])) {
     // el('div', ns, 'Lorem ipsum}')
-    return internalEl(name, {}, [args[1]], undefined, args[0], vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, {}, [args[1]], undefined, args[0]);
   }
   // 4 args
   if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && !_.isArray(args[2])) {
     // el('div', ns, {...}, 'lorem ipsum')
-    return internalEl(name, args[1], [args[2]], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
   }
   if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && _.isArray(args[2])) {
     // el('div', ns, {...}, [...])
-    return internalEl(name, args[1], args[2], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
+    return internalEl(name, args[1], args[2], args[1].key, args[0]);
   }
   console.warn('Unknown el expression ...', arguments)
-  return internalEl(name, args[1], args[2], args[1].key, args[0], vdomNodeMaker, vdomTextMaker);
+  return internalEl(name, args[1], args[2], args[1].key, args[0]);
 }
 
-function vdomTextMaker(str) {
-  return new VText(str + '');
-}
-
-function vdomNodeMaker(name, attrs, children, key, namespace) {
-  return new VNode(name, attrs, children, key, namespace);
-}
-
-function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker) {
+function internalEl(name, attrs, children, key, namespace) {
   let innerHTML = undefined;
   attrs = attrs || {};
   children = children || [];
@@ -177,9 +168,9 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
         if (item instanceof VNode) newChildren.push(item);
         else if (_.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
-          newChildren.push(textMaker(''));
+          newChildren.push(new VText(''));
         } else {
-          newChildren.push(textMaker(item + ''));
+          newChildren.push(new VText(item + ''));
         }
       }
     }
@@ -214,7 +205,7 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
   if (innerHTML) {
       finalAttrs.innerHTML = innerHTML;
   }
-  return nodeMaker(name, finalAttrs, children, attrs.key, namespace);
+  return new VNode(name, finalAttrs, children, attrs.key, namespace);
 }
 
 export function svg(name) {
