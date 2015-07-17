@@ -104,7 +104,7 @@ export function style(obj) {
     if (_.isObject(clazz)) {
       result[key] = _.extend({}, {
         extend: function(o) {
-          return _.extend({}, o, clazz);
+          return _.extend({}, clazz, o);
         }
       }, clazz);
     }

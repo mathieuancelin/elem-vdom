@@ -1,7 +1,7 @@
 elem-vdom
 ================
 
-Simple and idiotic lib to build UI components. It's a component library promoting functionnal composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates and string concat when modifying the DOM.
+Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates and string concat when modifying the DOM.
 
 Install
 -------
@@ -32,6 +32,7 @@ API
   * `Elem.Perf.stop` : disable performance measures
   * `Elem.Perf.markStart(name)` : mark the start of a measure
   * `Elem.Perf.markStop(name)` : mark the stop of a measure
+  * `Elem.Perf.mark(name, block)` : mark the start and stop of a measure around a block of code
   * `Elem.Perf.collectMeasures` : return all collected measures and clear the measures store
   * `Elem.Perf.printMeasures` : print collected measures and clear the measures store
 
@@ -60,7 +61,7 @@ var node = Elem.el('div', { className: 'col-md-6' }, [
 Elem.render(MyAwesomeNode, '#container');
 ```
 
-As you construct the node tree with functions and arrays, it is prettry easy to map and filter model objects to render your components easily (see the Todo List example above).
+As you construct the node tree with functions and arrays, it is pretty easy to map and filter model objects to render your components easily (see the Todo List example above).
 
 Attributes use camel case shaped keys, so something like `backgroundColor` will be rendered as `background-color`. Also, you can notice that the `class` attribute is named `className`. Also, you can provide an object for `className` value with boolean as values. Every key with a false value will not be rendered.
 
@@ -151,7 +152,73 @@ function svg() {
 Elem.render(svg, document.getElementById("svg"));
 ```
 
-Can I create reusable components ?
+I just want functions everywhere man ...
+------------------------------
+
+Pretty easy actually, Elem is made for that :-)
+
+```javascript
+var interval = null;
+
+function DateField(props, ctx) { 
+  return Elem.el('div', [
+    Elem.el('h1', moment().format(props.format))
+  ]);
+}
+
+function TimeField(props, ctx) {
+  return Elem.el('div', [
+    Elem.el('h2', moment().format(props.format))
+  ]);
+}
+
+function GraphicalClock(props, ctx) {
+  var hoursRotation = 'rotate(' + (30 * moment().hours()) + (moment().minutes() / 2) + ')';
+  var minutesRotation = 'rotate(' + (6 * moment().minutes()) + (moment().seconds() / 10) + ')';
+  var secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
+  return Elem.el('div', { className: "clock", style: { width: props.width + 'px', height: props.height + 'px' } }, [
+    Elem.svg('svg', { xmlns: Elem.svgNS, version: "1.1", viewBox: "0 0 100 100"}, [
+      Elem.svg('g', { transform: "translate(50,50)" }, [
+        Elem.svg('circle', { className: "clock-face", r: "48", fill: 'white', stroke: '#333' }),
+        Elem.svg('line', { className: "hour", y1: "2", y2: "-20", transform: hoursRotation }),
+        Elem.svg('line', { className: "minute", y1: "4", y2: "-30", transform: minutesRotation }),
+        Elem.svg('g', { transform: secondsRotation }, [
+          Elem.svg('line', { className: "second", y1: "10", y2: "-38" }),
+          Elem.svg('line', { className: "second-counterweight", y1: "10", y2: "2" })
+        ])
+      ])
+    ])
+  ]);
+}
+
+function Clock(ctx) {
+  if (interval === null) {
+    interval = setInterval(ctx.refresh, 1000);
+  }
+  return Elem.el('div', { style: { display: 'flex' } }, [
+    Elem.el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
+      Elem.el(DateField, { format: 'DD/MM/YYYY' }),
+      Elem.el(TimeField, { format: 'HH:mm:ss' })
+    ]),
+    Elem.el(GraphicalClock, { width: 120, height: 120 })
+  ]);
+}
+
+Elem.render(Clock, container);
+```
+
+The context of function `Clock` contains :
+
+```javascript
+refs: 'refs of DOM nodes inside the current render tree'
+state: 'mutable state where every change will trigger a refresh'
+refresh: 'rerender the current function at the same place'
+setState: 'mutate the state with diff'
+replaceState: 'mutatle the whole state'
+getDOMNode: 'return root DOM node of the current render tree'
+```
+
+But can I also create reusable components ?
 -----------------------------------
 
 Of course you can. You just need to to something like
@@ -328,69 +395,3 @@ What about webcomponents ?
 ----------------------------
 
 WIP
-
-I just want functions everywhere man ...
-------------------------------
-
-Pretty easy actually, Elem is made for that :-)
-
-```javascript
-var interval = null;
-
-function DateField(props) {
-  return Elem.el('div', [
-    Elem.el('h1', moment().format(props.format))
-  ]);
-}
-
-function TimeField(props) {
-  return Elem.el('div', [
-    Elem.el('h2', moment().format(props.format))
-  ]);
-}
-
-function GraphicalClock(props) {
-  var hoursRotation = 'rotate(' + (30 * moment().hours()) + (moment().minutes() / 2) + ')';
-  var minutesRotation = 'rotate(' + (6 * moment().minutes()) + (moment().seconds() / 10) + ')';
-  var secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
-  return Elem.el('div', { className: "clock", style: { width: props.width + 'px', height: props.height + 'px' } }, [
-    Elem.svg('svg', { xmlns: Elem.svgNS, version: "1.1", viewBox: "0 0 100 100"}, [
-      Elem.svg('g', { transform: "translate(50,50)" }, [
-        Elem.svg('circle', { className: "clock-face", r: "48", fill: 'white', stroke: '#333' }),
-        Elem.svg('line', { className: "hour", y1: "2", y2: "-20", transform: hoursRotation }),
-        Elem.svg('line', { className: "minute", y1: "4", y2: "-30", transform: minutesRotation }),
-        Elem.svg('g', { transform: secondsRotation }, [
-          Elem.svg('line', { className: "second", y1: "10", y2: "-38" }),
-          Elem.svg('line', { className: "second-counterweight", y1: "10", y2: "2" })
-        ])
-      ])
-    ])
-  ]);
-}
-
-function Clock(ctx) {
-  if (interval === null) {
-    interval = setInterval(ctx.refresh, 1000);
-  }
-  return Elem.el('div', { style: { display: 'flex' } }, [
-    Elem.el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
-      Elem.el(DateField, { format: 'DD/MM/YYYY' }),
-      Elem.el(TimeField, { format: 'HH:mm:ss' })
-    ]),
-    Elem.el(GraphicalClock, { width: 120, height: 120 })
-  ]);
-}
-
-Elem.render(Clock, container);
-```
-
-The context of function `Clock` contains :
-
-```javascript
-refs: 'refs of DOM nodes inside the current render tree'
-state: 'mutable state where every change will trigger a refresh'
-refresh: 'rerender the current function at the same place'
-setState: 'mutate the state with diff'
-replaceState: 'mutatle the whole state'
-getDOMNode: 'return root DOM node of the current render tree'
-```

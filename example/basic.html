@@ -59,6 +59,46 @@
             ]);
             Elem.render(node, container);
           });
+          Showcase.registerTile('Stylesheet usage', function(container) {
+            var Style = Elem.style({
+              withBackground: {
+                backgroundColor: 'yellow',
+                borderStyle: 'solid',
+                borderWidth: '1px',
+                borderColor: 'black'
+              }
+            });
+            var CustomBackground = Style.withBackground.extend({
+              backgroundColor: 'red',
+              borderRadius: '5px',
+              borderColor: 'blue'
+            });
+            var node = Elem.el('div', { className: 'col-md-6' }, [
+              Elem.el('h3', { style: Style.withBackground }, 'Hello World!'),
+              Elem.el('p', { style: CustomBackground }, "Lorem ipsum ....")
+            ]);
+            Elem.render(node, container);
+          });
+          Showcase.registerTile('Predicate usage', function(container) {
+            var show = false;
+            function saySomething() {
+                alert("Something !");
+            }
+            function node() {
+              return Elem.el('div', { className: 'col-md-6' }, [
+                Elem.el('h3', 'Hello World!'),
+                Elem.predicate(show, Elem.el('button', {
+                    className: ['btn', 'btn-primary'],
+                    onclick: saySomething
+                  }, 'Say something')),
+                Elem.el('p', { style: { backgroundColor: 'red' } }, "Lorem ipsum ....")
+              ]);
+            }
+            setInterval(function() {
+              show = !show;
+              Elem.render(node, container);
+            }, 1000);
+          });
           Showcase.render('#app');
         </script>
     </body>

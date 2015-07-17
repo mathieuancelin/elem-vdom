@@ -89,13 +89,13 @@
 
             var interval = null;
 
-            function DateField(props) {
+            function DateField(props, ctx) {
               return Elem.el('div', [
                 Elem.el('h1', moment().format(props.format))
               ]);
             }
 
-            function TimeField(props) {
+            function TimeField(props, ctx) {
               return Elem.el('div', [
                 Elem.el('h2', moment().format(props.format))
               ]);

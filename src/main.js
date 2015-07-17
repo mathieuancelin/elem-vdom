@@ -11,6 +11,7 @@ const VText = require('virtual-dom/vnode/vtext');
 export const svgNS = "http://www.w3.org/2000/svg";
 const treeCache = {};
 let globalRefs = {};
+let currentComponentContext = undefined;
 
 function NotSupported() {
   throw new Error("Not supported yet !!!");
@@ -203,7 +204,7 @@ function internalEl(name, attrs, children, key, namespace, nodeMaker, textMaker)
     props.children = children;
     props.key = key;
     props.namespace = namespace;
-    return name(attrs);
+    return name(attrs, currentComponentContext);
   }
 
   let finalAttrs = {};
@@ -248,7 +249,12 @@ export function render(el, node) {
     let refs = _.clone(globalRefs);
     globalRefs = {};
     Perf.markStart('Elem.render.tree');
-    tree = tree(createComponentContext(() => render(el, node), node, refs));
+    try {
+      currentComponentContext = createComponentContext(() => render(el, node), node, refs);
+      tree = tree(currentComponentContext);
+    } finally {
+      currentComponentContext = undefined;
+    }
     Perf.markStop('Elem.render.tree');
   }
   let doc = document;
