@@ -386,4 +386,8 @@ on the client side, you just have to re-render the component at the same div dan
 What about webcomponents ?
 ----------------------------
 
-WIP
+Just use `Elem.registerWebComponent(name-with-a-dash, component)` and use it like an average HTML element
+
+```html
+<my-awesomecomponent></my-awesomecomponent>
+```
