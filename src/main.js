@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Utils = require('./utils');
 const State = require('./state');
 const Docs = require('./docs');
+const WebComponents = require('./webcomponents');
 const diff = require('virtual-dom/diff');
 const patch = require('virtual-dom/patch');
 const VDOMCreateElement = require('virtual-dom/create-element');
@@ -406,7 +407,7 @@ export function component(comp) {
   return factory;
 }
 
-export const registerWebComponent = NotSupported;
+export const registerWebComponent = WebComponents.registerWebComponent;
 export const Perf = require('./perfs');
 export const style = Utils.style;
 export const predicate = Utils.predicate;
@@ -447,6 +448,6 @@ export function renderToString(el) {
 // OK : refs to get DOM nodes
 // OK : more perf measures
 // OK : ref for root
+// OK : webcomponents
 
 // TODO : context per tree ??
-// TODO : webcomponents
