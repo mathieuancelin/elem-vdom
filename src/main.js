@@ -313,6 +313,7 @@ function createComponentContext(refresh, renderNode, refs) {
     props: {},
     state,
     refresh,
+    redraw: refresh,
     setState: state.set,
     replaceState: state.replace,
     getDOMNode: function() {
