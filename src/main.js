@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const Utils = require('./utils');
-const State = require('./state');
 const Docs = require('./docs');
 const WebComponents = require('./webcomponents');
 const diff = require('virtual-dom/diff');
@@ -304,16 +303,14 @@ export function render(el, node) {
 }
 
 function createComponentContext(refresh, renderNode, refs) {
-  let state = State();
-  state.onChange(refresh);
-  return {
+  //let state = State();
+  //state.onChange(refresh);
+  let context = {
     refs: refs || {},
-    state,
+    state: {},
     refresh,
     redraw: refresh,
-    setState: state.set,
-    replaceState: state.replace,
-    getDOMNode: function() {
+    getDOMNode() {
       let doc = document;
       if (renderNode.ownerDocument) {
         doc = renderNode.ownerDocument;
@@ -324,6 +321,26 @@ function createComponentContext(refresh, renderNode, refs) {
       return renderNode;
     }
   };
+
+  context.setState = (diff, cb) => {
+    for (var key in diff) {
+      context.state[key] = diff[key];
+    }
+    refresh();
+    if (cb) {
+      cb();
+    }
+  };
+
+  context.replaceState = (newState, cb) => {
+    context.state = newState;
+    refresh();
+    if (cb) {
+      cb();
+    }
+  };
+
+  return context;
 }
 
 export function findDOMNode(ref) {
@@ -347,9 +364,19 @@ export function component(comp) {
       isElemComponent: true,
       renderToString() {
         instance.props = instance.defaultProps.bind(instance)();
-        instance.state = State(instance.initialState.bind(instance)());
+        instance.state = instance.initialState();
         instance.setState = instance.state.set;
         instance.replaceState = instance.state.replace;
+        instance.setState = (diff, cb) => {
+          for (var key in diff) {
+            instance.state[key] = diff[key];
+          }
+          if (cb) cb();
+        };
+        instance.replaceState = (newState, cb) => {
+          instance.state = newState;
+          if (cb) cb();
+        };
         instance.getDOMNode = () => null;
         _.each(_.keys(instance), k => {
           if (k !== 'state' && _.isFunction(instance[k])) {
@@ -363,9 +390,19 @@ export function component(comp) {
       renderTo(node) {
         Perf.markStart('Elem.component.init');
         instance.props = instance.defaultProps.bind(instance)();
-        instance.state = State(instance.initialState.bind(instance)());
-        instance.setState = instance.state.set;
-        instance.replaceState = instance.state.replace;
+        instance.state = instance.initialState();
+        instance.setState = (diff, cb) => {
+          for (var key in diff) {
+            instance.state[key] = diff[key];
+          }
+          instance.refresh();
+          if (cb) cb();
+        };
+        instance.replaceState = (newState, cb) => {
+          instance.state = newState;
+          instance.refresh();
+          if (cb) cb();
+        };
         instance.getDOMNode = () => {
           let doc = document;
           if (node.ownerDocument) {
@@ -381,7 +418,6 @@ export function component(comp) {
             instance[k] = instance[k].bind(instance);
           }
         });
-        instance.init();
         instance.refresh = () => {
           Perf.markStart('Elem.component.tree');
           let tree = instance.render();
@@ -395,7 +431,7 @@ export function component(comp) {
             return tree;
           }
         };
-        instance.state.onChange(instance.refresh);
+        instance.init();
         Perf.markStop('Elem.component.init');
         return instance.refresh();
       }
@@ -454,4 +490,4 @@ export function renderToString(el) {
 // OK : optimize
 // OK : injectable stylesheet
 // OK : use same context for all calls
-// TODO : remove state as is
+// OK : remove state as is

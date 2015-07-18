@@ -59,7 +59,7 @@
 
             render: function() {
               //var startRows = Date.now();
-              var rows = this.state.get('databases').map(function(database) {
+              var rows = this.state.databases.map(function(database) {
                 var base = [
                   Elem.el('td', { className: "dbname" }, [database.dbname]),
                   Elem.el('td', { className: "query-count" }, [

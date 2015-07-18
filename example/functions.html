@@ -98,9 +98,9 @@
             }
 
             function GraphicalClock(ctx, props) {
-              var hoursRotation = 'rotate(' + (6 * moment().hours() * 2.5) + ')';
-              var minutesRotation = 'rotate(' + (6 * moment().minutes()) + ')';
-              var secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
+              var hoursRotation = 'rotate(' + ((moment().hours() % 12) * 30) + ')';
+              var minutesRotation = 'rotate(' + ((moment().minutes() % 60) * 6) + ')';
+              var secondsRotation = 'rotate(' + ((moment().seconds() % 60) * 6) + ')';
               return Elem.el('div', { className: "clock", style: { width: props.width + 'px', height: props.height + 'px' } }, [
                 Elem.svg('svg', { xmlns: Elem.svgNS, version: "1.1", viewBox: "0 0 100 100"}, [
                   Elem.svg('g', { transform: "translate(50,50)" }, [
@@ -149,9 +149,9 @@
             }
 
             function GraphicalClock() {
-              var hoursRotation = 'rotate(' + (6 * moment().hours() * 2.5) + ')';
-              var minutesRotation = 'rotate(' + (6 * moment().minutes()) + ')';
-              var secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
+              var hoursRotation = 'rotate(' + ((moment().hours() % 12) * 30) + ')';
+              var minutesRotation = 'rotate(' + ((moment().minutes() % 60) * 6) + ')';
+              var secondsRotation = 'rotate(' + ((moment().seconds() % 60) * 6) + ')';
               return Elem.el('div', { className: "clock", style: { width: this.props.width + 'px', height: this.props.height + 'px' } }, [
                 Elem.svg('svg', { xmlns: Elem.svgNS, version: "1.1", viewBox: "0 0 100 100"}, [
                   Elem.svg('g', { transform: "translate(50,50)" }, [

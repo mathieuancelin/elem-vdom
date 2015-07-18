@@ -112,9 +112,9 @@
               render: function() {
                 return Elem.el('div', {}, [
                   Elem.el('div', { style: Style.circle }, [
-                    Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + this.state().hours + 'deg)'    , '-webkit-transform': 'rotate(' + this.state().hours + 'deg)'  , '-moz-transform': 'rotate(' + this.state().hours + 'deg)'  , '-ms-transform': 'rotate(' + this.state().hours + 'deg)'   }) }, ''),
-                    Elem.el('div', { style: Style.circleMinute.extend({ transform: 'rotate(' + this.state().minutes + 'deg)', '-webkit-transform': 'rotate(' + this.state().minutes + 'deg)', '-moz-transform': 'rotate(' + this.state().minutes + 'deg)', '-ms-transform': 'rotate(' + this.state().minutes + 'deg)' }) }, ''),
-                    Elem.el('div', { style: Style.circleSecond.extend({ transform: 'rotate(' + this.state().seconds + 'deg)', '-webkit-transform': 'rotate(' + this.state().seconds + 'deg)', '-moz-transform': 'rotate(' + this.state().seconds + 'deg)', '-ms-transform': 'rotate(' + this.state().seconds + 'deg)' }) }, ''),
+                    Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + this.state.hours + 'deg)'    , '-webkit-transform': 'rotate(' + this.state.hours + 'deg)'  , '-moz-transform': 'rotate(' + this.state.hours + 'deg)'  , '-ms-transform': 'rotate(' + this.state.hours + 'deg)'   }) }, ''),
+                    Elem.el('div', { style: Style.circleMinute.extend({ transform: 'rotate(' + this.state.minutes + 'deg)', '-webkit-transform': 'rotate(' + this.state.minutes + 'deg)', '-moz-transform': 'rotate(' + this.state.minutes + 'deg)', '-ms-transform': 'rotate(' + this.state.minutes + 'deg)' }) }, ''),
+                    Elem.el('div', { style: Style.circleSecond.extend({ transform: 'rotate(' + this.state.seconds + 'deg)', '-webkit-transform': 'rotate(' + this.state.seconds + 'deg)', '-moz-transform': 'rotate(' + this.state.seconds + 'deg)', '-ms-transform': 'rotate(' + this.state.seconds + 'deg)' }) }, ''),
                     Elem.el('span', { style: Style.circleAfter }, ''),
                     Elem.el('span', { style: Style.circleCentered }, moment().hours() + ' h ' + moment().minutes() + ' m ' + moment().seconds() + ' s')
                   ])
