@@ -73,7 +73,7 @@ export function collectMeasures() {
 
 export function printMeasures() {
   if (!perfs) return;
-  console.table(collectMeasures().map(item => {
+  console.table(collectMeasures().map(item =>  {
     return {
       name: item.name,
       duration: item.duration,

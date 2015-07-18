@@ -229,16 +229,31 @@ export function render(el, node) {
   Perf.markStart('Elem.render');
   let tree = el;
   if (_.isFunction(tree)) {
+    Perf.markStart('Elem.render.tree');
+    let functionAsComponentContext = {
+      context: undefined,
+      props: arguments[2] || {}
+    };
+    let reTree = () => {
+      try {
+        let refs = _.clone(globalRefs);
+        globalRefs = {};
+        functionAsComponentContext.context.refs = refs;
+        currentComponentContext = functionAsComponentContext.context;
+        let thisContext = {...functionAsComponentContext.context, props: functionAsComponentContext.props};
+        return el.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
+      } finally {
+        currentComponentContext = undefined;
+      }
+    };
+    let refresh = () => {
+      let currentTree = reTree();
+      render(currentTree, node);
+    };
     let refs = _.clone(globalRefs);
     globalRefs = {};
-    Perf.markStart('Elem.render.tree');
-    try {
-      currentComponentContext = createComponentContext(() => render(el, node), node, refs);
-      let thisContext = {...currentComponentContext, props: arguments[2] || {}};
-      tree = tree.bind(thisContext)(currentComponentContext, arguments[2] || {});
-    } finally {
-      currentComponentContext = undefined;
-    }
+    functionAsComponentContext.context = createComponentContext(refresh, node, refs);
+    tree = reTree();
     Perf.markStop('Elem.render.tree');
   }
   let doc = document;
@@ -438,5 +453,5 @@ export function renderToString(el) {
 // OK : webcomponents
 // OK : optimize
 // OK : injectable stylesheet
-
-// TODO : context per tree ??
+// OK : use same context for all calls
+// TODO : remove state as is

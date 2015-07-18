@@ -167,7 +167,11 @@
               ]);
             }
 
-            function Clock() {
+            var oldCtx = undefined;
+
+            function Clock(ctx) {
+              console.log(oldCtx == ctx);
+              oldCtx = ctx;
               if (interval === null) {
                 interval = setInterval(this.refresh, 1000);
               }

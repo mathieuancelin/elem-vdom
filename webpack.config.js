@@ -15,6 +15,14 @@ module.exports = {
     extensions: ['', '.js']
   },
   module: {
+    nopreLoaders: [
+      {
+        // "extends": "eslint-config-airbnb",
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'eslint-loader'
+      }
+    ],
     loaders: [
       {
         test: /\.js$/,

@@ -1,9 +1,9 @@
 function uuid() {
   let d = Date.now();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    let r = (d + Math.random()*16)%16 | 0;
-    d = Math.floor(d/16);
-    return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+    let r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
   });
 }
 
@@ -11,9 +11,9 @@ let registrationFunction = undefined
 
 try {
   registrationFunction = (document.registerElement || document.register || function() {
-      if (window.console) console.error('[Elem] No registerElement function, webcomponents will not work !!!');
+    if (window.console) console.error('[Elem] No registerElement function, webcomponents will not work !!!');
   }).bind(document);
-} catch(e) {}
+} catch (e) {}
 
 function registerWebComponent(tag, elemTree) {
   console.log(`registering WebComponent ${tag}`);
@@ -44,7 +44,9 @@ function registerWebComponent(tag, elemTree) {
     this.props[attr] = newVal;
     renderElemTree(this.props, this.fragment);
   };
-  registrationFunction(tag, { prototype: ElementProto });
+  registrationFunction(tag, {
+    prototype: ElementProto
+  });
 }
 
 if (registrationFunction) {
