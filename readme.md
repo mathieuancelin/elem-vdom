@@ -229,10 +229,10 @@ Of course you can. You just need to to something like
 const Timer = Elem.component({
   init() {
     this.setState({time: 0});
-    setInterval(() => this.setState({ time: state().time + 1 }), 1000);
+    setInterval(() => this.setState({ time: this.state.time + 1 }), 1000);
   },
   render() {
-    return Elem.el('span', `Elapsed : ${this.state().time}`));
+    return Elem.el('span', `Elapsed : ${this.state.time}`));
   }
 });
 Timer().renderTo('#timer'); // render inside #timer div
@@ -243,7 +243,7 @@ when creating a component, you can define
 ```javascript
 {
   init: 'init function that receive the state and props as parameters'
-  initialState: 'function that returns the initial state state of the component. If undefined, an empty one will be created'
+  initialState: 'function that returns the initial state of the component. If undefined, an empty one will be created'
   defaultProps: 'function that returns the initial properties for the component, can be passed at instanciation if factory mode'
   render: 'function that will return an Elem node'
 }
@@ -352,11 +352,11 @@ export default Elem.component({
   render() {
     return Elem.el('div', { className: 'circle'}, [
       Elem.el('div', { className: 'hour',
-          style: { transform: `rotate(${this.state().hours}deg)` }}, ''),
+          style: { transform: `rotate(${this.state.hours}deg)` }}, ''),
       Elem.el('div', { className: 'minute',
-          style: { transform: `rotate(${this.state().minutes}deg)` }}, ''),
+          style: { transform: `rotate(${this.state.minutes}deg)` }}, ''),
       Elem.el('div', { className: 'second',
-          style: { transform: `rotate(${this.state().seconds}deg)` }}, ''),
+          style: { transform: `rotate(${this.state.seconds}deg)` }}, ''),
       Elem.el('span', { className: 'centered' },
           `${moment().hours()} h ${moment().minutes()} m ${moment().seconds()} s`)
     ]);

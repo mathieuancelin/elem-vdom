@@ -303,8 +303,6 @@ export function render(el, node) {
 }
 
 function createComponentContext(refresh, renderNode, refs) {
-  //let state = State();
-  //state.onChange(refresh);
   let context = {
     refs: refs || {},
     state: {},
@@ -321,7 +319,6 @@ function createComponentContext(refresh, renderNode, refs) {
       return renderNode;
     }
   };
-
   context.setState = (diff, cb) => {
     for (var key in diff) {
       context.state[key] = diff[key];
@@ -331,7 +328,6 @@ function createComponentContext(refresh, renderNode, refs) {
       cb();
     }
   };
-
   context.replaceState = (newState, cb) => {
     context.state = newState;
     refresh();
@@ -339,7 +335,6 @@ function createComponentContext(refresh, renderNode, refs) {
       cb();
     }
   };
-
   return context;
 }
 
