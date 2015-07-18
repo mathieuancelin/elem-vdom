@@ -1,5 +1,15 @@
 var webpack = require('webpack');
 
+var preLoaders = [];
+
+if (process.env.NODE_ENV === 'lint') {
+  preLoaders.push({
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loader: 'eslint-loader'
+  });
+}
+
 module.exports = {
   output: {
     path: './dist/',
@@ -15,14 +25,7 @@ module.exports = {
     extensions: ['', '.js']
   },
   module: {
-    nopreLoaders: [
-      {
-        // "extends": "eslint-config-airbnb",
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint-loader'
-      }
-    ],
+    preLoaders: preLoaders,
     loaders: [
       {
         test: /\.js$/,
