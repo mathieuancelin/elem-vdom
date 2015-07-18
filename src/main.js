@@ -191,7 +191,7 @@ function internalEl(name, attrs, children, key, namespace) {
     props.key = key;
     props.namespace = namespace;
     let thisContext = {...currentComponentContext, props: attrs};
-    return name.bind(thisContext)(attrs, currentComponentContext);
+    return name.bind(thisContext)(currentComponentContext, attrs);
   }
 
   let finalAttrs = {
@@ -439,3 +439,4 @@ export function renderToString(el) {
 // OK : optimize
 
 // TODO : context per tree ??
+// TODO : injectable stylesheet

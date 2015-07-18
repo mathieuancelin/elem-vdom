@@ -162,19 +162,19 @@ Pretty easy actually, Elem is made for that :-)
 ```javascript
 let interval = null;
 
-function DateField(props, ctx) {
+function DateField(ctx, props) {
   return Elem.el('div', [
     Elem.el('h1', moment().format(props.format))
   ]);
 }
 
-function TimeField(props, ctx) {
+function TimeField(ctx, props) {
   return Elem.el('div', [
     Elem.el('h2', moment().format(props.format))
   ]);
 }
 
-function GraphicalClock(props, ctx) {
+function GraphicalClock(ctx, props) {
   const hoursRotation = 'rotate(' + (30 * moment().hours()) + (moment().minutes() / 2) + ')';
   const minutesRotation = 'rotate(' + (6 * moment().minutes()) + (moment().seconds() / 10) + ')';
   const secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
@@ -209,7 +209,7 @@ function Clock(ctx) {
 Elem.render(Clock, container);
 ```
 
-The context of function `Clock` contains :
+Context (`ctx`) and `props` of the components are also available on `this`. Props are different for each components instance (each function call), the context is the same for the whole tree. The context contains the following.
 
 ```javascript
 refs: 'refs of DOM nodes inside the current render tree'

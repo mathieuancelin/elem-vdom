@@ -19,19 +19,19 @@
 
           var interval = null;
 
-          function DateField(props, ctx) {
+          function DateField(ctx, props) {
             return Elem.el('div', [
               Elem.el('h1', moment().format(props.format))
             ]);
           }
 
-          function TimeField(props, ctx) {
+          function TimeField(ctx, props) {
             return Elem.el('div', [
               Elem.el('h2', moment().format(props.format))
             ]);
           }
 
-          function GraphicalClock(props) {
+          function GraphicalClock(ctx, props) {
             var hoursRotation = 'rotate(' + (6 * moment().hours() * 2.5) + ')';
             var minutesRotation = 'rotate(' + (6 * moment().minutes()) + ')';
             var secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
