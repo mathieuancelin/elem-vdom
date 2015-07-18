@@ -392,7 +392,7 @@ export function component(comp) {
 
 export const registerWebComponent = WebComponents.registerWebComponent;
 export const Perf = require('./perfs');
-export const style = Utils.style;
+export const stylesheet = Utils.stylesheet;
 export const predicate = Utils.predicate;
 export const keyMirror = Utils.keyMirror;
 

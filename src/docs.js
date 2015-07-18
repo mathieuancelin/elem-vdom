@@ -34,7 +34,7 @@ export function createStringDocument() {
         });
         let selfCloseTag = children.length === 0;
         if (selfCloseTag) return '<' + name + ' ' + attrs.join(' ') + ' />';
-        return '<' + name + ' ' + attrs.join(' ') + '>' + _.map(children, child => child.render()).join('') + '</' + name + '>';
+        return '<' + name + (attrs.length > 0 ? ' ' : '') + attrs.join(' ') + '>' + _.map(children, child => child.render()).join('') + '</' + name + '>';
       }
     }
   }

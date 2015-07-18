@@ -60,7 +60,7 @@
             Elem.render(node, container);
           });
           Showcase.registerTile('Stylesheet usage', function(container) {
-            var Style = Elem.style({
+            var Style = Elem.stylesheet({
               withBackground: {
                 backgroundColor: 'yellow',
                 borderStyle: 'solid',
@@ -73,9 +73,18 @@
               borderRadius: '5px',
               borderColor: 'blue'
             });
+            var CustomStyle = Elem.stylesheet({
+              customBackground: {
+                extend: Style.withBackground,
+                backgroundColor: 'red',
+                borderRadius: '5px',
+                borderColor: 'blue'
+              }
+            });
             var node = Elem.el('div', { className: 'col-md-6' }, [
               Elem.el('h3', { style: Style.withBackground }, 'Hello World!'),
-              Elem.el('p', { style: CustomBackground }, "Lorem ipsum ....")
+              Elem.el('p', { style: CustomBackground }, "Lorem ipsum ...."),
+              Elem.el('p', { style: CustomStyle.customBackground }, "Lorem ipsum 2 ...."),
             ]);
             Elem.render(node, container);
           });

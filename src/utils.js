@@ -96,19 +96,29 @@ export function predicate(predicate, what) {
   }
 };
 
-export function style(obj) {
+export function stylesheet(obj) {
   let result = {};
   let keys = _.keys(obj);
   _.each(keys, (key) => {
     let clazz = obj[key];
     if (_.isObject(clazz)) {
+      // Handle 'class' that extends other 'classes'
+      while (clazz.extend) {
+        if (clazz.extend) {
+          let value = clazz.extend;
+          delete clazz.extend;
+          clazz = _.extend({}, value, clazz);
+        }
+      }
+      // Add an extend function to a 'class'
       result[key] = _.extend({}, {
-        extend: function(o) {
+        extend(o) {
           return _.extend({}, clazz, o);
         }
       }, clazz);
     }
   });
+  // Add an extend function to the sheet
   result.extend = (o) => {
     return _.extend({}, obj, o);
   };
