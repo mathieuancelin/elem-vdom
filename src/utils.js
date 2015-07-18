@@ -96,11 +96,14 @@ export function predicate(predicate, what) {
   }
 };
 
-export function stylesheet(obj) {
+export function stylesheet(obj, type, media) {
+  let stylesheetElement = undefined;
+  let mounted = false;
   let result = {};
-  let keys = _.keys(obj);
+  let sheet = obj;
+  let keys = _.keys(sheet);
   _.each(keys, (key) => {
-    let clazz = obj[key];
+    let clazz = sheet[key];
     if (_.isObject(clazz)) {
       // Handle 'class' that extends other 'classes'
       while (clazz.extend) {
@@ -120,7 +123,35 @@ export function stylesheet(obj) {
   });
   // Add an extend function to the sheet
   result.extend = (o) => {
-    return _.extend({}, obj, o);
+    return _.extend({}, sheet, o);
+  };
+  result.toString = (asClasses) => {
+    return _.chain(_.keys(result))
+      .filter(key => key !== 'extend' && key !== 'mount' && key !== 'unmount' && key !== 'toString')
+      .map(key => {
+        let value = result[key];
+        return (asClasses ? '.' : '') + dasherize(key) + ' {\n' + _.chain(_.keys(value)).filter(k => k !== 'extend').map(k => {
+          return '    ' + dasherize(k) + ': ' + value[k] + ';';
+        }).value().join('\n') + '\n}'
+      }).value().join('\n');
+  };
+  result.mount = (asClasses) => {
+    if (!mounted && typeof document != 'undefined') {
+      stylesheetElement = document.createElement('style');
+      if (type) stylesheetElement.setAttribute('type', type);
+      if (media) stylesheetElement.setAttribute('media', media);
+      stylesheetElement.innerHTML = result.toString(asClasses);
+      document.head.appendChild(stylesheetElement);
+      mounted = true;
+    }
+    return result;
+  };
+  result.unmount = () => {
+    if (mounted && typeof document != 'undefined') {
+      stylesheetElement.parentNode.removeChild(stylesheetElement);
+      mounted = false;
+    }
+    return result;
   };
   return result;
 };

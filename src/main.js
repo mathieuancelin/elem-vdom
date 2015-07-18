@@ -22,7 +22,7 @@ function styleToString(attrs) {
   if (!attrs) return '';
   let attrsArray = [];
   for (var key in attrs) {
-    if (key !== 'extend') {
+    if (key !== 'extend' && key !== 'mount' && key !== 'unmount' && key !== 'toString') {
       let keyName = Utils.dasherize(key);
       if (key === 'className') {
         keyName = 'class';
@@ -437,6 +437,6 @@ export function renderToString(el) {
 // OK : ref for root
 // OK : webcomponents
 // OK : optimize
+// OK : injectable stylesheet
 
 // TODO : context per tree ??
-// TODO : injectable stylesheet

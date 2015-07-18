@@ -125,6 +125,15 @@
             str = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             document.querySelector(container).innerHTML = '<span>' + str + '</span>';
           });
+
+          Showcase.registerTile('Stylesheet output', function(container) {
+            document.querySelector(container).innerHTML = '<span>' + Style.toString() + '</span>';
+          });
+          Showcase.registerTile('Stylesheet mount', function(container) {
+            Style.mount(true);
+            document.querySelector(container).innerHTML = '<span>' + document.querySelector('style').innerHTML.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;') + '</span>';
+            Style.unmount();
+          });
           Showcase.render('#app');
 
         </script>
