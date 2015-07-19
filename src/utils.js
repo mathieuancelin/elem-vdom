@@ -101,6 +101,13 @@ export function stylesheet(obj, type, media) {
   let mounted = false;
   let result = {};
   let sheet = obj;
+  while (sheet.extend) {
+    if (sheet.extend) {
+      let value = sheet.extend;
+      delete sheet.extend;
+      sheet = _.extend({}, value, sheet);
+    }
+  }
   let keys = _.keys(sheet);
   _.each(keys, (key) => {
     let clazz = sheet[key];

@@ -1,7 +1,7 @@
 elem-vdom
 ================
 
-Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates and string concat when modifying the DOM.
+Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates, string concat and manual mutations when modifying the DOM.
 
 Install
 -------
@@ -213,10 +213,10 @@ Context (`ctx`) and `props` of the components are also available on `this`. Prop
 
 ```javascript
 refs: 'refs of DOM nodes inside the current render tree'
-state: 'mutable state where every change will trigger a refresh'
+state: 'mutable state of the current render tree'
 refresh: 'rerender the current function at the same place'
-setState: 'mutate the state with diff'
-replaceState: 'mutatle the whole state'
+setState: 'mutate the state with diff and trigger a refresh'
+replaceState: 'mutate the whole state and trigger a refresh'
 getDOMNode: 'return root DOM node of the current render tree'
 ```
 
@@ -254,9 +254,9 @@ You can access a lot of pretty interesting stuff inside `Elem.component` like :
 ```javascript
 this.state: 'the state of the component'
 this.props: 'props of the component'
-this.setState({ state diff }); 'mutate the state with a diff'
-this.replaceState({ new state }); 'change the state'
-this.getDOMNode(); 'return root DOM node of the component'
+this.setState(diff): 'mutate the state with a diff and trigger a refresh'
+this.replaceState(newState): 'change the state and trigger a refresh'
+this.getDOMNode(): 'return root DOM node of the component'
 ```
 
 Don't worry about `this`, every function in `Elem.component` is bound to the component object.
@@ -393,3 +393,90 @@ Just use `Elem.registerWebComponent(name-with-a-dash, component)` and use it lik
 ```html
 <my-awesomecomponent></my-awesomecomponent>
 ```
+
+What is this `stylesheet` function ?
+-------------------------------
+
+The `Elem.stylesheet` function allows you to create something like
+
+```javascript
+var Style = Elem.stylesheet({
+  circle: {
+    borderRadius: '50%',
+    width: '120px',
+    height: '120px',
+    marginLeft: '10px',
+    marginTop: '10px',
+    background: 'white',
+    border: '3px solid #61b2a7',
+    position: 'relative',
+  },
+  circleCentered: {
+    position: 'absolute',
+    top: '55%',
+    left: '0px',
+    width: '120px',
+    textAlign: 'center',
+    fontFamily: "'Montserrat',sans-serif",
+    textShadow: '1px 1px 1px rgba(34, 34, 34, 0.5)'
+  },
+  circleSecond: {
+    width: '0',
+    height: '0',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    margin: '-40% -1px 0 0',
+    padding: '40% 1px 0',
+    background: '#61b2a9',
+    '-webkit-transform-origin': '50% 100%',
+    '-ms-transform-origin': '50% 100%',
+    transformOrigin: '50% 100%'
+  },
+  circleMinute: {
+    width: '0',
+    height: '0',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    margin: '-40% -3px 0',
+    padding: '40% 3px 0',
+    borderRadius: '3px',
+    background: '#61b2a7',
+    '-webkit-transform-origin': '50% 100%',
+    '-ms-transform-origin': '50% 100%',
+    transformOrigin: '50% 100%'
+  },
+  circleHour: {
+    width: '0',
+    height: '0',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    margin: '-25% -4px 0',
+    padding: '25% 4px 0',
+    borderRadius: '3px',
+    background: '#61b2a7',
+    '-webkit-transform-origin': '50% 100%',
+    '-ms-transform-origin': '50% 100%',
+    transformOrigin: '50% 100%'
+  },
+  circleAfter: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '12px',
+    height: '12px',
+    margin: '-6px 0 0 -6px',
+    background: '#fff',
+    borderRadius: '6px',
+    content: "",
+    background: '#61b2a7',
+    display: 'block'
+  }
+});
+```
+
+And use parts for inline styles of your component. Every stylesheet and stylesheet element owns an `extend` function to customize your styles on demand. You can also specify an `extend` member in a stylesheet element for declarative customization.
+
+You can also use it as an actual stylesheet for your pages, just call `mount()` on a stylesheet object to mount it in the DOM. You can call `unmount()` to remove it.
