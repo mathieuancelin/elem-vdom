@@ -34,9 +34,9 @@
     "webpack-dev-server": "^1.10.1"
   },
   "scripts": {
-    "lint": "NODE_ENV=lint webpack --colors -p",
-    "build": "webpack --colors -p",
-    "dev": "webpack --watch --colors -d",
-    "start": "webpack-dev-server --colors --hot --inline"
+    "lint": "node ./node_modules/eslint/bin/eslint.js src",
+    "build": "NODE_ENV=production webpack --colors -p",
+    "dev": "NODE_ENV=dev webpack --watch --colors -d",
+    "start": "NODE_ENV=dev webpack-dev-server --colors --hot --inline"
   }
 }

@@ -2,12 +2,36 @@ var webpack = require('webpack');
 
 var preLoaders = [];
 
+var devOnlyPlugins = [
+  new webpack.HotModuleReplacementPlugin(),
+  new webpack.NoErrorsPlugin()
+];
+
+var plugins = [
+  new webpack.optimize.OccurenceOrderPlugin(),
+  new webpack.DefinePlugin({
+    '__DEV__': process.env.NODE_ENV === 'production' ? false : true,
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+  })
+];
+
 if (process.env.NODE_ENV === 'lint') {
   preLoaders.push({
     test: /\.js$/,
     exclude: /node_modules/,
     loader: 'eslint-loader'
   });
+} else if (process.env.NODE_ENV === 'production') {
+  plugins.push(
+    new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        screw_ie8: true,
+        warnings: false
+      }
+    })
+  );
+} else {
+  plugins = devOnlyPlugins.concat(plugins);
 }
 
 module.exports = {
@@ -34,8 +58,5 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ]
+  plugins: plugins
 };
