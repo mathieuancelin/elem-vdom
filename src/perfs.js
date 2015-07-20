@@ -1,4 +1,7 @@
-const _ = require('lodash');
+const _ = {
+  each: require('lodash/collection/each'),
+  contains: require('lodash/collection/contains')
+};
 const Utils = require('./utils');
 
 let globalObject = Utils.memoGobalObject();

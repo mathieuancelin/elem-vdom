@@ -1,4 +1,11 @@
-const _ = require('lodash');
+const _ = {
+  memoize: require('lodash/function/memoize'),
+  isFunction: require('lodash/lang/isFunction'),
+  isObject: require('lodash/lang/isObject'),
+  extend: require('lodash/object/extend'),
+  keys: require('lodash/object/keys'),
+  each: require('lodash/collection/each')
+};
 
 function getGlobalObject() {
   // Workers don’t have `window`, only `self`
@@ -133,14 +140,14 @@ export function stylesheet(obj, type, media) {
     return _.extend({}, sheet, o);
   };
   result.toString = (asClasses) => {
-    return _.chain(_.keys(result))
+    return _.keys(result)
       .filter(key => key !== 'extend' && key !== 'mount' && key !== 'unmount' && key !== 'toString')
       .map(key => {
         let value = result[key];
-        return (asClasses ? '.' : '') + dasherize(key) + ' {\n' + _.chain(_.keys(value)).filter(k => k !== 'extend').map(k => {
+        return (asClasses ? '.' : '') + dasherize(key) + ' {\n' + _.keys(value).filter(k => k !== 'extend').map(k => {
           return '    ' + dasherize(k) + ': ' + value[k] + ';';
-        }).value().join('\n') + '\n}';
-      }).value().join('\n');
+        }).join('\n') + '\n}';
+      }).join('\n');
   };
   result.mount = (asClasses) => {
     if (!mounted && typeof document !== 'undefined') {

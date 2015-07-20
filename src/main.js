@@ -1,4 +1,17 @@
-const _ = require('lodash');
+const _ = {
+  isFunction: require('lodash/lang/isFunction'),
+  isObject: require('lodash/lang/isObject'),
+  isArray: require('lodash/lang/isArray'),
+  isString: require('lodash/lang/isString'),
+  isUndefined: require('lodash/lang/isUndefined'),
+  isNull: require('lodash/lang/isNull'),
+  clone: require('lodash/lang/clone'),
+  escape: require('lodash/string/escape'),
+  extend: require('lodash/object/extend'),
+  keys: require('lodash/object/keys'),
+  each: require('lodash/collection/each'),
+  times: require('lodash/utility/times')
+};
 const Utils = require('./utils');
 const Docs = require('./docs');
 const WebComponents = require('./webcomponents');

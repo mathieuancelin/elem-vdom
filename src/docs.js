@@ -1,4 +1,7 @@
-const _ = require('lodash');
+const _ = {
+  map: require('lodash/collection/map'),
+  filter: require('lodash/collection/filter')
+};
 
 export function createStringDocument() {
   function node(name, a) {
