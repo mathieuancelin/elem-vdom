@@ -1,19 +1,15 @@
 const _ = require('lodash');
 
 export function createStringDocument() {
-
-  function node(name, attrs, ns) {
-    var attrs = attrs || [];
+  function node(name, a) {
+    let attrs = a || [];
     let children = [];
     return {
-      setAttribute(name, value) {
-        attrs.push({
-          key: name,
-          value
-        });
+      setAttribute(key, value) {
+        attrs.push({ key, value });
       },
-      removeAttribute(name) {
-        attrs = _.filter(attrs, item => item.key !== name);
+      removeAttribute(key) {
+        attrs = _.filter(attrs, item => item.key !== key);
       },
       appendChild(child) {
         children.push(child);
@@ -36,7 +32,7 @@ export function createStringDocument() {
         if (selfCloseTag) return '<' + name + ' ' + attrs.join(' ') + ' />';
         return '<' + name + (attrs.length > 0 ? ' ' : '') + attrs.join(' ') + '>' + _.map(children, child => child.render()).join('') + '</' + name + '>';
       }
-    }
+    };
   }
 
   function createElementNS(ns, name, attrs) {
@@ -63,19 +59,15 @@ export function createStringDocument() {
 }
 
 export function createJsonDocument() {
-
-  function node(name, attrs, ns) {
-    var attrs = attrs || [];
+  function node(name, a) {
+    let attrs = a || [];
     let children = [];
     return {
-      setAttribute(name, value) {
-        attrs.push({
-          key: name,
-          value
-        });
+      setAttribute(key, value) {
+        attrs.push({ key, value });
       },
-      removeAttribute(name) {
-        attrs = _.filter(attrs, item => item.key !== name);
+      removeAttribute(key) {
+        attrs = _.filter(attrs, item => item.key !== key);
       },
       appendChild(child) {
         children.push(child);
@@ -95,7 +87,7 @@ export function createJsonDocument() {
           children: _.map(children, child => child.render())
         };
       }
-    }
+    };
   }
 
   function createElementNS(ns, name, attrs) {

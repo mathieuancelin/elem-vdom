@@ -62,7 +62,7 @@ export function markStop(name) {
 export function collectMeasures() {
   if (!perfs) return [];
   let results = [];
-  _.each(names, function(name) {
+  _.each(names, name => {
     results = results.concat(Performances.getEntriesByName(name));
   });
   Performances.clearMarks();
@@ -73,7 +73,7 @@ export function collectMeasures() {
 
 export function printMeasures() {
   if (!perfs) return;
-  console.table(collectMeasures().map(item =>  {
+  console.table(collectMeasures().map(item => {
     return {
       name: item.name,
       duration: item.duration,

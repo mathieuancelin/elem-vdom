@@ -1,16 +1,18 @@
+const Elem = require('./main');
+
 function uuid() {
   let d = Date.now();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     let r = (d + Math.random() * 16) % 16 | 0;
     d = Math.floor(d / 16);
-    return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+    return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
   });
 }
 
-let registrationFunction = undefined
+let registrationFunction;
 
 try {
-  registrationFunction = (document.registerElement || document.register || function() {
+  registrationFunction = (document.registerElement || document.register || () => {
     if (window.console) console.error('[Elem] No registerElement function, webcomponents will not work !!!');
   }).bind(document);
 } catch (e) {}
@@ -28,9 +30,9 @@ function registerWebComponent(tag, elemTree) {
     }
   }
 
-  ElementProto.createdCallback = function() {
+  ElementProto.createdCallback = function createWebcomponentInstance() {
     let props = {};
-    for (var i in this.attributes) {
+    for (let i in this.attributes) {
       let item = this.attributes[i];
       props[item.name] = item.value;
     }
@@ -40,10 +42,12 @@ function registerWebComponent(tag, elemTree) {
     this.appendChild(this.fragment);
     this.renderedElement = renderElemTree(props, this.fragment);
   };
-  ElementProto.attributeChangedCallback = function(attr, oldVal, newVal) {
+
+  ElementProto.attributeChangedCallback = function changeAttribute(attr, oldVal, newVal) {
     this.props[attr] = newVal;
     renderElemTree(this.props, this.fragment);
   };
+
   registrationFunction(tag, {
     prototype: ElementProto
   });
@@ -52,7 +56,7 @@ function registerWebComponent(tag, elemTree) {
 if (registrationFunction) {
   exports.registerWebComponent = registerWebComponent;
 } else {
-  exports.registerWebComponent = function() {
+  exports.registerWebComponent = () => {
     if (window.console) console.error('[Elem] WebComponent not available here :(');
   };
 }

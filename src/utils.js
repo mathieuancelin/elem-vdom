@@ -1,22 +1,5 @@
 const _ = require('lodash');
 
-// Avoid some issues in non browser environments
-if (typeof globalObject === 'undefined') {
-  globalObject = {
-    __fake: true
-  };
-}
-// Avoid some issues in older browsers
-if (typeof globalObject.console === 'undefined') {
-  globalObject.console = {
-    log() {},
-    error() {},
-    table() {},
-    debug() {},
-    trace() {}
-  };
-}
-
 function getGlobalObject() {
   // Workers don’t have `window`, only `self`
   if (typeof self !== undefined) {
@@ -33,7 +16,24 @@ function getGlobalObject() {
   return new Function('return this')();
 }
 
-const globalObject = getGlobalObject() || {}; //global || window || {};
+let globalObject = getGlobalObject() || {}; // global || window || {};
+
+// Avoid some issues in non browser environments
+if (typeof globalObject === 'undefined') {
+  globalObject = {
+    __fake: true
+  };
+}
+// Avoid some issues in older browsers
+if (typeof globalObject.console === 'undefined') {
+  globalObject.console = {
+    log() {},
+    error() {},
+    table() {},
+    debug() {},
+    trace() {}
+  };
+}
 
 globalObject.__ElemInternals = globalObject.__ElemInternals || {};
 globalObject.__ElemInternals.Utils = globalObject.__ElemInternals.Utils || {};
@@ -80,24 +80,24 @@ export function keyMirror(obj, p) {
   return ret;
 }
 
-export function predicate(predicate, what) {
-  if (_.isFunction(predicate)) {
-    if (predicate() === true) {
+export function predicate(p, what) {
+  if (_.isFunction(p)) {
+    if (p() === true) {
       return what;
     } else {
       return undefined;
     }
   } else {
-    if (predicate === true) {
+    if (p === true) {
       return what;
     } else {
       return undefined;
     }
   }
-};
+}
 
 export function stylesheet(obj, type, media) {
-  let stylesheetElement = undefined;
+  let stylesheetElement;
   let mounted = false;
   let result = {};
   let sheet = obj;
@@ -139,11 +139,11 @@ export function stylesheet(obj, type, media) {
         let value = result[key];
         return (asClasses ? '.' : '') + dasherize(key) + ' {\n' + _.chain(_.keys(value)).filter(k => k !== 'extend').map(k => {
           return '    ' + dasherize(k) + ': ' + value[k] + ';';
-        }).value().join('\n') + '\n}'
+        }).value().join('\n') + '\n}';
       }).value().join('\n');
   };
   result.mount = (asClasses) => {
-    if (!mounted && typeof document != 'undefined') {
+    if (!mounted && typeof document !== 'undefined') {
       stylesheetElement = document.createElement('style');
       if (type) stylesheetElement.setAttribute('type', type);
       if (media) stylesheetElement.setAttribute('media', media);
@@ -154,11 +154,15 @@ export function stylesheet(obj, type, media) {
     return result;
   };
   result.unmount = () => {
-    if (mounted && typeof document != 'undefined') {
+    if (mounted && typeof document !== 'undefined') {
       stylesheetElement.parentNode.removeChild(stylesheetElement);
       mounted = false;
     }
     return result;
   };
   return result;
-};
+}
+
+export function NotSupported() {
+  throw new Error('Not supported yet !!!');
+}

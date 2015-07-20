@@ -4,5 +4,14 @@
     "browser": true,
     "es6": true,
     "node": true
+  },
+  "rules": {
+    "no-else-return": 0,
+    "no-console": 0,
+    "no-new-func": 1,
+    "no-empty": 0,
+    "guard-for-in": 0,
+    "new-cap": 0,
+    "space-infix-ops": 0
   }
 }
