@@ -139,8 +139,8 @@ function internalEl(name, attributes, childrenArray, key, namespace) {
     props.children = children;
     props.key = key;
     props.namespace = namespace;
-    let thisContext = {...currentComponentContext, props: attrs};
-    return name.bind(thisContext)(currentComponentContext, attrs);
+    let thisContext = {...currentComponentContext, props: props};
+    return name.bind(thisContext)(currentComponentContext, props);
   }
 
   let finalAttrs = {
@@ -482,16 +482,3 @@ export function component(comp) {
   factory.isElemComponentFactory = true;
   return factory;
 }
-
-// OK : universal apps
-// OK : in place callbacks
-// OK : SVG
-// OK : nested components
-// OK : refs to get DOM nodes
-// OK : more perf measures
-// OK : ref for root
-// OK : webcomponents
-// OK : optimize
-// OK : injectable stylesheet
-// OK : use same context for all calls
-// OK : remove state as is

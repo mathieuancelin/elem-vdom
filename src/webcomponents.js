@@ -1,20 +1,10 @@
 const Elem = require('./main');
-
-function uuid() {
-  let d = Date.now();
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    let r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
-  });
-}
+const Utils = require('./utils');
 
 let registrationFunction;
 
 try {
-  registrationFunction = (document.registerElement || document.register || () => {
-    if (window.console) console.error('[Elem] No registerElement function, webcomponents will not work !!!');
-  }).bind(document);
+  registrationFunction = (document.registerElement || document.register).bind(document);
 } catch (e) {}
 
 function registerWebComponent(tag, elemTree) {
@@ -38,7 +28,7 @@ function registerWebComponent(tag, elemTree) {
     }
     this.props = props;
     this.fragment = thatDoc.createElement('content');
-    this.fragment.setAttribute('id', uuid());
+    this.fragment.setAttribute('id', Utils.uuid());
     this.appendChild(this.fragment);
     this.renderedElement = renderElemTree(props, this.fragment);
   };

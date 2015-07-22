@@ -35,7 +35,8 @@
   },
   "scripts": {
     "lint": "node ./node_modules/eslint/bin/eslint.js src",
-    "build": "NODE_ENV=production webpack --colors -p",
+    "dist": "NODE_ENV=production webpack --colors -p",
+    "build": "npm run lint && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d",
     "start": "NODE_ENV=dev webpack-dev-server --colors --hot --inline"
   }
