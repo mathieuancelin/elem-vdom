@@ -44,7 +44,7 @@ module.exports = {
   },
   entry: {
     'elem': ['./src/main.js'],
-    'sink': ['./example/sink/main.js']
+    'sink': ['./examples/sink/main.js']
   },
   resolve: {
     extensions: ['', '.js']

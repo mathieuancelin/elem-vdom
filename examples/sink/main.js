@@ -13,12 +13,20 @@ export const Elem = require('../..');
 export const Showcase = require('./showcase');
 
 let selectedContainer = 'foo';
+let app = '#app';
+
+let hashes = {};
+Showcase.getTiles().forEach(i => {
+  let hash = '#' + i.title.replace(/ /g, '-');
+  hashes[hash] = i;
+});
 
 function showTileHandler(tile, ctx) {
   return () => {
     selectedContainer = tile.container;
-    tile.render('#app');
+    tile.render(app);
     ctx.refresh();
+    window.location.hash = tile.title.replace(/ /g, '-');
   };
 }
 
@@ -41,8 +49,16 @@ function Sidebar(ctx) {
 
 window.Sink = {
   init() {
-    selectedContainer = Showcase.getTiles()[0].container;
-    Elem.render(Sidebar, '#sidebar');
-    Showcase.getTiles()[0].render('#app');
+    if (window.location.hash) {
+      selectedContainer = hashes[window.location.hash].container;
+      Elem.render(Sidebar, '#sidebar');
+      hashes[window.location.hash].render(app);
+    } else {
+      let tile = Showcase.getTiles()[0];
+      selectedContainer = tile.container;
+      Elem.render(Sidebar, '#sidebar');
+      tile.render(app);
+      window.location.hash = tile.title.replace(/ /g, '-');
+    }
   }
 };

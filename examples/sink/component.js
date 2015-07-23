@@ -114,3 +114,29 @@ Showcase.registerTile('Component usage', container => {
 }, () => {
   clearInterval(interval);
 });
+
+Showcase.registerTile('Stateful component usage', container => {
+  let Counter = Elem.component({
+    init() {
+      interval = setInterval(this.update, 1000);
+    },
+    update() {
+      this.setState({
+        counter: this.state.counter + 1
+      });
+    },
+    initialState() {
+      return {
+        counter: 0
+      };
+    },
+    render() {
+      return Elem.el('div', {}, [
+        Elem.el('h1', '' + this.state.counter)
+      ]);
+    }
+  });
+  Counter().renderTo(container);
+}, () => {
+  clearInterval(interval);
+});
