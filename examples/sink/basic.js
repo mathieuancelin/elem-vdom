@@ -117,6 +117,7 @@ Showcase.registerTile('Predicate usage', container => {
       }, 'Lorem ipsum ....')
     ]);
   }
+  Elem.render(node, container);
   interval = setInterval(() => {
     show = !show;
     Elem.render(node, container);

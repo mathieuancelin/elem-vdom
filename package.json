@@ -35,10 +35,11 @@
     "webpack-dev-server": "^1.10.1"
   },
   "scripts": {
+    "examples": "open -a 'Google Chrome Canary' http://localhost:8080/examples/",
     "lint": "node ./node_modules/eslint/bin/eslint.js src examples/sink",
     "dist": "NODE_ENV=production webpack --colors -p",
     "build": "npm run lint && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d",
-    "start": "NODE_ENV=dev webpack-dev-server --colors --hot --inline"
+    "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline"
   }
 }

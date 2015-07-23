@@ -11,6 +11,7 @@ export const webcomponents = require('./webcomponents');
 export const perfs = require('./perfs');
 export const Elem = require('../..');
 export const Showcase = require('./showcase');
+export const Counter = require('./counter');
 
 let selectedContainer = 'foo';
 let app = '#app';

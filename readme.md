@@ -38,7 +38,7 @@ API
 Dependencies
 -------------
 
-elem-vdom depends on `virtual-dom` and `lodash`
+elem-vdom depends on `virtual-dom` and `lodash` but these dependencies are bundled in the distribution package.
 
 How can I use elem-vdom ?
 ----------------------------
