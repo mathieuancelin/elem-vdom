@@ -12,6 +12,7 @@
     "no-empty": 0,
     "guard-for-in": 0,
     "new-cap": 0,
-    "space-infix-ops": 0
+    "space-infix-ops": 0,
+    "no-loop-func": 0
   }
 }

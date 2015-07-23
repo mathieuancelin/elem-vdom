@@ -41,7 +41,7 @@ Showcase.registerTile('Redux like example', container => {
     return Elem.el(Redux.Connector, {
       store,
       selector: (state) => {
-        return { counter: state.counter }
+        return { counter: state.counter };
       },
       actions: { increment, decrement },
       tree: (ctx, props) => {

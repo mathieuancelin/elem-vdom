@@ -2,15 +2,13 @@ const _ = {
   clone: require('lodash/lang/clone'),
   isFunction: require('lodash/lang/isFunction')
 };
-const Elem = require('./main');
 
 let nameCounter = 0;
 
 export function createStore() {
-
   let reducers = Array.slice(arguments).map(f => {
     if (!_.isFunction(f)) {
-      throw new Error("Store should be a function ...");
+      throw new Error('Store should be a function ...');
     }
     let __name = f.name || `substate-${nameCounter++}`;
     return {
@@ -24,6 +22,7 @@ export function createStore() {
   let listeners = [];
 
   function dispatch(what) {
+    actionsTimeline.push(what);
     let currentState = state;
     reducers.forEach(reducer => {
       currentState[reducer.name] = reducer.getNewState(currentState[reducer.name], what);
