@@ -1,9 +1,10 @@
 const Showcase = require('./showcase');
 const Elem = require('../..');
+const moment = require('moment');
 
-var interval;
+let interval;
 
-var Style = Elem.stylesheet({
+let Style = Elem.stylesheet({
   circle: {
     borderRadius: '50%',
     width: '120px',
@@ -12,7 +13,7 @@ var Style = Elem.stylesheet({
     marginTop: '10px',
     background: 'white',
     border: '3px solid #61b2a7',
-    position: 'relative',
+    position: 'relative'
   },
   circleCentered: {
     position: 'absolute',
@@ -72,35 +73,35 @@ var Style = Elem.stylesheet({
     height: '12px',
     margin: '-6px 0 0 -6px',
     borderRadius: '6px',
-    content: "",
+    content: '',
     background: '#61b2a7',
     display: 'block'
   }
 });
 
-Showcase.registerTile('Component usage', function(container) {
-  var Clock = Elem.component({
-    init: function() {
+Showcase.registerTile('Component usage', container => {
+  let Clock = Elem.component({
+    init() {
       interval = setInterval(this.update, 1000);
     },
-    update: function() {
+    update() {
       this.setState({
         seconds: (moment().seconds() % 60) * 6,
         minutes: (moment().minutes() % 60) * 6,
         hours: (moment().hours() % 12) * 30
       });
     },
-    initialState: function() {
+    initialState() {
       return {
         seconds: (moment().seconds() % 60) * 6,
         minutes: (moment().minutes() % 60) * 6,
         hours: (moment().hours() % 12) * 30
-      }
+      };
     },
-    render: function() {
+    render() {
       return Elem.el('div', {}, [
         Elem.el('div', { style: Style.circle }, [
-          Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + this.state.hours + 'deg)'    , '-webkit-transform': 'rotate(' + this.state.hours + 'deg)'  , '-moz-transform': 'rotate(' + this.state.hours + 'deg)'  , '-ms-transform': 'rotate(' + this.state.hours + 'deg)'   }) }, ''),
+          Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + this.state.hours + 'deg)', '-webkit-transform': 'rotate(' + this.state.hours + 'deg)', '-moz-transform': 'rotate(' + this.state.hours + 'deg)', '-ms-transform': 'rotate(' + this.state.hours + 'deg)' }) }, ''),
           Elem.el('div', { style: Style.circleMinute.extend({ transform: 'rotate(' + this.state.minutes + 'deg)', '-webkit-transform': 'rotate(' + this.state.minutes + 'deg)', '-moz-transform': 'rotate(' + this.state.minutes + 'deg)', '-ms-transform': 'rotate(' + this.state.minutes + 'deg)' }) }, ''),
           Elem.el('div', { style: Style.circleSecond.extend({ transform: 'rotate(' + this.state.seconds + 'deg)', '-webkit-transform': 'rotate(' + this.state.seconds + 'deg)', '-moz-transform': 'rotate(' + this.state.seconds + 'deg)', '-ms-transform': 'rotate(' + this.state.seconds + 'deg)' }) }, ''),
           Elem.el('span', { style: Style.circleAfter }, ''),
@@ -110,6 +111,6 @@ Showcase.registerTile('Component usage', function(container) {
     }
   });
   Clock().renderTo(container);
-}, function() {
+}, () => {
   clearInterval(interval);
 });

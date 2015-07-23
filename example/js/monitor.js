@@ -1,15 +1,5 @@
 var Monitoring = Monitoring || (function() {
 
-  var stats = new MemoryStats();
-  stats.domElement.style.position = 'fixed';
-  stats.domElement.style.right        = '0px';
-  stats.domElement.style.bottom       = '0px';
-  document.body.appendChild( stats.domElement );
-  requestAnimationFrame(function rAFloop(){
-      stats.update();
-      requestAnimationFrame(rAFloop);
-  });
-
   var RenderRate = function () {
     var container = document.createElement( 'div' );
     container.id  = 'stats';
@@ -56,5 +46,5 @@ var Monitoring = Monitoring || (function() {
     memoryStats: stats,
     renderRate: renderRate
   };
-  
+
 })();

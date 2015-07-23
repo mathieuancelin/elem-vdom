@@ -1,7 +1,8 @@
 const Showcase = require('./showcase');
 const Elem = require('../..');
+const moment = require('moment');
 
-var Style = Elem.stylesheet({
+let Style = Elem.stylesheet({
   circle: {
     borderRadius: '50%',
     width: '120px',
@@ -10,7 +11,7 @@ var Style = Elem.stylesheet({
     marginTop: '10px',
     background: 'white',
     border: '3px solid #61b2a7',
-    position: 'relative',
+    position: 'relative'
   },
   circleCentered: {
     position: 'absolute',
@@ -70,52 +71,52 @@ var Style = Elem.stylesheet({
     height: '12px',
     margin: '-6px 0 0 -6px',
     borderRadius: '6px',
-    content: "",
+    content: '',
     background: '#61b2a7',
     display: 'block'
   }
 });
 
-Showcase.registerTile('Universal app example with JSON output', function(container) {
-  var seconds = (moment().seconds() % 60) * 6;
-  var minutes = (moment().minutes() % 60) * 6;
-  var hours = (moment().hours() % 12) * 30;
-  var clock = Elem.el('div', {}, [
+Showcase.registerTile('Universal app example with JSON output', container => {
+  let seconds = (moment().seconds() % 60) * 6;
+  let minutes = (moment().minutes() % 60) * 6;
+  let hours = (moment().hours() % 12) * 30;
+  let clock = Elem.el('div', {}, [
     Elem.el('div', { style: Style.circle }, [
-      Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + hours + 'deg)'    , '-webkit-transform': 'rotate(' + hours + 'deg)'  , '-moz-transform': 'rotate(' + hours + 'deg)'  , '-ms-transform': 'rotate(' + hours + 'deg)'   }) }, ''),
+      Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + hours + 'deg)', '-webkit-transform': 'rotate(' + hours + 'deg)', '-moz-transform': 'rotate(' + hours + 'deg)', '-ms-transform': 'rotate(' + hours + 'deg)' }) }, ''),
       Elem.el('div', { style: Style.circleMinute.extend({ transform: 'rotate(' + minutes + 'deg)', '-webkit-transform': 'rotate(' + minutes + 'deg)', '-moz-transform': 'rotate(' + minutes + 'deg)', '-ms-transform': 'rotate(' + minutes + 'deg)' }) }, ''),
       Elem.el('div', { style: Style.circleSecond.extend({ transform: 'rotate(' + seconds + 'deg)', '-webkit-transform': 'rotate(' + seconds + 'deg)', '-moz-transform': 'rotate(' + seconds + 'deg)', '-ms-transform': 'rotate(' + seconds + 'deg)' }) }, ''),
       Elem.el('span', { style: Style.circleAfter }, ''),
       Elem.el('span', { style: Style.circleCentered }, moment().hours() + ' h ' + moment().minutes() + ' m ' + moment().seconds() + ' s')
     ])
   ]);
-  var str = Elem.renderToJson(clock);
+  let str = Elem.renderToJson(clock);
   console.log(JSON.stringify(str, null, 2));
-  Elem.render(Elem.el('span', { __asHtml: JSON.stringify(str, null, 2).replace(/ /g, '&nbsp;').replace(/\n/g, '<br/>') }), container);
+  Elem.render(Elem.el('span', {__asHtml: JSON.stringify(str, null, 2).replace(/ /g, '&nbsp;').replace(/\n/g, '<br/>')}), container);
 });
-Showcase.registerTile('Universal app example with HTML output', function(container) {
-  var seconds = (moment().seconds() % 60) * 6;
-  var minutes = (moment().minutes() % 60) * 6;
-  var hours = (moment().hours() % 12) * 30;
-  var clock = Elem.el('div', {}, [
+Showcase.registerTile('Universal app example with HTML output', container => {
+  let seconds = (moment().seconds() % 60) * 6;
+  let minutes = (moment().minutes() % 60) * 6;
+  let hours = (moment().hours() % 12) * 30;
+  let clock = Elem.el('div', {}, [
     Elem.el('div', { style: Style.circle }, [
-      Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + hours + 'deg)'    , '-webkit-transform': 'rotate(' + hours + 'deg)'  , '-moz-transform': 'rotate(' + hours + 'deg)'  , '-ms-transform': 'rotate(' + hours + 'deg)'   }) }, ''),
+      Elem.el('div', { style: Style.circleHour.extend({ transform: 'rotate(' + hours + 'deg)', '-webkit-transform': 'rotate(' + hours + 'deg)', '-moz-transform': 'rotate(' + hours + 'deg)', '-ms-transform': 'rotate(' + hours + 'deg)' }) }, ''),
       Elem.el('div', { style: Style.circleMinute.extend({ transform: 'rotate(' + minutes + 'deg)', '-webkit-transform': 'rotate(' + minutes + 'deg)', '-moz-transform': 'rotate(' + minutes + 'deg)', '-ms-transform': 'rotate(' + minutes + 'deg)' }) }, ''),
       Elem.el('div', { style: Style.circleSecond.extend({ transform: 'rotate(' + seconds + 'deg)', '-webkit-transform': 'rotate(' + seconds + 'deg)', '-moz-transform': 'rotate(' + seconds + 'deg)', '-ms-transform': 'rotate(' + seconds + 'deg)' }) }, ''),
       Elem.el('span', { style: Style.circleAfter }, ''),
       Elem.el('span', { style: Style.circleCentered }, moment().hours() + ' h ' + moment().minutes() + ' m ' + moment().seconds() + ' s')
     ])
   ]);
-  var str = Elem.renderToString(clock);
+  let str = Elem.renderToString(clock);
   console.log(str);
   str = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   Elem.render(Elem.el('span', { __asHtml: str }), container);
 });
 
-Showcase.registerTile('Stylesheet output', function(container) {
+Showcase.registerTile('Stylesheet output', container => {
   Elem.render(Elem.el('span', { __asHtml: Style.toString() }), container);
 });
-Showcase.registerTile('Stylesheet mount', function(container) {
+Showcase.registerTile('Stylesheet mount', container => {
   Style.mount(true);
   Elem.render(Elem.el('span', { __asHtml: document.querySelector('style').innerHTML.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;') }), container);
   Style.unmount();

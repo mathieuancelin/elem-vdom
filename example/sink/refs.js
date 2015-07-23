@@ -1,8 +1,7 @@
 const Showcase = require('./showcase');
 const Elem = require('../..');
 
-
-Showcase.registerTile('Refs usage example', function(container) {
+Showcase.registerTile('Refs usage example', container => {
   function refTest(context) {
     return Elem.el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
       Elem.el('input', {

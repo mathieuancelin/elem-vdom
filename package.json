@@ -29,12 +29,13 @@
     "eslint": "^0.24.1",
     "eslint-config-airbnb": "0.0.6",
     "eslint-loader": "^0.14.2",
+    "moment": "^2.10.3",
     "node-libs-browser": "^0.5.2",
     "webpack": "^1.10.1",
     "webpack-dev-server": "^1.10.1"
   },
   "scripts": {
-    "lint": "node ./node_modules/eslint/bin/eslint.js src",
+    "lint": "node ./node_modules/eslint/bin/eslint.js src example/sink",
     "dist": "NODE_ENV=production webpack --colors -p",
     "build": "npm run lint && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d",
