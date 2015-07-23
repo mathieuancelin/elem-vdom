@@ -139,8 +139,8 @@ function internalEl(name, attributes, childrenArray, key, namespace) {
     props.children = children;
     props.key = key;
     props.namespace = namespace;
-    let thisContext = {...currentComponentContext, props: props};
-    return name.bind(thisContext)(currentComponentContext, props);
+    let thisContext = {...currentComponentContext, props, children};
+    return name.bind(thisContext)(currentComponentContext, props, children);
   }
 
   let finalAttrs = {

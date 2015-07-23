@@ -38,12 +38,13 @@ module.exports = {
   output: {
     path: './dist/',
     publicPath: '/assets/',
-    filename: 'elem.js',
+    filename: '[name].js',
     library: 'Elem',
     libraryTarget: 'umd'
   },
   entry: {
-    'Elem': ['./src/main.js']
+    'elem': ['./src/main.js'],
+    'sink': ['./example/sink/main.js']
   },
   resolve: {
     extensions: ['', '.js']

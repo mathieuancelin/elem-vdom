@@ -4,6 +4,12 @@
         <title>DEMO</title>
         <link rel="stylesheet" href="./css/bootstrap.min.css">
         <style>
+          .dark-background {
+            background-color: grey
+          }
+          .brigh-background {
+            background-color: lightgrey
+          }
           th {
             font-weight: bolder;
           }
@@ -69,42 +75,28 @@
           .second-counterweight {
             stroke-width: 3;
           }
+          .Query {
+            position: relative;
+          }
+          .Query:hover .popover {
+            left: -100%;
+            width: 100%;
+            display: block;
+          }
         </style>
     </head>
     <body>
         <div class="container-fluid">
             <div class="row">
-                <div id="app" class="col-md-12"></div>
+                <div id="sidebar" class="col-md-3"></div>
+                <div id="app" class="col-md-9"></div>
             </div>
         </div>
         <script src="/assets/elem.js" type="text/javascript"></script>
-        <script src="./js/showcase.js" type="text/javascript"></script>
+        <script src="/assets/sink.js" type="text/javascript"></script>
         <script src="./js/moment.min.js" type="text/javascript"></script>
         <script type="text/javascript">
-          Showcase.registerTile('Children example', function(container) {
-
-            function Frame() {
-              var children = this.props.children;
-              delete this.props.children;
-              var style = this.props;
-              style.padding = '5px';
-              return Elem.el('div', { style: style }, children);
-            }
-
-            function Sample() {
-              return Elem.el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
-                  Elem.el('p', 'not framed'),
-                  Elem.el(Frame, { borderStyle: 'solid', borderColor: 'black', borderWidth: '1px' }, [
-                    Elem.el('h1', 'Hello World'),
-                    Elem.el('p', 'Lorem Ipsum ...')
-                  ]),
-                  Elem.el('p', 'not framed too'),
-                ]);
-            }
-
-            Elem.render(Sample, container);
-          });
-          Showcase.render('#app');
+          Sink.init();
         </script>
     </body>
 </html>
