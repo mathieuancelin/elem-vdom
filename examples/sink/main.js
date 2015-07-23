@@ -12,6 +12,7 @@ export const perfs = require('./perfs');
 export const Elem = require('../..');
 export const Showcase = require('./showcase');
 export const Counter = require('./counter');
+export const StatefulCounter = require('./stateful/app');
 
 let selectedContainer = 'foo';
 let app = '#app';

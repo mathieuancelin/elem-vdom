@@ -1,6 +1,6 @@
 const Showcase = require('./showcase');
 const Elem = require('../..');
-const Redux = require('../../src/redux');
+const Stores = require('../../src/stores');
 
 export const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
 export const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
@@ -29,7 +29,7 @@ export default function counter(state = 0, action) {
 }
 
 Showcase.registerTile('Redux like example', container => {
-  let store = Redux.createStore(counter);
+  let store = Stores.createStore(counter);
   console.log('First state', store.getState());
   store.subscribe(() => console.log(store.getState()));
   store.dispatch(increment());
@@ -37,22 +37,28 @@ Showcase.registerTile('Redux like example', container => {
   store.dispatch(decrement());
   console.log('Final state', store.getState());
 
-  function Counter() {
-    return Elem.el(Redux.Connector, {
+  function CounterSelector(state) {
+    return {
+      counter: state.counter
+    };
+  }
+
+  function Counter(ctx, props) {
+    return Elem.el('div', [
+      Elem.el('p', 'count : ' + props.counter),
+      Elem.el('button', { type: 'button', onclick: props.increment }, '+1'),
+      Elem.el('button', { type: 'button', onclick: props.decrement }, '-1')
+    ]);
+  }
+
+  function CounterWrapper() {
+    return Elem.el(Stores.Connector, {
       store,
-      selector: (state) => {
-        return { counter: state.counter };
-      },
+      selector: CounterSelector,
       actions: { increment, decrement },
-      tree: (ctx, props) => {
-        return Elem.el('div', [
-          Elem.el('p', 'count : ' + props.counter),
-          Elem.el('button', { type: 'button', onclick: props.increment }, '+1'),
-          Elem.el('button', { type: 'button', onclick: props.decrement }, '-1')
-        ]);
-      }
+      tree: Counter
     });
   }
 
-  Elem.render(Counter, container);
+  Elem.render(CounterWrapper, container);
 });
