@@ -1,7 +1,9 @@
 const Elem = require('../..');
 
 let tiles = [];
+
 let counter = 0;
+
 let lastRendered = {
   title: '',
   unmount: () => {},
