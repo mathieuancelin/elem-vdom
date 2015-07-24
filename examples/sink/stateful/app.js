@@ -1,5 +1,3 @@
-
-
 const Showcase = require('../showcase');
 const Elem = require('../../..');
 const Store = require('../../../src/store');
