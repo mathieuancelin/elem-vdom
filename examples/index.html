@@ -83,12 +83,17 @@
             width: 100%;
             display: block;
           }
+          .list-group-item {
+            padding-top: 2px;
+            padding-bottom: 2px;
+            height: 30px;
+          }
         </style>
     </head>
     <body>
         <div class="container-fluid">
             <div class="row">
-                <div id="sidebar" class="col-md-3"></div>
+                <div id="sidebar" style="overflow-y: scroll" class="col-md-3"></div>
                 <div id="app" class="col-md-9"></div>
             </div>
         </div>
