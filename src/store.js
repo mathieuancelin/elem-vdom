@@ -37,8 +37,8 @@ export function createStore(reducer = {}, initialState = {}) {
   function dispatch(what) {
     actionsTimeline.push(what);
     let currentState = state;
-    reducers.forEach(reducer => {
-      currentState[reducer.name] = reducer.getNewState(currentState[reducer.name], what);
+    reducers.forEach(r => {
+      currentState[r.name] = reducer.getNewState(currentState[r.name], what);
     });
     state = currentState;
     listeners.forEach(listener => listener());
