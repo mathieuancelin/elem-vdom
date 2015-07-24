@@ -1,6 +1,6 @@
 const Showcase = require('./showcase');
 const Elem = require('../..');
-const Stores = require('../../src/stores');
+const Store = require('../../src/store');
 
 export const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
 export const DECREMENT_COUNTER = 'DECREMENT_COUNTER';
@@ -29,7 +29,7 @@ export default function counter(state = 0, action) {
 }
 
 Showcase.registerTile('Redux like example', container => {
-  let store = Stores.createStore(counter);
+  let store = Store.createStore({ counter });
   console.log('First state', store.getState());
   store.subscribe(() => console.log(store.getState()));
   store.dispatch(increment());
@@ -52,7 +52,7 @@ Showcase.registerTile('Redux like example', container => {
   }
 
   function CounterWrapper() {
-    return Elem.el(Stores.Connector, {
+    return Elem.el(Store.Connector, {
       store,
       selector: CounterSelector,
       actions: { increment, decrement },

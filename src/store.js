@@ -1,24 +1,37 @@
 const _ = {
   clone: require('lodash/lang/clone'),
-  isFunction: require('lodash/lang/isFunction')
+  isFunction: require('lodash/lang/isFunction'),
+  isObject: require('lodash/lang/isObject')
 };
 
 let nameCounter = 0;
 
-export function createStore() {
-  let reducers = Array.slice(arguments).map(f => {
-    if (!_.isFunction(f)) {
-      throw new Error('Store should be a function ...');
+export function createStore(reducer = {}, initialState = {}) {
+  let reducers = [];
+  if (_.isObject(reducer)) {
+    for (let key in reducer) {
+      let f = reducer[key];
+      if (!_.isFunction(f)) {
+        throw new Error('Store should be a function ...');
+      }
+      let __name = f.name || `substate-${nameCounter++}`;
+      reducers.push({
+        getNewState: f,
+        name: __name
+      });
     }
-    let __name = f.name || `substate-${nameCounter++}`;
-    return {
-      getNewState: f,
-      name: __name
-    };
-  });
+  } else if (_.isFunction(reducer)) {
+    let name = reducer.name || 'reducer';
+    reducers = [{
+      getNewState: reducer,
+      name
+    }];
+  } else {
+    throw new Error('Store should be a function or an object of functions ...');
+  }
 
   let actionsTimeline = [];
-  let state = {};
+  let state = initialState;
   let listeners = [];
 
   function dispatch(what) {
@@ -70,6 +83,11 @@ export function bindActionsToDispatch(actions, dispatch) {
 
 export function Connector(ctx, props) {
   let { store, selector, actions, tree } = props;
+  if (!tree) {
+    tree = () => {
+      return props.children;
+    };
+  }
   let newCtx = {...ctx};
   delete props.actions;
   delete props.tree;

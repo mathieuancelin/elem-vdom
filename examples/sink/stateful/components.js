@@ -1,5 +1,5 @@
 const Elem = require('../../..');
-const Stores = require('../../../src/stores');
+const Store = require('../../../src/store');
 
 import * as actions from './actions';
 
@@ -16,7 +16,7 @@ function Counter(ctx, props) {
 }
 
 export default function CounterWrapper(ctx, props) {
-  return Elem.el(Stores.Connector, {
+  return Elem.el(Store.Connector, {
     store: props.store,
     selector,
     actions,
