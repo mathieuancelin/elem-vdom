@@ -27,6 +27,10 @@ export const Perf = require('./perfs');
 export const stylesheet = Utils.stylesheet;
 export const predicate = Utils.predicate;
 export const keyMirror = Utils.keyMirror;
+export const uuid = Utils.uuid;
+export const invariant = Utils.invariant;
+export const invariantLog = Utils.invariantLog;
+export const Store = require('./store');
 
 const treeCache = {};
 let globalRefs = {};
