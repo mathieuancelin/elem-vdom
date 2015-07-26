@@ -13,6 +13,7 @@ export const Elem = require('../..');
 export const Showcase = require('./showcase');
 export const Counter = require('./counter');
 export const StatefulCounter = require('./stateful/app');
+export const Todo = require('./todomvc/containers/app');
 
 let selectedContainer = 'foo';
 let app = '#app';
@@ -25,10 +26,10 @@ Showcase.getTiles().forEach(i => {
 
 function showTileHandler(tile, ctx) {
   return () => {
+    window.location.hash = tile.title.replace(/ /g, '-');
     selectedContainer = tile.container;
     tile.render(app);
     ctx.refresh();
-    window.location.hash = tile.title.replace(/ /g, '-');
   };
 }
 

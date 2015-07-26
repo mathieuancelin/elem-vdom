@@ -93,7 +93,8 @@ export function Connector(ctx, props) {
   delete props.tree;
   delete props.store;
   delete props.selector;
-  let newProps = {...props, ...bindActionsToDispatch(actions, store.dispatch), ...selector(store.getState())};
+  let boundActions = bindActionsToDispatch(actions, store.dispatch);
+  let newProps = {...props, ...boundActions, ...selector(store.getState()), actions: boundActions};
   newCtx.store = store;
   newCtx.dispatch = store.dispatch;
   let fakeCtx = {
