@@ -25,7 +25,7 @@ Showcase.getTiles().forEach(i => {
   hashes[hash] = i;
 });
 
-function Redbox(error) {
+function Redbox(error, title) {
   const frames = ErrorStackParser.parse(error).map(f => {
     const link = `${f.fileName}:${f.lineNumber}:${f.columnNumber}`;
     return Elem.el('div', { className: 'frame' }, [
@@ -41,15 +41,22 @@ function Redbox(error) {
   ]);
 }
 
+function render(tile) {
+  console.log('render');
+  delete document.querySelector(app).rootId;
+  document.querySelector(app).innerHTML = '';
+  try {
+    tile.render(app);
+  } catch (e) {
+    Elem.render(Redbox(e), app);
+  }
+}
+
 function showTileHandler(tile, ctx) {
   return () => {
     window.location.hash = tile.title.replace(/ /g, '-');
     selectedContainer = tile.container;
-    try {
-      tile.render(app);
-    } catch (e) {
-      Elem.render(Redbox(e), app);
-    }
+    render(tile);
     ctx.refresh();
   };
 }
@@ -76,20 +83,12 @@ window.Sink = {
     if (window.location.hash) {
       selectedContainer = hashes[window.location.hash].container;
       Elem.render(Sidebar, '#sidebar');
-      try {
-        hashes[window.location.hash].render(app);
-      } catch (e) {
-        Elem.render(Redbox(e), app);
-      }
+      render(hashes[window.location.hash]);
     } else {
       let tile = Showcase.getTiles()[0];
       selectedContainer = tile.container;
       Elem.render(Sidebar, '#sidebar');
-      try {
-        tile.render(app);
-      } catch (e) {
-        Elem.render(Redbox(e), app);
-      }
+      render(tile);
       window.location.hash = tile.title.replace(/ /g, '-');
     }
   }
