@@ -32,14 +32,15 @@
     "moment": "^2.10.3",
     "node-libs-browser": "^0.5.2",
     "webpack": "^1.10.1",
-    "webpack-dev-server": "^1.10.1"
+    "webpack-dev-server": "^1.10.1",
+    "error-stack-parser": "~1.2.0"
   },
   "scripts": {
     "clean": "rm ./dist/*",
     "examples": "open -a 'Google Chrome Canary' http://localhost:8080/examples/",
     "lint": "node ./node_modules/eslint/bin/eslint.js src examples/sink",
     "dist": "NODE_ENV=production webpack --colors -p",
-    "build": "npm run lint && npm run dist",
+    "build": "npm run lint && npm run clean && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d",
     "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline"
   }

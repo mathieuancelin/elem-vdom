@@ -45,7 +45,7 @@ export function createStore(reducer = {}, initialState = {}) {
 
   function subscribe(listener) {
     listeners.push(listener);
-    return function unsubscribe() {
+    return () => {
       let index = listeners.indexOf(listener);
       listeners.splice(index, 1);
     };
@@ -80,7 +80,8 @@ export function bindActionsToDispatch(actions, dispatch) {
   return boundActions;
 }
 
-export function handleActions(actions, initialState) {
+// export default const myStore = Store.handleActions({ ... }, { ... })
+export function handleActions(actions, initialState = {}) {
   return (state, action) => {
     let actualAction = state[action];
     if (actualAction) {
@@ -91,6 +92,7 @@ export function handleActions(actions, initialState) {
   };
 }
 
+// export default const myStore = Store.withInitialState({ ... }).handleActions({ ... })
 export function withInitialState(initialState) {
   const apiHandleActions = handleActions;
   return {
@@ -101,15 +103,15 @@ export function withInitialState(initialState) {
 }
 
 export function Connector(ctx, props) {
-  let { store, selector, actions, tree } = props;
-  if (!tree) {
-    tree = () => {
+  let { store, selector, actions, render } = props;
+  if (!render) {
+    render = () => {
       return props.children;
     };
   }
   let newCtx = {...ctx};
   delete props.actions;
-  delete props.tree;
+  delete props.render;
   delete props.store;
   delete props.selector;
   let boundActions = bindActionsToDispatch(actions, store.dispatch);
@@ -123,5 +125,5 @@ export function Connector(ctx, props) {
     ctx.refresh();
     fakeCtx.unsubscribe();
   });
-  return tree(newCtx, newProps);
+  return render(newCtx, newProps);
 }

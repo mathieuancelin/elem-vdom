@@ -56,7 +56,7 @@ Showcase.registerTile('Redux like example', container => {
       store,
       selector: CounterSelector,
       actions: { increment, decrement },
-      tree: Counter
+      render: Counter
     });
   }
 

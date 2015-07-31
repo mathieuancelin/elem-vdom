@@ -1,3 +1,5 @@
+import ErrorStackParser from 'error-stack-parser';
+
 export const basic = require('./basic');
 export const children = require('./children');
 export const component = require('./component');
@@ -13,7 +15,6 @@ export const Elem = require('../..');
 export const Showcase = require('./showcase');
 export const Counter = require('./counter');
 export const StatefulCounter = require('./stateful/app');
-export const Todo = require('./todomvc/containers/app');
 
 let selectedContainer = 'foo';
 let app = '#app';
@@ -24,11 +25,31 @@ Showcase.getTiles().forEach(i => {
   hashes[hash] = i;
 });
 
+function Redbox(error) {
+  const frames = ErrorStackParser.parse(error).map(f => {
+    const link = `${f.fileName}:${f.lineNumber}:${f.columnNumber}`;
+    return Elem.el('div', { className: 'frame' }, [
+      Elem.el('div', f.functionName || 'closure ...'),
+      Elem.el('div', { className: 'file' }, [
+        Elem.el('a', { href: link }, link)
+      ])
+    ]);
+  });
+  return Elem.el('div', { className: 'redbox' }, [
+    Elem.el('div', { className: 'message' }, `${error.name}: ${error.message}`),
+    Elem.el('div', { className: 'stack' }, frames)
+  ]);
+}
+
 function showTileHandler(tile, ctx) {
   return () => {
     window.location.hash = tile.title.replace(/ /g, '-');
     selectedContainer = tile.container;
-    tile.render(app);
+    try {
+      tile.render(app);
+    } catch (e) {
+      Elem.render(Redbox(e), app);
+    }
     ctx.refresh();
   };
 }
@@ -55,12 +76,20 @@ window.Sink = {
     if (window.location.hash) {
       selectedContainer = hashes[window.location.hash].container;
       Elem.render(Sidebar, '#sidebar');
-      hashes[window.location.hash].render(app);
+      try {
+        hashes[window.location.hash].render(app);
+      } catch (e) {
+        Elem.render(Redbox(e), app);
+      }
     } else {
       let tile = Showcase.getTiles()[0];
       selectedContainer = tile.container;
       Elem.render(Sidebar, '#sidebar');
-      tile.render(app);
+      try {
+        tile.render(app);
+      } catch (e) {
+        Elem.render(Redbox(e), app);
+      }
       window.location.hash = tile.title.replace(/ /g, '-');
     }
   }

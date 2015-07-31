@@ -20,6 +20,6 @@ export default function CounterWrapper(ctx, props) {
     store: props.store,
     selector,
     actions,
-    tree: Counter
+    render: Counter
   });
 }
