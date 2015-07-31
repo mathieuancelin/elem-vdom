@@ -349,12 +349,30 @@ export function render(elementOrFunction, selectorOrNode) {
   Perf.markStop('Elem.render');
   return {
     unmount() {
+      delete node.rootId;
       while (!_.isUndefined(node) && !_.isNull(node) && node.firstChild) {
         node.removeChild(node.firstChild);
       }
       delete treeCache[rootId];
     }
   };
+}
+
+export function unmount(node) {
+  let doc = document;
+  if (node.ownerDocument) {
+    doc = node.ownerDocument;
+  }
+  if (_.isString(node)) {
+    node = doc.querySelector(node);
+  }
+  while (!_.isUndefined(node) && !_.isNull(node) && node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+  if (node.rootId) {
+    delete treeCache[node.rootId];
+    delete node.rootId;
+  }
 }
 
 export function findDOMNode(ref) {

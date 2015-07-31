@@ -42,9 +42,7 @@ function Redbox(error, title) {
 }
 
 function render(tile) {
-  console.log('render');
-  delete document.querySelector(app).rootId;
-  document.querySelector(app).innerHTML = '';
+  Elem.unmount(app);
   try {
     tile.render(app);
   } catch (e) {
