@@ -1,10 +1,9 @@
 const _ = {
-  memoize: require('lodash/function/memoize'),
   isFunction: require('lodash/lang/isFunction'),
   isObject: require('lodash/lang/isObject'),
-  extend: require('lodash/object/extend'),
-  keys: require('lodash/object/keys'),
-  each: require('lodash/collection/each')
+  extend: Object.assign, // require('lodash/object/extend'),
+  keys: Object.keys, // require('lodash/object/keys'),
+  each: (what, funct) => what.forEach(funct) // require('lodash/collection/each'),
 };
 
 function getGlobalObject() {
@@ -46,7 +45,25 @@ globalObject.__ElemInternals = globalObject.__ElemInternals || {};
 globalObject.__ElemInternals.Utils = globalObject.__ElemInternals.Utils || {};
 globalObject.__ElemInternals.Utils.__idCounter = globalObject.__ElemInternals.Utils.__idCounter || 0;
 
-export const memoGobalObject = _.memoize(getGlobalObject);
+export function times(n, func) {
+  let results = [];
+  for (let i = 0; i < n; i++) {
+    results.push(func(n));
+  }
+  return results;
+}
+
+export function memoize(func) {
+  let cache;
+  return function memoizer() {
+    if (!cache) {
+      cache = func();
+    }
+    return cache;
+  };
+}
+
+export const memoGobalObject = memoize(getGlobalObject);
 
 export function uniqueId(prefix) {
   const id = ++globalObject.__ElemInternals.Utils.__idCounter + '';

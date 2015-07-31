@@ -1,6 +1,6 @@
 const _ = {
-  map: require('lodash/collection/map'),
-  filter: require('lodash/collection/filter')
+  map: (what, func) => what.map(func), // require('lodash/collection/map'),
+  filter: (what, func) => what.filter(func) // require('lodash/collection/filter')
 };
 
 export function createStringDocument() {

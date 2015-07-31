@@ -1,3 +1,4 @@
+const Utils = require('./utils');
 const _ = {
   isFunction: require('lodash/lang/isFunction'),
   isObject: require('lodash/lang/isObject'),
@@ -5,14 +6,13 @@ const _ = {
   isString: require('lodash/lang/isString'),
   isUndefined: require('lodash/lang/isUndefined'),
   isNull: require('lodash/lang/isNull'),
-  clone: require('lodash/lang/clone'),
+  clone: (what) => ({...what}), // require('lodash/lang/clone'),
   escape: require('lodash/string/escape'),
-  extend: require('lodash/object/extend'),
-  keys: require('lodash/object/keys'),
-  each: require('lodash/collection/each'),
-  times: require('lodash/utility/times')
+  extend: Object.assign, // require('lodash/object/extend'),
+  keys: Object.keys, // require('lodash/object/keys'),
+  each: (what, funct) => what.forEach(funct), // require('lodash/collection/each'),
+  times: Utils.times // require('lodash/utility/times')
 };
-const Utils = require('./utils');
 const Docs = require('./docs');
 const WebComponents = require('./webcomponents');
 const diff = require('virtual-dom/diff');

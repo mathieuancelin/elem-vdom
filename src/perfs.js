@@ -1,5 +1,5 @@
 const _ = {
-  each: require('lodash/collection/each'),
+  each: (what, funct) => what.forEach(funct), // require('lodash/collection/each'),
   contains: require('lodash/collection/contains')
 };
 const Utils = require('./utils');

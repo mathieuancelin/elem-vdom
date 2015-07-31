@@ -1,5 +1,4 @@
 const _ = {
-  clone: require('lodash/lang/clone'),
   isFunction: require('lodash/lang/isFunction'),
   isObject: require('lodash/lang/isObject')
 };
@@ -63,7 +62,7 @@ export function createStore(reducer = {}, initialState = {}) {
       return state;
     },
     getState() {
-      return _.clone(state);
+      return {...state};
     }
   };
 }
