@@ -25,7 +25,7 @@ Showcase.getTiles().forEach(i => {
   hashes[hash] = i;
 });
 
-function Redbox(error, title) {
+function Redbox(error) {
   const frames = ErrorStackParser.parse(error).map(f => {
     const link = `${f.fileName}:${f.lineNumber}:${f.columnNumber}`;
     return Elem.el('div', { className: 'frame' }, [

@@ -358,7 +358,8 @@ export function render(elementOrFunction, selectorOrNode) {
   };
 }
 
-export function unmount(node) {
+export function unmount(theNode) {
+  let node = theNode;
   let doc = document;
   if (node.ownerDocument) {
     doc = node.ownerDocument;
