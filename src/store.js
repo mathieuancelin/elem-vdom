@@ -80,6 +80,26 @@ export function bindActionsToDispatch(actions, dispatch) {
   return boundActions;
 }
 
+export function handleActions(actions, initialState) {
+  return (state, action) => {
+    let actualAction = state[action];
+    if (actualAction) {
+      return actualAction(state, action);
+    } else {
+      return initialState;
+    }
+  };
+}
+
+export function withInitialState(initialState) {
+  const apiHandleActions = handleActions;
+  return {
+    handleActions(actions) {
+      return apiHandleActions(actions, initialState);
+    }
+  };
+}
+
 export function Connector(ctx, props) {
   let { store, selector, actions, tree } = props;
   if (!tree) {
