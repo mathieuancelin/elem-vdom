@@ -5,7 +5,7 @@ const _ = {
   isArray: require('lodash/lang/isArray'),
   isString: require('lodash/lang/isString'),
   isUndefined: require('lodash/lang/isUndefined'),
-  isNull: require('lodash/lang/isNull'),
+  isNull: (what) => Object.is(what, null), // require('lodash/lang/isNull'),
   clone: (what) => ({...what}), // require('lodash/lang/clone'),
   escape: require('lodash/string/escape'),
   extend: Object.assign, // require('lodash/object/extend'),
