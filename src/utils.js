@@ -200,17 +200,15 @@ export function uuid() {
   });
 }
 
-export function invariant(condition, message) {
+export function invariant(condition, message, ...args) {
   if (!condition) {
-    let args = Array.slice(arguments).slice(2);
     let argIndex = 0;
     throw new Error('Violation : ' + message.replace(/%s/g, () => { return args[argIndex++]; }));
   }
 }
 
-export function invariantLog(condition, message) {
+export function invariantLog(condition, message, ...args) {
   if (!condition) {
-    let args = Array.slice(arguments).slice(2);
     let argIndex = 0;
     console.error('Violation : ' + message.replace(/%s/g, () => { return args[argIndex++]; }));
   }

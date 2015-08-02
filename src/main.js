@@ -5,7 +5,7 @@ const _ = {
   isArray: require('lodash/lang/isArray'),
   isString: require('lodash/lang/isString'),
   isUndefined: require('lodash/lang/isUndefined'),
-  isNull: require('lodash/lang/isNull'),
+  isNull: (what) => Object.is(what, null), // require('lodash/lang/isNull'),
   clone: (what) => ({...what}), // require('lodash/lang/clone'),
   escape: require('lodash/string/escape'),
   extend: Object.assign, // require('lodash/object/extend'),
@@ -163,9 +163,7 @@ function internalEl(name, attributes, childrenArray, key, namespace) {
   return new VNode(name, finalAttrs, children, attrs.key, namespace);
 }
 
-export function el(tagName) {
-  let args = Array.slice(arguments);
-  args = args.slice(1);
+export function el(tagName, ...args) {
   let argsLength = args.length;
   let name = _.isString(tagName) ? (_.escape(tagName) || 'unknown') : tagName;
   // 1 args
@@ -228,8 +226,8 @@ export function el(tagName) {
   return internalEl(name, args[1], args[2], args[1].key, args[0]);
 }
 
-export function svg(name) {
-  return el.apply(null, [name, svgNS].concat(Array.slice(arguments).slice(1)));
+export function svg(name, ...args) {
+  return el.apply(null, [name, svgNS].concat(args));
 }
 
 export function nbsp(times) {
