@@ -31,7 +31,7 @@ export const uuid = Utils.uuid;
 export const invariant = Utils.invariant;
 export const invariantLog = Utils.invariantLog;
 export const Store = require('./store');
-export const DevTools = require('./devtools');
+export const Devtools = require('./devtools');
 
 const treeCache = {};
 let globalRefs = {};

@@ -127,3 +127,11 @@ export function Connector(ctx, props) {
   });
   return render(newCtx, newProps);
 }
+
+export function ComposableConnector(store, selector, actions) {
+  return (render) => {
+    return (ctx, props) => {
+      return Connector(ctx, { ...props, store, selector, actions, render });
+    };
+  };
+}

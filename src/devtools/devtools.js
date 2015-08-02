@@ -1,5 +1,5 @@
-const Utils = require('./utils');
-const Elem = require('./main');
+const Utils = require('../utils');
+const Elem = require('../main');
 const ErrorStackParser = require('error-stack-parser');
 const isFunction = require('lodash/lang/isFunction');
 
@@ -44,7 +44,7 @@ export const RedboxStyle = Utils.stylesheet({
 
 export function Redbox(error) {
   const frames = ErrorStackParser.parse(error).map(f => {
-    const link = `${f.fileName}:${f.lineNumber}:${f.columnNumber}`;
+    const link = `${f.fileName}#${f.lineNumber}:${f.columnNumber}`;
     return Elem.el('div', { style: RedboxStyle.stackframe }, [
       Elem.el('div', f.functionName || '<anonymous function>'),
       Elem.el('div', { style: RedboxStyle.stackframeFile }, [
