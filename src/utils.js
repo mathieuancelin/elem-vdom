@@ -8,13 +8,13 @@ const _ = {
 
 function getGlobalObject() {
   // Workers don’t have `window`, only `self`
-  if (typeof self !== undefined) {
+  if (typeof self !== 'undefined') {
     return self;
   }
-  if (typeof global !== undefined) {
+  if (typeof global !== 'undefined') {
     return global;
   }
-  if (typeof window !== undefined) {
+  if (typeof window !== 'undefined') {
     return window;
   }
   // Not all environments allow eval and Function
