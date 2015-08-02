@@ -1,5 +1,4 @@
 const _ = {
-  each: (what, funct) => what.forEach(funct), // require('lodash/collection/each'),
   contains: require('lodash/collection/contains')
 };
 const Utils = require('./utils');
@@ -65,7 +64,7 @@ export function markStop(name) {
 export function collectMeasures() {
   if (!perfs) return [];
   let results = [];
-  _.each(names, name => {
+  names.forEach(name => {
     results = results.concat(Performances.getEntriesByName(name));
   });
   Performances.clearMarks();

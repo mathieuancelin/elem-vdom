@@ -1,8 +1,3 @@
-const _ = {
-  map: (what, func) => what.map(func), // require('lodash/collection/map'),
-  filter: (what, func) => what.filter(func) // require('lodash/collection/filter')
-};
-
 export function createStringDocument() {
   function node(name, a) {
     let attrs = a || [];
@@ -12,7 +7,7 @@ export function createStringDocument() {
         attrs.push({ key, value });
       },
       removeAttribute(key) {
-        attrs = _.filter(attrs, item => item.key !== key);
+        attrs = attrs.filter(item => item.key !== key);
       },
       appendChild(child) {
         children.push(child);
@@ -26,14 +21,14 @@ export function createStringDocument() {
             }
           });
         }
-        attrs = _.map(attrs, (attr) => {
+        attrs = attrs.map(attr => {
           let key = attr.key;
           let value = attr.value;
           return key + '="' + value + '"';
         });
         let selfCloseTag = children.length === 0;
         if (selfCloseTag) return '<' + name + ' ' + attrs.join(' ') + ' />';
-        return '<' + name + (attrs.length > 0 ? ' ' : '') + attrs.join(' ') + '>' + _.map(children, child => child.render()).join('') + '</' + name + '>';
+        return '<' + name + (attrs.length > 0 ? ' ' : '') + attrs.join(' ') + '>' + children.map(child => child.render()).join('') + '</' + name + '>';
       }
     };
   }
@@ -70,7 +65,7 @@ export function createJsonDocument() {
         attrs.push({ key, value });
       },
       removeAttribute(key) {
-        attrs = _.filter(attrs, item => item.key !== key);
+        attrs = attrs.filter(item => item.key !== key);
       },
       appendChild(child) {
         children.push(child);
@@ -87,7 +82,7 @@ export function createJsonDocument() {
         return {
           name,
           attrs,
-          children: _.map(children, child => child.render())
+          children: children.map(child => child.render())
         };
       }
     };

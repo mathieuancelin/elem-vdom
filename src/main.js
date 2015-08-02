@@ -5,13 +5,7 @@ const _ = {
   isArray: require('lodash/lang/isArray'),
   isString: require('lodash/lang/isString'),
   isUndefined: require('lodash/lang/isUndefined'),
-  isNull: (what) => Object.is(what, null), // require('lodash/lang/isNull'),
-  clone: (what) => ({...what}), // require('lodash/lang/clone'),
-  escape: require('lodash/string/escape'),
-  extend: Object.assign, // require('lodash/object/extend'),
-  keys: Object.keys, // require('lodash/object/keys'),
-  each: (what, funct) => what.forEach(funct), // require('lodash/collection/each'),
-  times: Utils.times // require('lodash/utility/times')
+  escape: require('lodash/string/escape')
 };
 const Docs = require('./docs');
 const WebComponents = require('./webcomponents');
@@ -132,7 +126,7 @@ function internalEl(name, attributes, childrenArray, key, namespace) {
   children = newChildren;
 
   if (_.isFunction(name) && name.isElemComponentFactory) {
-    let props = _.clone(attrs);
+    let props = {...attrs};
     props.children = children;
     props.key = key;
     props.namespace = namespace;
@@ -140,7 +134,7 @@ function internalEl(name, attributes, childrenArray, key, namespace) {
     return name(attrs).renderTo();
   }
   if (_.isFunction(name) && !name.isElemComponentFactory) {
-    let props = _.clone(attrs);
+    let props = {...attrs};
     props.children = children;
     props.key = key;
     props.namespace = namespace;
@@ -232,7 +226,7 @@ export function svg(name, ...args) {
 
 export function nbsp(times) {
   return el('span', {
-    __asHtml: _.times(times || 1, () => '&nbsp;')
+    __asHtml: Utils.times(times || 1, () => '&nbsp;')
   });
 }
 
@@ -288,7 +282,7 @@ export function render(elementOrFunction, selectorOrNode) {
     };
     let reTree = () => {
       try {
-        let refs = _.clone(globalRefs);
+        let refs = {...globalRefs};
         globalRefs = {};
         functionAsComponentContext.context.refs = refs;
         currentComponentContext = functionAsComponentContext.context;
@@ -302,7 +296,7 @@ export function render(elementOrFunction, selectorOrNode) {
       let currentTree = reTree();
       render(currentTree, node);
     };
-    let refs = _.clone(globalRefs);
+    let refs = {...globalRefs};
     globalRefs = {};
     functionAsComponentContext.context = createComponentContext(refresh, node, refs);
     tree = reTree();
@@ -349,7 +343,7 @@ export function render(elementOrFunction, selectorOrNode) {
   return {
     unmount() {
       delete node.rootId;
-      while (!_.isUndefined(node) && !_.isNull(node) && node.firstChild) {
+      while (!_.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
         node.removeChild(node.firstChild);
       }
       delete treeCache[rootId];
@@ -366,7 +360,7 @@ export function unmount(theNode) {
   if (_.isString(node)) {
     node = doc.querySelector(node);
   }
-  while (!_.isUndefined(node) && !_.isNull(node) && node.firstChild) {
+  while (!_.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
     node.removeChild(node.firstChild);
   }
   if (node.rootId) {
@@ -383,7 +377,7 @@ export function renderToJson(elementOrFunction) {
   Perf.markStart('Elem.renderToJson');
   let tree = elementOrFunction;
   if (_.isFunction(tree)) {
-    let refs = _.clone(globalRefs);
+    let refs = {...globalRefs};
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
     let thisContext = {...componentContext, props: arguments[1] || {}};
@@ -399,7 +393,7 @@ export function renderToString(elementOrFunction) {
   Perf.markStart('Elem.renderToString');
   let tree = elementOrFunction;
   if (_.isFunction(tree)) {
-    let refs = _.clone(globalRefs);
+    let refs = {...globalRefs};
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
     let thisContext = {...componentContext, props: arguments[1] || {}};
@@ -423,7 +417,7 @@ export function component(comp) {
     defaultProps() { return {}; }
   };
   let factory = (props) => {
-    let instance = _.extend(_.clone(blueprint), comp);
+    let instance = Object.assign({...blueprint}, comp);
     return {
       isElemComponent: true,
       renderToString() {
@@ -442,7 +436,7 @@ export function component(comp) {
           if (cb) cb();
         };
         instance.getDOMNode = () => null;
-        _.each(_.keys(instance), k => {
+        Object.keys(instance).forEach(k => {
           if (k !== 'state' && _.isFunction(instance[k])) {
             instance[k] = instance[k].bind(instance);
           }
@@ -477,7 +471,7 @@ export function component(comp) {
           }
           return node;
         };
-        _.each(_.keys(instance), k => {
+        Object.keys(instance).forEach(k => {
           if (k !== 'state' && _.isFunction(instance[k])) {
             instance[k] = instance[k].bind(instance);
           }

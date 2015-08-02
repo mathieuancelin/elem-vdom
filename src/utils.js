@@ -1,9 +1,6 @@
 const _ = {
   isFunction: require('lodash/lang/isFunction'),
-  isObject: require('lodash/lang/isObject'),
-  extend: Object.assign, // require('lodash/object/extend'),
-  keys: Object.keys, // require('lodash/object/keys'),
-  each: (what, funct) => what.forEach(funct) // require('lodash/collection/each'),
+  isObject: require('lodash/lang/isObject')
 };
 
 function getGlobalObject() {
@@ -129,11 +126,11 @@ export function stylesheet(obj, type, media) {
     if (sheet.extend) {
       let value = sheet.extend;
       delete sheet.extend;
-      sheet = _.extend({}, value, sheet);
+      sheet = Object.assign({}, value, sheet);
     }
   }
-  let keys = _.keys(sheet);
-  _.each(keys, (key) => {
+  let keys = Object.keys(sheet);
+  keys.forEach(key => {
     let clazz = sheet[key];
     if (_.isObject(clazz)) {
       // Handle 'class' that extends other 'classes'
@@ -141,27 +138,27 @@ export function stylesheet(obj, type, media) {
         if (clazz.extend) {
           let value = clazz.extend;
           delete clazz.extend;
-          clazz = _.extend({}, value, clazz);
+          clazz = Object.assign({}, value, clazz);
         }
       }
       // Add an extend function to a 'class'
-      result[key] = _.extend({}, {
+      result[key] = Object.assign({}, {
         extend(o) {
-          return _.extend({}, clazz, o);
+          return Object.assign({}, clazz, o);
         }
       }, clazz);
     }
   });
   // Add an extend function to the sheet
   result.extend = (o) => {
-    return _.extend({}, sheet, o);
+    return Object.assign({}, sheet, o);
   };
   result.toString = (asClasses) => {
-    return _.keys(result)
+    return Object.keys(result)
       .filter(key => key !== 'extend' && key !== 'mount' && key !== 'unmount' && key !== 'toString')
       .map(key => {
         let value = result[key];
-        return (asClasses ? '.' : '') + dasherize(key) + ' {\n' + _.keys(value).filter(k => k !== 'extend').map(k => {
+        return (asClasses ? '.' : '') + dasherize(key) + ' {\n' + Object.keys(value).filter(k => k !== 'extend').map(k => {
           return '    ' + dasherize(k) + ': ' + value[k] + ';';
         }).join('\n') + '\n}';
       }).join('\n');
