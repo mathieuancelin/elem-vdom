@@ -24,11 +24,11 @@ export function createStringDocument() {
         attrs = attrs.map(attr => {
           let key = attr.key;
           let value = attr.value;
-          return key + '="' + value + '"';
+          return `${key}="${value}"`;
         });
         let selfCloseTag = children.length === 0;
-        if (selfCloseTag) return '<' + name + ' ' + attrs.join(' ') + ' />';
-        return '<' + name + (attrs.length > 0 ? ' ' : '') + attrs.join(' ') + '>' + children.map(child => child.render()).join('') + '</' + name + '>';
+        if (selfCloseTag) return `<${name} ${attrs.join(' ')} />`;
+        return `<${name}${attrs.length > 0 ? ' ' : ''}${attrs.join(' ')}>${children.map(child => child.render()).join('')}</${name}>`;
       }
     };
   }
