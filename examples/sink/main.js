@@ -1,5 +1,3 @@
-import ErrorStackParser from 'error-stack-parser';
-
 export const basic = require('./basic');
 export const children = require('./children');
 export const component = require('./component');
@@ -25,28 +23,12 @@ Showcase.getTiles().forEach(i => {
   hashes[hash] = i;
 });
 
-function Redbox(error) {
-  const frames = ErrorStackParser.parse(error).map(f => {
-    const link = `${f.fileName}:${f.lineNumber}:${f.columnNumber}`;
-    return Elem.el('div', { className: 'frame' }, [
-      Elem.el('div', f.functionName || 'closure ...'),
-      Elem.el('div', { className: 'file' }, [
-        Elem.el('a', { href: link }, link)
-      ])
-    ]);
-  });
-  return Elem.el('div', { className: 'redbox' }, [
-    Elem.el('div', { className: 'message' }, `${error.name}: ${error.message}`),
-    Elem.el('div', { className: 'stack' }, frames)
-  ]);
-}
-
 function render(tile) {
   Elem.unmount(app);
   try {
     tile.render(app);
   } catch (e) {
-    Elem.render(Redbox(e), app);
+    Elem.render(Elem.DevTools.Redbox(e), app);
   }
 }
 
