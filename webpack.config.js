@@ -1,5 +1,9 @@
 var webpack = require('webpack');
 
+var entries = {
+  'elem': ['./src/main.js']
+};
+
 var preLoaders = [];
 
 var devOnlyPlugins = [
@@ -11,17 +15,12 @@ var plugins = [
   new webpack.optimize.OccurenceOrderPlugin(),
   new webpack.DefinePlugin({
     '__DEV__': process.env.NODE_ENV === 'production' ? false : true,
+    '__DEVTOOLS__': process.env.NODE_ENV === 'production' ? false : true,
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
   })
 ];
 
-if (process.env.NODE_ENV === 'lint') {
-  preLoaders.push({
-    test: /\.js$/,
-    exclude: /node_modules/,
-    loader: 'eslint-loader'
-  });
-} else if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   plugins.push(
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
@@ -31,6 +30,7 @@ if (process.env.NODE_ENV === 'lint') {
     })
   );
 } else {
+  entries.sink = ['./examples/sink/main.js'];
   plugins = devOnlyPlugins.concat(plugins);
 }
 
@@ -42,10 +42,7 @@ module.exports = {
     library: 'Elem',
     libraryTarget: 'umd'
   },
-  entry: {
-    'elem': ['./src/main.js'],
-    'sink': ['./examples/sink/main.js']
-  },
+  entry: entries,
   resolve: {
     extensions: ['', '.js']
   },
