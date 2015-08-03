@@ -1,6 +1,6 @@
 export function createStringDocument() {
-  function node(name, a) {
-    let attrs = a || [];
+  function node(name, a = []) {
+    let attrs = a;
     let children = [];
     return {
       setAttribute(key, value) {
@@ -57,8 +57,8 @@ export function createStringDocument() {
 }
 
 export function createJsonDocument() {
-  function node(name, a) {
-    let attrs = a || [];
+  function node(name, a = []) {
+    let attrs = a;
     let children = [];
     return {
       setAttribute(key, value) {

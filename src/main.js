@@ -101,10 +101,9 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
   return context;
 }
 
-function internalEl(name, attributes, childrenArray, key, namespace) {
+function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   let innerHTML;
-  let attrs = attributes || {};
-  let children = childrenArray || [];
+  let children = childrenArray;
   let newChildren = [];
   for (let i in children) {
     let item = children[i];
@@ -234,9 +233,9 @@ export function text(spanText) {
   return el('span', {}, spanText);
 }
 
-function createComponentContext(refresh, renderNode, refs) {
+function createComponentContext(refresh, renderNode, refs = {}) {
   let context = {
-    refs: refs || {},
+    refs,
     state: {},
     refresh,
     redraw: refresh,
@@ -270,7 +269,7 @@ function createComponentContext(refresh, renderNode, refs) {
   return context;
 }
 
-export function render(elementOrFunction, selectorOrNode) {
+export function render(elementOrFunction, selectorOrNode, props = {}) {
   Perf.markStart('Elem.render');
   let node = selectorOrNode;
   let tree = elementOrFunction;
@@ -278,7 +277,7 @@ export function render(elementOrFunction, selectorOrNode) {
     Perf.markStart('Elem.render.tree');
     let functionAsComponentContext = {
       context: undefined,
-      props: arguments[2] || {}
+      props
     };
     let reTree = () => {
       try {
@@ -373,15 +372,15 @@ export function findDOMNode(ref) {
   return document.querySelector(`[data-elemref="${ref}"]`);
 }
 
-export function renderToJson(elementOrFunction) {
+export function renderToJson(elementOrFunction, props = {}) {
   Perf.markStart('Elem.renderToJson');
   let tree = elementOrFunction;
   if (_.isFunction(tree)) {
     let refs = {...globalRefs};
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
-    let thisContext = {...componentContext, props: arguments[1] || {}};
-    tree = tree.bind(thisContext)(componentContext, arguments[1] || {});
+    let thisContext = {...componentContext, props};
+    tree = tree.bind(thisContext)(componentContext, props);
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createJsonDocument() });
   let str = rootNode.render();
@@ -389,15 +388,15 @@ export function renderToJson(elementOrFunction) {
   return str;
 }
 
-export function renderToString(elementOrFunction) {
+export function renderToString(elementOrFunction, props = {}) {
   Perf.markStart('Elem.renderToString');
   let tree = elementOrFunction;
   if (_.isFunction(tree)) {
     let refs = {...globalRefs};
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
-    let thisContext = {...componentContext, props: arguments[1] || {}};
-    tree = tree.bind(thisContext)(componentContext, arguments[1] || {});
+    let thisContext = {...componentContext, props};
+    tree = tree.bind(thisContext)(componentContext, props);
   }
   let rootNode = VDOMCreateElement(tree, { document: Docs.createStringDocument() });
   let str = rootNode.render();
