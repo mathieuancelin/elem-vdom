@@ -39,14 +39,6 @@ globalObject.__ElemInternals = globalObject.__ElemInternals || {};
 globalObject.__ElemInternals.Utils = globalObject.__ElemInternals.Utils || {};
 globalObject.__ElemInternals.Utils.__idCounter = globalObject.__ElemInternals.Utils.__idCounter || 0;
 
-export function times(n, func) {
-  let results = [];
-  for (let i = 0; i < n; i++) {
-    results.push(func(n));
-  }
-  return results;
-}
-
 export function memoize(func) {
   let cache;
   return function memoizer() {

@@ -225,7 +225,7 @@ export function svg(name, ...args) {
 
 export function nbsp(times) {
   return el('span', {
-    __asHtml: Utils.times(times || 1, () => '&nbsp;')
+    __asHtml: '&nbsp;'.repeat(times || 1)
   });
 }
 

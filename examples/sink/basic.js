@@ -125,3 +125,14 @@ Showcase.registerTile('Predicate usage', container => {
 }, () => {
   clearInterval(interval);
 });
+
+Showcase.registerTile('Repeat and text example', container => {
+  let MyAwesomeNode = Elem.el('div', [
+    Elem.text('Hello World!'),
+    Elem.nbsp(2),
+    Elem.text('2'),
+    Elem.nbsp(5),
+    Elem.text('5')
+  ]);
+  Elem.render(MyAwesomeNode, container);
+});
