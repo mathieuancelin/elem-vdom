@@ -1,7 +1,7 @@
 elem-vdom
 ================
 
-Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates, string concat and manual mutations when modifying the DOM.
+Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates, string concat and manual mutations when modifying the DOM. `elem-vdom` is fully written in ES2015
 
 [![build status][1]][2]
 [![NPM version][3]][4]
@@ -43,7 +43,7 @@ API
 Dependencies
 -------------
 
-elem-vdom depends on `virtual-dom` and `lodash` but these dependencies are bundled in the distribution package.
+elem-vdom depends on `virtual-dom`, `babel-runtime` and `error-stack-parser` but these dependencies are bundled in the distribution package.
 
 How can I use elem-vdom ?
 ----------------------------
