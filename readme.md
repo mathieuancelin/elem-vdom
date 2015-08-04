@@ -3,6 +3,11 @@ elem-vdom
 
 Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates, string concat and manual mutations when modifying the DOM.
 
+[![build status][1]][2]
+[![NPM version][3]][4]
+[![Coverage Status][5]][6]
+[![Davis Dependency status][7]][8]
+
 Install
 -------
 
@@ -480,3 +485,13 @@ var Style = Elem.stylesheet({
 And use parts for inline styles of your component. Every stylesheet and stylesheet element owns an `extend` function to customize your styles on demand. You can also specify an `extend` member in a stylesheet element for declarative customization.
 
 You can also use it as an actual stylesheet for your pages, just call `mount()` on a stylesheet object to mount it in the DOM. You can call `unmount()` to remove it.
+
+
+[1]: https://api.travis-ci.org/mathieuancelin/elem-vdom.svg
+[2]: https://api.travis-ci.org/mathieuancelin/elem-vdom
+[3]: https://badge.fury.io/js/elem-vdom.svg
+[4]: https://badge.fury.io/js/elem-vdom
+[5]: http://img.shields.io/coveralls/mathieuancelin/elem-vdom.svg
+[6]: https://coveralls.io/r/mathieuancelin/elem-vdom
+[7]: https://david-dm.org/mathieuancelin/elem-vdom.svg
+[8]: https://david-dm.org/mathieuancelin/elem-vdom
