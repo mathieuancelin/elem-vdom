@@ -16,7 +16,7 @@ const escapeMap = {
   "'": '&#x27;',
   '`': '&#x60;'
 };
-const source = '(?:' + Object.keys(escapeMap).join('|') + ')';
+const source = `(?:${Object.keys(escapeMap).join('|')})`;
 const testRegexp = RegExp(source);
 const replaceRegexp = RegExp(source, 'g');
 
@@ -30,11 +30,11 @@ function escape(value = '') {
 }
 
 export default {
-  isFunction: (χ) => isObject(χ) && Object.prototype.toString.call(χ) == '[object Function]',
+  escape,
   isObject,
   isArray: Array.isArray,
-  isString: (χ) => typeof χ == 'string' || ((!!χ && typeof χ == 'object') && Object.prototype.toString.call(χ) == '[object String]'),
   isUndefined: (χ) => χ === undefined,
-  escape,
-  contains: (arr, of) => ~arr.indexOf(of)
+  contains: (arr, of) => ~arr.indexOf(of),
+  isFunction: (χ) => isObject(χ) && Object.prototype.toString.call(χ) == '[object Function]',
+  isString: (χ) => typeof χ == 'string' || ((!!χ && typeof χ == 'object') && Object.prototype.toString.call(χ) == '[object String]')
 };
