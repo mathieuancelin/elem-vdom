@@ -1,28 +1,31 @@
 import * as Utils from './utils';
 import * as Docs from './docs';
+import * as PerfApi from './perfs';
+import * as StoreApi from './store';
+import * as DevtoolsApi from './devtools';
 import * as WebComponents from './webcomponents';
+import _ from './lodash';
+
 import diff from 'virtual-dom/diff';
 import patch from 'virtual-dom/patch';
 import VDOMCreateElement from 'virtual-dom/create-element';
 import VNode from 'virtual-dom/vnode/vnode';
 import VText from 'virtual-dom/vnode/vtext';
-import _ from './lodash';
 
 export const svgNS = 'http://www.w3.org/2000/svg';
 export const registerWebComponent = WebComponents.registerWebComponent;
 export const stylesheet = Utils.stylesheet;
 export const predicate = Utils.predicate;
 export const keyMirror = Utils.keyMirror;
+export const Perf = PerfApi;
+export const Store = StoreApi;
+export const Devtools = DevtoolsApi;
 
-export const Perf = require('./perfs');
-export const Store = require('./store');
-export const Devtools = require('./devtools');
-
-/** Remove these ??? **/
+/** Remove these, api does too much already ??? **/
 export const uuid = Utils.uuid;
 export const invariant = Utils.invariant;
 export const invariantLog = Utils.invariantLog;
-/** **/
+/****/
 
 const treeCache = {};
 let globalRefs = {};
@@ -43,7 +46,7 @@ function styleToString(attrs) {
           value = value();
         }
         if (value) {
-          attrsArray.push(keyName + ': ' + value + ';');
+          attrsArray.push(`${keyName}: ${value};`);
         }
       }
     }
