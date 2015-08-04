@@ -1,7 +1,4 @@
-const _ = {
-  contains: require('lodash/collection/contains')
-};
-
+import _ from './lodash';
 import * as Utils from './utils';
 
 let globalObject = Utils.memoGobalObject();

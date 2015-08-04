@@ -1,7 +1,4 @@
-const _ = {
-  isFunction: require('lodash/lang/isFunction'),
-  isObject: require('lodash/lang/isObject')
-};
+import _ from './lodash';
 
 function getGlobalObject() {
   // Workers don’t have `window`, only `self`

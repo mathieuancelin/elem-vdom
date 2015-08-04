@@ -6,27 +6,23 @@ import patch from 'virtual-dom/patch';
 import VDOMCreateElement from 'virtual-dom/create-element';
 import VNode from 'virtual-dom/vnode/vnode';
 import VText from 'virtual-dom/vnode/vtext';
-
-const _ = {
-  isFunction: require('lodash/lang/isFunction'),
-  isObject: require('lodash/lang/isObject'),
-  isArray: require('lodash/lang/isArray'),
-  isString: require('lodash/lang/isString'),
-  isUndefined: require('lodash/lang/isUndefined'),
-  escape: require('lodash/string/escape')
-};
+import _ from './lodash';
 
 export const svgNS = 'http://www.w3.org/2000/svg';
 export const registerWebComponent = WebComponents.registerWebComponent;
-export const Perf = require('./perfs');
 export const stylesheet = Utils.stylesheet;
 export const predicate = Utils.predicate;
 export const keyMirror = Utils.keyMirror;
+
+export const Perf = require('./perfs');
+export const Store = require('./store');
+export const Devtools = require('./devtools');
+
+/** Remove these ??? **/
 export const uuid = Utils.uuid;
 export const invariant = Utils.invariant;
 export const invariantLog = Utils.invariantLog;
-export const Store = require('./store');
-export const Devtools = require('./devtools');
+/** **/
 
 const treeCache = {};
 let globalRefs = {};
