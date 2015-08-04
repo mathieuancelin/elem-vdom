@@ -1,5 +1,5 @@
-const Elem = require('./main');
-const Utils = require('./utils');
+import * as Elem from './main';
+import * as Utils from './utils';
 
 let registrationFunction;
 

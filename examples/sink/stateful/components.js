@@ -1,4 +1,4 @@
-const Elem = require('../../..');
+const Elem = require('../../../src/main');
 const Store = require('../../../src/store');
 
 import * as actions from './actions';

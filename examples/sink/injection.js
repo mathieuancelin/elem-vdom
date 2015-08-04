@@ -1,5 +1,5 @@
 const Showcase = require('./showcase');
-const Elem = require('../..');
+const Elem = require('../../src/main');
 
 Showcase.registerTile('No injectable HTML', container => {
   let items = [{name: 'a'}, {name: 'b'}, {name: 'c'}, {name: 'a'},

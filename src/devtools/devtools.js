@@ -1,7 +1,7 @@
-const Utils = require('../utils');
-const Elem = require('../main');
-const ErrorStackParser = require('error-stack-parser');
-const isFunction = require('lodash/lang/isFunction');
+import * as Utils from '../utils';
+import * as Elem from '../main';
+import ErrorStackParser from 'error-stack-parser';
+import isFunction from 'lodash/lang/isFunction';
 
 export const RedboxStyle = Utils.stylesheet({
 

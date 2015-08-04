@@ -1,5 +1,5 @@
 const Showcase = require('./showcase');
-const Elem = require('../..');
+const Elem = require('../../src/main');
 
 Showcase.registerTile('Hello World example', container => {
   let MyAwesomeNode = Elem.el('h1', 'Hello World!');

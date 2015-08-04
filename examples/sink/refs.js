@@ -1,5 +1,5 @@
 const Showcase = require('./showcase');
-const Elem = require('../..');
+const Elem = require('../../src/main');
 
 Showcase.registerTile('Refs usage example', container => {
   function refTest(context) {

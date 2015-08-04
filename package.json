@@ -1,8 +1,8 @@
 {
   "name": "elem-vdom",
   "description": "Simple tool to build UIs",
-  "version": "0.0.7",
-  "main": "src/main.js",
+  "version": "0.0.8",
+  "main": "lib/main.js",
   "homepage": "https://github.com/mathieuancelin/elem-vdom",
   "keywords": [
     "Virtual DOM",
@@ -18,13 +18,14 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "babel-runtime": "^5.7.0",
+    "babel-runtime": "^5.8.20",
+    "error-stack-parser": "~1.2.0",
     "lodash": "^3.10.0",
-    "virtual-dom": "^2.0.1",
-    "error-stack-parser": "~1.2.0"
+    "virtual-dom": "^2.0.1"
   },
   "devDependencies": {
-    "babel-core": "^5.7.2",
+    "babel": "^5.8.20",
+    "babel-core": "^5.8.20",
     "babel-eslint": "^3.1.30",
     "babel-loader": "^5.3.2",
     "eslint": "^0.24.1",
@@ -36,11 +37,12 @@
     "webpack-dev-server": "^1.10.1"
   },
   "scripts": {
-    "clean": "rm ./dist/*",
+    "clean": "rm -rf ./dist && rm -rf ./lib",
     "examples": "open -a 'Google Chrome Canary' http://localhost:8080/examples/",
     "lint": "node ./node_modules/eslint/bin/eslint.js src examples/sink",
     "dist": "NODE_ENV=production webpack --colors -p",
-    "build": "npm run lint && npm run clean && npm run dist",
+    "es5": "babel src --out-dir lib",
+    "build": "npm run lint && npm run clean && npm run es5 && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d --progress",
     "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline --progress"
   }

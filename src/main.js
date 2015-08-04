@@ -1,4 +1,12 @@
-const Utils = require('./utils');
+import * as Utils from './utils';
+import * as Docs from './docs';
+import * as WebComponents from './webcomponents';
+import diff from 'virtual-dom/diff';
+import patch from 'virtual-dom/patch';
+import VDOMCreateElement from 'virtual-dom/create-element';
+import VNode from 'virtual-dom/vnode/vnode';
+import VText from 'virtual-dom/vnode/vtext';
+
 const _ = {
   isFunction: require('lodash/lang/isFunction'),
   isObject: require('lodash/lang/isObject'),
@@ -7,13 +15,6 @@ const _ = {
   isUndefined: require('lodash/lang/isUndefined'),
   escape: require('lodash/string/escape')
 };
-const Docs = require('./docs');
-const WebComponents = require('./webcomponents');
-const diff = require('virtual-dom/diff');
-const patch = require('virtual-dom/patch');
-const VDOMCreateElement = require('virtual-dom/create-element');
-const VNode = require('virtual-dom/vnode/vnode');
-const VText = require('virtual-dom/vnode/vtext');
 
 export const svgNS = 'http://www.w3.org/2000/svg';
 export const registerWebComponent = WebComponents.registerWebComponent;

@@ -4,8 +4,6 @@ var entries = {
   'elem': ['./src/main.js']
 };
 
-var preLoaders = [];
-
 var devOnlyPlugins = [
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoErrorsPlugin()
@@ -29,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
       }
     })
   );
-} else {
+} else if (process.env.NODE_ENV === 'dev') {
   entries.sink = ['./examples/sink/main.js'];
   plugins = devOnlyPlugins.concat(plugins);
 }
@@ -47,7 +45,6 @@ module.exports = {
     extensions: ['', '.js']
   },
   module: {
-    preLoaders: preLoaders,
     loaders: [
       {
         test: /\.js$/,

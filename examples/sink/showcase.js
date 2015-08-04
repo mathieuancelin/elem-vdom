@@ -1,4 +1,4 @@
-const Elem = require('../..');
+const Elem = require('../../src/main');
 
 let tiles = [];
 
