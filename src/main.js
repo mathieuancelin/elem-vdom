@@ -1,8 +1,6 @@
 import * as Utils from './utils';
 import * as Docs from './docs';
-import * as PerfApi from './perfs';
-import * as StoreApi from './store';
-import * as DevtoolsApi from './devtools';
+import * as Perf from './perfs';
 import * as WebComponents from './webcomponents';
 import _ from './lodash';
 
@@ -17,9 +15,9 @@ export const registerWebComponent = WebComponents.registerWebComponent;
 export const stylesheet = Utils.stylesheet;
 export const predicate = Utils.predicate;
 export const keyMirror = Utils.keyMirror;
-export const Perf = PerfApi;
-export const Store = StoreApi;
-export const Devtools = DevtoolsApi;
+
+// export all sub namespace
+export * from './exporter';
 
 /** Remove these, api does too much already ??? **/
 export const uuid = Utils.uuid;
