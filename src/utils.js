@@ -177,11 +177,8 @@ export function NotSupported() {
   throw new Error('Not supported yet !!!');
 }
 
-export function id() {
-  return Math.random().toString(15).slice(10, 20);
-}
-
 export function uuid() {
+  // Math.random().toString(15).slice(10, 20)
   let d = Date.now();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     let r = (d + Math.random() * 16) % 16 | 0;

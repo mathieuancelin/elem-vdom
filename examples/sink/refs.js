@@ -14,9 +14,10 @@ Showcase.registerTile('Refs usage example', container => {
         onkeyup: context.refresh
       }),
       Elem.el('span', {
-        style: {
-          backgroundColor: 'lightgrey',
-          width: '100%' }
+          style: {
+            backgroundColor: 'lightgrey',
+            width: '100%'
+          }
         },
         (Elem.findDOMNode(context.refs.theText) || { value: ''}).value
       )

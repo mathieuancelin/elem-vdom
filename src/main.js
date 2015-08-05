@@ -23,7 +23,7 @@ export * from './exporter';
 export const uuid = Utils.uuid;
 export const invariant = Utils.invariant;
 export const invariantLog = Utils.invariantLog;
-/****/
+/** **/
 
 const treeCache = {};
 let globalRefs = {};
