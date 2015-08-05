@@ -6,7 +6,9 @@ Simple and idiotic lib to build UI components. It's a component library promotin
 [![build status][1]][2]
 [![NPM version][3]][4]
 [![Coverage Status][5]][6]
-[![Davis Dependency status][7]][8]
+[![Dependency status][7]][8]
+[![Dev Dependency status][11]][12]
+[![Downloads][9]][10]
 
 Install
 -------
@@ -495,3 +497,7 @@ You can also use it as an actual stylesheet for your pages, just call `mount()` 
 [6]: https://coveralls.io/r/mathieuancelin/elem-vdom
 [7]: https://david-dm.org/mathieuancelin/elem-vdom.svg
 [8]: https://david-dm.org/mathieuancelin/elem-vdom
+[9]: https://img.shields.io/npm/dm/elem-vdom.svg
+[10]: https://www.npmjs.com/package/elem-vdom
+[11]: https://img.shields.io/david/dev/mathieuancelin/elem-vdom.svg
+[12]: https://david-dm.org/mathieuancelin/elem-vdom#info=devDependencies&view=table
