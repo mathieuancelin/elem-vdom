@@ -75,7 +75,7 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
       keyName = 'class';
     }
     if (Utils.startsWith(keyName, 'on')) {
-      handlersHash[key] = attrs[key];
+      handlersHash[key.toLowerCase()] = attrs[key];
     } else if (keyName === 'ref') {
       context.ref = attrs[key];
     } else {
@@ -127,7 +127,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     props.children = children;
     props.key = key;
     props.namespace = namespace;
-    // TODO : hook global resfesh on nested state
+    // TODO : hook global resfesh on nested state and keep state ...
     return name(attrs).renderTo();
   }
   if (_.isFunction(name) && !name.isElemComponentFactory) {
@@ -135,8 +135,30 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     props.children = children;
     props.key = key;
     props.namespace = namespace;
-    let thisContext = {...currentComponentContext, props, children};
-    return name.bind(thisContext)(currentComponentContext, props, children);
+    let functionContext = {...currentComponentContext};
+    if (key) {
+      // TODO : cleanup state when key re-appear
+      if (props.initialState && !functionContext.state[`substateof-${key}`]) {
+        functionContext.__internalSetState({ [`substateof-${key}`]: props.initialState });
+      }
+      let setGlobalState = functionContext.setState;
+      let replaceGlobalState = functionContext.replaceState;
+      let globalState = functionContext.state;
+      functionContext.globalState = globalState;
+      functionContext.setGlobalState = setGlobalState;
+      functionContext.replaceGlobalState = replaceGlobalState;
+      functionContext.state = globalState[`substateof-${key}`] || {};
+      functionContext.replaceState = (state, cb) => setGlobalState({ [`substateof-${key}`]: diff }, cb);
+      functionContext.setState = (diffState, cb) => {
+        let newState = globalState[`substateof-${key}`] || {};
+        for (let k in diffState) {
+          newState[k] = diffState[k];
+        }
+        setGlobalState({ [`substateof-${key}`]: newState }, cb);
+      };
+    }
+    let thisContext = {...functionContext, props, children};
+    return name.bind(thisContext)(functionContext, props, children);
   }
 
   let finalAttrs = {
@@ -177,7 +199,7 @@ export function el(tagName, ...args) {
   }
   if (argsLength === 1 && _.isObject(args[0])) {
     // el('div', {...})
-    return internalEl(name, args[0], [], undefined, undefined);
+    return internalEl(name, args[0], [], args[0].key, undefined);
   }
   if (argsLength === 1 && _.isString(args[0])) {
     // el('div', 'Lorem Ipsum')
@@ -248,6 +270,12 @@ function createComponentContext(refresh, renderNode, refs = {}) {
       return renderNode;
     }
   };
+  context.__internalSetState = (diffState) => {
+    for (let key in diffState) {
+      context.state[key] = diffState[key];
+    }
+  };
+  context.__internalReplaceState = (newState) => context.state = newState;
   context.setState = (diffState, cb) => {
     for (let key in diffState) {
       context.state[key] = diffState[key];
@@ -296,6 +324,11 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     let refs = {...globalRefs};
     globalRefs = {};
     functionAsComponentContext.context = createComponentContext(refresh, node, refs);
+    if (props.initialState) {
+      functionAsComponentContext.context.state = props.initialState;
+    } else {
+      functionAsComponentContext.context.state = {};
+    }
     tree = reTree();
     Perf.markStop('Elem.render.tree');
   }

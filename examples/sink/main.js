@@ -28,6 +28,7 @@ function render(tile) {
   try {
     tile.render(app);
   } catch (e) {
+    console.log(e);
     Elem.render(Elem.Devtools.Redbox(e), app);
   }
 }
