@@ -131,6 +131,8 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     return name(attrs).renderTo();
   }
   if (_.isFunction(name) && !name.isElemComponentFactory) {
+    let funKey = `Elem.function.${name.name || '<anonymous function>'}.tree`;
+    Perf.markStart(funKey);
     let props = {...attrs};
     props.children = children;
     props.key = key;
@@ -158,7 +160,9 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
       };
     }
     let thisContext = {...functionContext, props, children};
-    return name.bind(thisContext)(functionContext, props, children);
+    let subTree = name.bind(thisContext)(functionContext, props, children);
+    Perf.markStop(funKey);
+    return subTree;
   }
 
   let finalAttrs = {
@@ -446,6 +450,9 @@ export function renderToString(elementOrFunction, props = {}) {
   return str;
 }
 
+/**
+ * @deprecated ???
+ */
 export function component(comp) {
   const blueprint = {
     state: {},

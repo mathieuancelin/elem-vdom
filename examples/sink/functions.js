@@ -1,6 +1,7 @@
 const Showcase = require('./showcase');
 const Elem = require('../../src/main');
 const moment = require('moment');
+const beautify = require('json-beautify');
 
 let interval = null;
 
@@ -108,47 +109,50 @@ Showcase.registerTile('Function composition example with "this"', container => {
 
 Showcase.registerTile('Substate with function composition', container => {
 
-  let linesArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
   function id() {
     return Math.random().toString(15).slice(10, 20);
   }
 
-  function displayModel(state) {
-    setTimeout(() => {
-      document.getElementById('statemodel').innerHTML = JSON.stringify(state, null, 2).replace(/ /g, '&nbsp;').replace(/\n/g, '<br/>');
-    }, 0);
-  }
-
-  function deleteRow(key, refresh) {
-    let value = parseInt(key.replace('line-', ''), 10);
-    linesArray = linesArray.filter(i => i !== value);
-    refresh();
+  /**
+   * As StateMonitor does not own a key props, this.state ref the global state
+   */
+  function StateMonitor() {
+    return Elem.el('div', [
+      Elem.el('p', { __asHtml: beautify(this.props.globalState, null, 2, 80).replace(/ /g, '&nbsp;').replace(/\n/g, '<br/>') })
+    ]);
   }
 
   function Line() {
-    return Elem.el('div', { style: { display: 'flex' } }, [
-      Elem.el('button', { type: 'button', onClick: () => {
-        this.setState({ value: id() });
-        displayModel(this.globalState);
-      } }, 'Change value'),
-      Elem.el('button', { type: 'button', onClick: () => {
-        deleteRow(this.props.key, this.refresh);
-        displayModel(this.globalState);
-      } }, 'Delete row'),
+    return Elem.el('div', { style: { display: 'flex', marginTop: '4px' } }, [
+      Elem.el('div', { className: 'btn-group' }, [
+        Elem.el('button', { className: 'btn btn-xs btn-success', type: 'button', onClick: () => this.setState({ value: id() }) }, 'Update value'),
+        Elem.el('button', { className: 'btn btn-xs btn-danger', type: 'button', onClick: () => this.props.deleteLine(this.props.key) }, 'Delete row')
+      ]),
       Elem.el('div', { style: { marginLeft: '20px' } }, this.state.value)
     ]);
   }
 
+  /**
+   * As it's the root component, this.state is the 'global state' of the component
+   */
   function Lines() {
-    const lines = linesArray.map(i => Elem.el(Line, { key: `line-${i}`, initialState: { value: '--' } }));
+    // here, can call this.state, this.props, this.setState(...), this.redraw()
+    const deleteLine = (key) => this.setState({ lines: this.state.lines.filter(i => i !== key) });
+    // Create a Line component instance with its own state because of the key props. And provide an initial state value with prop initialState
+    const lines = this.state.lines.map(i => Elem.el(Line, { key: `${i}`, deleteLine, initialState: { value: '--' } }));
     return Elem.el('div', [
-      Elem.el('div', { display: 'flex', flexDirection: 'column' }, lines),
-      Elem.el('div', { id: 'statemodel' })
+      Elem.el('div', { className: 'btn-group', style: { marginTop: '20px', marginBottom: '20px' } }, [
+        Elem.el('button', { className: 'btn btn-xs btn-success', type: 'button', onClick: () => this.setState({ lines: [...this.state.lines, `${Date.now()}`] }) }, 'Add a row'),
+        Elem.el('button', { className: 'btn btn-xs btn-danger', type: 'button', onClick: () => deleteLine(this.state.lines[0] ) }, 'remove a row')
+      ]),
+      Elem.el('div', { style: { display: 'flex' } }, [
+        Elem.el('div', { style: { width: '50%', display: 'flex', flexDirection: 'column' } }, lines),
+        Elem.el(StateMonitor, { globalState: {...this.state} }) // Creates a StateMonitor instance and pass the current state as props
+      ])
     ]);
   }
 
-  Elem.render(Lines, container);
+  Elem.render(Lines, container, { initialState: { lines: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] } });
 });
 
 
