@@ -108,20 +108,44 @@ Showcase.registerTile('Function composition example with "this"', container => {
 
 Showcase.registerTile('Substate with function composition', container => {
 
+  let linesArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   function id() {
     return Math.random().toString(15).slice(10, 20);
   }
 
+  function displayModel(state) {
+    setTimeout(() => {
+      document.getElementById('statemodel').innerHTML = JSON.stringify(state, null, 2).replace(/ /g, '&nbsp;').replace(/\n/g, '<br/>');
+    }, 0);
+  }
+
+  function deleteRow(key, refresh) {
+    let value = parseInt(key.replace('line-', ''), 10);
+    linesArray = linesArray.filter(i => i !== value);
+    refresh();
+  }
+
   function Line() {
     return Elem.el('div', { style: { display: 'flex' } }, [
-      Elem.el('button', { type: 'button', onClick: () => this.setState({ value: id() }) }, 'Change value'),
+      Elem.el('button', { type: 'button', onClick: () => {
+        this.setState({ value: id() });
+        displayModel(this.globalState);
+      } }, 'Change value'),
+      Elem.el('button', { type: 'button', onClick: () => {
+        deleteRow(this.props.key, this.refresh);
+        displayModel(this.globalState);
+      } }, 'Delete row'),
       Elem.el('div', { style: { marginLeft: '20px' } }, this.state.value)
     ]);
   }
 
   function Lines() {
-    const lines = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => Elem.el(Line, { key: `line-${i}`, initialState: { value: '--' } }));
-    return Elem.el('div', { display: 'flex', flexDirection: 'column' }, lines);
+    const lines = linesArray.map(i => Elem.el(Line, { key: `line-${i}`, initialState: { value: '--' } }));
+    return Elem.el('div', [
+      Elem.el('div', { display: 'flex', flexDirection: 'column' }, lines),
+      Elem.el('div', { id: 'statemodel' })
+    ]);
   }
 
   Elem.render(Lines, container);

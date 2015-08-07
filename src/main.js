@@ -137,7 +137,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     props.namespace = namespace;
     let functionContext = {...currentComponentContext};
     if (key) {
-      // TODO : cleanup state when key re-appear
+      functionContext.__keys.push(key);
       if (props.initialState && !functionContext.state[`substateof-${key}`]) {
         functionContext.__internalSetState({ [`substateof-${key}`]: props.initialState });
       }
@@ -255,6 +255,8 @@ export function text(spanText) {
 
 function createComponentContext(refresh, renderNode, refs = {}) {
   let context = {
+    __keys: [],
+    __oldKeys: [],
     refs,
     state: {},
     refresh,
@@ -315,6 +317,15 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         return elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
       } finally {
         currentComponentContext = undefined;
+        if (functionAsComponentContext.context.__keys.length !== 0) {
+          let diffs = functionAsComponentContext.context.__oldKeys.filter(value => !_.contains(functionAsComponentContext.context.__keys, value));
+          for (let currentDiff in diffs) {
+            let key = `substateof-${diffs[currentDiff]}`;
+            delete functionAsComponentContext.context.state[key];
+          }
+          functionAsComponentContext.context.__oldKeys = [...functionAsComponentContext.context.__keys];
+          functionAsComponentContext.context.__keys = [];
+        }
       }
     };
     let refresh = () => {
