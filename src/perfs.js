@@ -62,39 +62,25 @@ export function markStop(name) {
 export function collectMeasures(clear = true) {
   if (!perfs) return [];
   let results = [];
-  names.forEach(name => {
-    let measures = Performances.getEntriesByName(name).map(entry => {
-      let { n, duration, entryType, startTime} = entry;
-      return { name: n, duration, entryType, startTime };
-    });
-    results = [...results, ...measures];
-  });
-  if (clear) Performances.clearMarks();
-  if (clear) Performances.clearMeasures();
-  names = [ElemMeasure];
-  return results;
-}
-
-export function collectMeanMeasures(clear = true) {
-  if (!perfs) return [];
-  let results = [];
   names.filter(i => i !== ElemMeasure).forEach(name => {
-    let measures = Performances.getEntriesByName(name).map(entry => entry.duration);
-    let totalTime = measures.reduce((a, b) => a + b, 0);
-    let meanDuration = totalTime / measures.length;
-    let maxDuration = Math.max(...measures);
-    let minDuration = Math.min(...measures);
-    results = [...results, { name, minDuration, meanDuration, maxDuration, totalTime, called: measures.length, entryType: 'meanDuration' }];
+    let rawMeasures = Performances.getEntriesByName(name);
+    let timeline = rawMeasures.map(e => ({ at: e.startTime, value: e.duration }));
+    let values = rawMeasures.map(entry => entry.duration);
+    let totalDuration = values.reduce((a, b) => a + b, 0);
+    let meanDuration = totalDuration / values.length;
+    let maxDuration = Math.max(...values);
+    let minDuration = Math.min(...values);
+    let calls = values.length;
+    results = [...results, { name, minDuration, meanDuration, maxDuration, totalDuration, calls, values, timeline }];
   });
   if (clear) Performances.clearMarks();
   if (clear) Performances.clearMeasures();
-  names = [ElemMeasure];
+  if (clear) names = [ElemMeasure];
   return results;
 }
 
-export function printMeanMeasures(clear = true) {
-  if (!perfs) return;
-  console.table(collectMeanMeasures(clear));
+export function measures() {
+  return collectMeasures(false);
 }
 
 export function printMeasures(clear = true) {
