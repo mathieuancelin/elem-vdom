@@ -34,7 +34,7 @@ export default {
   isObject,
   isArray: Array.isArray,
   isUndefined: (χ) => χ === undefined,
-  contains: (arr, of) => ~arr.indexOf(of),
+  contains: Array.includes,
   isFunction: (χ) => isObject(χ) && Object.prototype.toString.call(χ) == '[object Function]',
   isString: (χ) => typeof χ == 'string' || ((!!χ && typeof χ == 'object') && Object.prototype.toString.call(χ) == '[object String]')
 };
