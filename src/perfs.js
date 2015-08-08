@@ -59,21 +59,41 @@ export function markStop(name) {
   }
 }
 
-export function collectMeasures() {
+export function collectMeasures(clear = true) {
   if (!perfs) return [];
   let results = [];
   names.forEach(name => {
-    results = results.concat(Performances.getEntriesByName(name));
+    results = [...results, ...Performances.getEntriesByName(name)];
   });
-  Performances.clearMarks();
-  Performances.clearMeasures();
+  if (clear) Performances.clearMarks();
+  if (clear) Performances.clearMeasures();
   names = [ElemMeasure];
   return results;
 }
 
-export function printMeasures() {
+export function collectMeanMeasures(clear = true) {
+  if (!perfs) return [];
+  let results = [];
+  names.filter(i => i !== ElemMeasure).forEach(name => {
+    let measures = Performances.getEntriesByName(name);
+    let total = measures.map(entry => entry.duration).reduce((a, b) => a + b, 0);
+    let duration = total / measures.length;
+    results = [...results, { name, meanDuration: duration, totalTime: total, called: measures.length, entryType: 'meanDuration' }];
+  });
+  if (clear) Performances.clearMarks();
+  if (clear) Performances.clearMeasures();
+  names = [ElemMeasure];
+  return results;
+}
+
+export function printMeanMeasures(clear = true) {
   if (!perfs) return;
-  console.table(collectMeasures().map(item => {
+  console.table(collectMeanMeasures(clear));
+}
+
+export function printMeasures(clear = true) {
+  if (!perfs) return;
+  console.table(collectMeasures(clear).map(item => {
     return {
       name: item.name,
       duration: item.duration,

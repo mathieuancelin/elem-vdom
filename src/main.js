@@ -244,7 +244,7 @@ export function el(tagName, ...args) {
 }
 
 export function svg(name, ...args) {
-  return el.apply(null, [name, svgNS].concat(args));
+  return el.apply(null, [name, svgNS, ...args]);
 }
 
 export function nbsp(times) {
