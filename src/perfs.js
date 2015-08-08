@@ -63,7 +63,11 @@ export function collectMeasures(clear = true) {
   if (!perfs) return [];
   let results = [];
   names.forEach(name => {
-    results = [...results, ...Performances.getEntriesByName(name)];
+    let measures = Performances.getEntriesByName(name).map(entry => {
+      let { n, duration, entryType, startTime} = entry;
+      return { name: n, duration, entryType, startTime };
+    });
+    results = [...results, ...measures];
   });
   if (clear) Performances.clearMarks();
   if (clear) Performances.clearMeasures();
@@ -75,10 +79,12 @@ export function collectMeanMeasures(clear = true) {
   if (!perfs) return [];
   let results = [];
   names.filter(i => i !== ElemMeasure).forEach(name => {
-    let measures = Performances.getEntriesByName(name);
-    let total = measures.map(entry => entry.duration).reduce((a, b) => a + b, 0);
-    let duration = total / measures.length;
-    results = [...results, { name, meanDuration: duration, totalTime: total, called: measures.length, entryType: 'meanDuration' }];
+    let measures = Performances.getEntriesByName(name).map(entry => entry.duration);
+    let totalTime = measures.reduce((a, b) => a + b, 0);
+    let meanDuration = totalTime / measures.length;
+    let maxDuration = Math.max(...measures);
+    let minDuration = Math.min(...measures);
+    results = [...results, { name, minDuration, meanDuration, maxDuration, totalTime, called: measures.length, entryType: 'meanDuration' }];
   });
   if (clear) Performances.clearMarks();
   if (clear) Performances.clearMeasures();
@@ -93,14 +99,7 @@ export function printMeanMeasures(clear = true) {
 
 export function printMeasures(clear = true) {
   if (!perfs) return;
-  console.table(collectMeasures(clear).map(item => {
-    return {
-      name: item.name,
-      duration: item.duration,
-      entryType: item.entryType,
-      startTime: item.startTime
-    };
-  }));
+  console.table(collectMeasures(clear));
 }
 
 export function mark(name, func) {
