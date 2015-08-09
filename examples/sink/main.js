@@ -14,6 +14,22 @@ export const Showcase = require('./showcase');
 export const Counter = require('./counter');
 export const StatefulCounter = require('./stateful/app');
 
+/* eslint no-extend-native: 0 */
+if (!String.prototype.includes) {
+  String.prototype.includes = function includes(what) {
+    return what.indexOf(what) > -1;
+  };
+}
+if (!String.prototype.repeat) {
+  String.prototype.repeat = function repeat(howMuch) {
+    let finalStr = '';
+    for (let i = 0; i < howMuch; i++) {
+      finalStr += this;
+    }
+    return finalStr;
+  };
+}
+
 let selectedContainer = 'foo';
 let app = '#app';
 
