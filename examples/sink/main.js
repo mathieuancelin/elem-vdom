@@ -77,7 +77,13 @@ function SinkSidebar(ctx) {
 }
 
 function computeColor(name) {
-  return name.indexOf('Elem.') !== 0 || name.indexOf('Elem.function.') !== 0 ? '#e50000' : '#0f0'; // '#0b0' : '#0f0';
+  if (name.indexOf('Elem.function.') === 0) {
+    return '#0f0';
+  } else if (name.indexOf('Elem.') === 0) {
+    return '#e50000'; // #0b0
+  } else {
+    return '#0f0';
+  }
 }
 
 function SelectedPerfPanel() {
