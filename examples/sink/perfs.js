@@ -16,10 +16,17 @@ Showcase.registerTile('Performance example', container => {
     },
     loadSamples() {
       if (!run) return;
+      Elem.Perf.markStart('Samples.Perfs.loadSamples');
+      Elem.Perf.markStart('Samples.Perfs.generateData');
       let db = window.ENV.generateData().toArray();
+      Elem.Perf.markStop('Samples.Perfs.generateData');
+      Elem.Perf.markStart('Samples.Perfs.setState');
       this.setState({ databases: db });
+      Elem.Perf.markStop('Samples.Perfs.setState');
       window.Monitoring.renderRate.ping();
-      setTimeout(this.loadSamples, window.ENV.timeout);
+      requestAnimationFrame(this.loadSamples);
+      Elem.Perf.markStop('Samples.Perfs.loadSamples');
+      // setTimeout(this.loadSamples, window.ENV.timeout);
     },
     render() {
       let rows = this.state.databases.map(database => {

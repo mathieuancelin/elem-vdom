@@ -76,6 +76,10 @@ function SinkSidebar(ctx) {
   );
 }
 
+function computeColor(name) {
+  return name.indexOf('Elem.') !== 0 || name.indexOf('Elem.function.') !== 0 ? '#e50000' : '#0f0'; // '#0b0' : '#0f0';
+}
+
 function SelectedPerfPanel() {
   const items = 112;
   const selectedLive = this.state.measures.filter(i => i.name === this.props.selected.name)[0];
@@ -90,7 +94,7 @@ function SelectedPerfPanel() {
   }
   const rate = (this.context.bucket.reduce((a, b) => a + b, 0) / this.context.bucket.length).toFixed(2);
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
-    Elem.el('h4', [
+    Elem.el('h4', { style: { color: computeColor(this.props.selected.name) } }, [
       Elem.el('span', { style: { cursor: 'pointer' }, onClick: () => this.setState({ selected: undefined }) }, { __asHtml: '&#9668;&nbsp;&nbsp;' }),
       Elem.el('span', this.props.selected.name)
     ]),
@@ -123,7 +127,8 @@ function SelectionPanel() {
   this.context.last = 0;
   this.context.bucket = [];
   const actualMeasures = this.props.measures
-    .filter(n => !n.name.includes('SelectedPerfPanel') && !n.name.includes('SelectionPanel') && !n.name.includes('SinkPerfMonitoring') && !n.name.includes('SinkSidebar'));
+    .filter(n => !n.name.includes('SelectedPerfPanel') && !n.name.includes('SelectionPanel') && !n.name.includes('SinkPerfMonitoring') && !n.name.includes('SinkSidebar'))
+    .sort((a, b) => a.name.localeCompare(b.name));
   const selectMeasure = (measure) => {
     this.setState({ selected: measure });
   };
@@ -131,10 +136,10 @@ function SelectionPanel() {
     Elem.el('h4', 'Elem performances profiling'),
     Elem.el('div', {}, [
       Elem.el('ul', { style: { overflowY: 'auto', height: '100%', position: 'absolute', listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
-                actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m) }, [
-                  Elem.el('span', { __asHtml: '&#9658;&nbsp;' }),
-                  Elem.el('span', `${m.name} (${m.meanDuration.toFixed(2)} ms, ${m.calls} times)`)
-                ])))
+        actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m), style: { color: computeColor(m.name) } }, [
+          Elem.el('span', { __asHtml: '&#9658;&nbsp;' }),
+          Elem.el('span', `${m.name} (${m.meanDuration.toFixed(2)} ms, ${m.calls} times)`)
+        ])))
     ])
   ]);
 }
