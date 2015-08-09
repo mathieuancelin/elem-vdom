@@ -102,7 +102,9 @@ function SelectedPerfPanel() {
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
     Elem.el('h4', { style: { color: computeColor(this.props.selected.name) } }, [
       Elem.el('span', { style: { cursor: 'pointer' }, onClick: () => this.setState({ selected: undefined }) }, { __asHtml: '&#9668;&nbsp;&nbsp;' }),
-      Elem.el('span', this.props.selected.name)
+      Elem.el('span', { key: 'measure_name' }, this.props.selected.name),
+      Elem.nbsp(2),
+      Elem.el('span', { className: 'glyphicon glyphicon-time' }, '')
     ]),
     Elem.el('p', { style }, { __asHtml: `<b>minimum duration</b>: ${selectedLive.minDuration} ms.` }),
     Elem.el('p', { style }, { __asHtml: `<b>mean duration</b>: ${selectedLive.meanDuration} ms.` }),
@@ -141,11 +143,17 @@ function SelectionPanel() {
   };
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
     Elem.el('h4', [
+      Elem.el('span', { key: 'home_title_icon', className: 'glyphicon glyphicon-dashboard' }, ''),
+      Elem.nbsp(),
       Elem.el('span', { key: 'home_title' }, 'Elem performances profiling'),
-      Elem.el('small', { onClick: () => Elem.Perf.clear(), style: { marginRight: '20px', color: 'red', cursor: 'pointer', float: 'right' } }, { __asHtml: 'clear measures' })
+      Elem.el('small', { onClick: () => Elem.Perf.clear(), style: { marginRight: '20px', color: 'red', cursor: 'pointer', float: 'right' } }, [
+        Elem.el('span', { className: 'glyphicon glyphicon-trash' }, ''),
+        Elem.nbsp(),
+        Elem.el('span', 'clear measures')
+      ])
     ]),
     Elem.el('div', {}, [
-      Elem.el('ul', { style: { overflowY: 'auto', height: '100%', position: 'absolute', listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
+      Elem.el('ul', { style: { listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
         actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m), style: { color: computeColor(m.name) } }, [
           Elem.el('span', { __asHtml: '&#9658;&nbsp;' }),
           Elem.el('span', `${m.name} (${m.meanDuration.toFixed(2)} ms, ${m.calls} times)`)
@@ -175,7 +183,7 @@ function SinkPerfMonitoring() {
     const innerPannel = this.state.selected ?
       Elem.el(SelectedPerfPanel, { selected: this.state.selected }) :
       Elem.el(SelectionPanel, { measures: this.state.measures });
-    return Elem.el('div', { style: { width: '600px', height: '260px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0' } }, [
+    return Elem.el('div', { style: { width: '600px', height: '260px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0', overflowY: 'auto' } }, [
       Elem.el('div', { key: 'close_perf_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#9660;' }),
       innerPannel
     ]);
