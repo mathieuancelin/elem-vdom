@@ -115,7 +115,7 @@ function SelectionPanel() {
     this.setState({ selected: measure });
   };
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
-    Elem.el('h4', 'Perf measures'),
+    Elem.el('h4', 'Elem performances profiling'),
     Elem.el('div', {}, [
       Elem.el('ul', { style: { overflowY: 'auto', height: '100%', position: 'absolute', listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
                 actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m) }, [
