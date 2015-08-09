@@ -43,7 +43,7 @@ function showTileHandler(tile, ctx) {
   };
 }
 
-function Sidebar(ctx) {
+function SinkSidebar(ctx) {
   return Elem.el('ul', { className: 'list-group', style: { marginTop: '10px' } },
     Showcase.getTiles().map(tile =>
       Elem.el('li', {
@@ -107,7 +107,7 @@ function SelectionPanel() {
   this.context.last = 0;
   this.context.bucket = [];
   const actualMeasures = this.props.measures
-    .filter(n => !n.name.includes('SelectedPerfPanel') && !n.name.includes('SelectionPanel') && !n.name.includes('SinkPerfMonitoring'));
+    .filter(n => !n.name.includes('SelectedPerfPanel') && !n.name.includes('SelectionPanel') && !n.name.includes('SinkPerfMonitoring') && !n.name.includes('SinkSidebar'));
   const selectMeasure = (measure) => {
     this.setState({ selected: measure });
   };
@@ -163,13 +163,13 @@ window.Sink = {
     Elem.render(SinkPerfMonitoring, '#perfs', { initialState: { activated: false, measures: Elem.Perf.measures(), selected: undefined }});
     if (window.location.hash) {
       selectedContainer = hashes[window.location.hash].container;
-      Elem.render(Sidebar, '#sidebar');
+      Elem.render(SinkSidebar, '#sidebar');
       Elem.Perf.clear();
       render(hashes[window.location.hash]);
     } else {
       let tile = Showcase.getTiles()[0];
       selectedContainer = tile.container;
-      Elem.render(Sidebar, '#sidebar');
+      Elem.render(SinkSidebar, '#sidebar');
       Elem.Perf.clear();
       render(tile);
       window.location.hash = tile.title.replace(/ /g, '-');
