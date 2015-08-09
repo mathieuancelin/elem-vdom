@@ -80,7 +80,7 @@ function computeColor(name) {
   if (name.indexOf('Elem.function.') === 0) {
     return '#0f0';
   } else if (name.indexOf('Elem.') === 0) {
-    return '#e50000'; // #0b0
+    return 'red'; // '#e50000'; // #0b0
   } else {
     return '#0f0';
   }
