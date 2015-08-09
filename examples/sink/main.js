@@ -60,22 +60,19 @@ function Sidebar(ctx) {
   );
 }
 
-let last = 0;
-let bucket = [];
-
 function SelectedPerfPanel() {
   const items = 112;
   const selectedLive = this.state.measures.filter(i => i.name === this.props.selected.name)[0];
   const lastThirthy = selectedLive.values.slice(selectedLive.values.length >= items ? selectedLive.values.length - items : 0, selectedLive.values.length);
   const max = Math.max(...lastThirthy);
   const style = { marginBottom: '0px' };
-  const sinceLast = selectedLive.calls - last;
-  last = selectedLive.calls;
-  bucket.push(sinceLast);
-  if (bucket.length > 20) {
-    bucket.shift();
+  const sinceLast = selectedLive.calls - this.context.last;
+  this.context.last = selectedLive.calls;
+  this.context.bucket.push(sinceLast);
+  if (this.context.bucket.length > 20) {
+    this.context.bucket.shift();
   }
-  const rate = (bucket.reduce((a, b) => a + b, 0) / bucket.length).toFixed(2);
+  const rate = (this.context.bucket.reduce((a, b) => a + b, 0) / this.context.bucket.length).toFixed(2);
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
     Elem.el('h4', [
       Elem.el('span', { style: { cursor: 'pointer' }, onClick: () => this.setState({ selected: undefined }) }, { __asHtml: '&#9668;&nbsp;&nbsp;' }),
@@ -107,10 +104,10 @@ function SelectedPerfPanel() {
 }
 
 function SelectionPanel() {
-  last = 0;
-  bucket = [];
+  this.context.last = 0;
+  this.context.bucket = [];
   const actualMeasures = this.props.measures
-    .filter(n => !n.name.includes('SelectedPerfPanel') && !n.name.includes('SelectionPanel'));
+    .filter(n => !n.name.includes('SelectedPerfPanel') && !n.name.includes('SelectionPanel') && !n.name.includes('SinkPerfMonitoring'));
   const selectMeasure = (measure) => {
     this.setState({ selected: measure });
   };
@@ -126,24 +123,22 @@ function SelectionPanel() {
   ]);
 }
 
-let refreshPerfPanelInterval;
-
-function PerfMonitoring() {
+function SinkPerfMonitoring() {
   const refreshPerfPanel = () => {
     this.setState({ measures: Elem.Perf.measures() });
   };
   const activate = () => {
     Elem.Perf.start();
     this.setState({ activated: true, measures: Elem.Perf.measures() });
-    clearInterval(refreshPerfPanelInterval);
-    refreshPerfPanelInterval = setInterval(refreshPerfPanel, 1000);
+    clearInterval(this.context.refreshPerfPanelInterval);
+    this.context.refreshPerfPanelInterval = setInterval(refreshPerfPanel, 1000);
   };
   const deactivate = () => {
     Elem.Perf.stop();
     Elem.Perf.clear();
     this.setState({ activated: false, selected: undefined });
-    clearInterval(refreshPerfPanelInterval);
-    refreshPerfPanelInterval = undefined;
+    clearInterval(this.context.refreshPerfPanelInterval);
+    this.context.refreshPerfPanelInterval = undefined;
   };
   if (this.state.activated === true) {
     const innerPannel = this.state.selected ?
@@ -165,7 +160,7 @@ function PerfMonitoring() {
 
 window.Sink = {
   init() {
-    Elem.render(PerfMonitoring, '#perfs', { initialState: { activated: false, measures: Elem.Perf.measures(), selected: undefined }});
+    Elem.render(SinkPerfMonitoring, '#perfs', { initialState: { activated: false, measures: Elem.Perf.measures(), selected: undefined }});
     if (window.location.hash) {
       selectedContainer = hashes[window.location.hash].container;
       Elem.render(Sidebar, '#sidebar');

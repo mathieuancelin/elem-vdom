@@ -263,6 +263,7 @@ function createComponentContext(refresh, renderNode, refs = {}) {
     __oldKeys: [],
     refs,
     state: {},
+    context: {},
     refresh,
     redraw: refresh,
     getDOMNode() {
@@ -306,7 +307,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   let node = selectorOrNode;
   let tree = elementOrFunction;
   if (_.isFunction(tree)) {
-    let funKey = `Elem.render.${tree.name || ''}.tree`;
+    let funKey = `Elem.${tree.name ? 'function' : 'render'}.${tree.name || ''}.tree`;
     Perf.markStart(funKey);
     // Perf.markStart('Elem.render.tree');
     let functionAsComponentContext = {
@@ -335,8 +336,10 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       }
     };
     let refresh = () => {
+      Perf.markStart(funKey);
       let currentTree = reTree();
       render(currentTree, node);
+      Perf.markStop(funKey);
     };
     let refs = {...globalRefs};
     globalRefs = {};
