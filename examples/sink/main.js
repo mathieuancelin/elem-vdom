@@ -67,7 +67,6 @@ function SelectedPerfPanel() {
   const items = 112;
   const selectedLive = this.state.measures.filter(i => i.name === this.props.selected.name)[0];
   const lastThirthy = selectedLive.values.slice(selectedLive.values.length >= items ? selectedLive.values.length - items : 0, selectedLive.values.length);
-  const min = Math.min(...lastThirthy);
   const max = Math.max(...lastThirthy);
   const style = { marginBottom: '0px' };
   const sinceLast = selectedLive.calls - last;
@@ -93,10 +92,10 @@ function SelectedPerfPanel() {
         width: '560px',
         height: '51px',
         display: 'flex',
-        flexDirection: "row-reverse",
+        flexDirection: 'row-reverse',
         border: '1px solid #0f0'
       } },
-      lastThirthy.map((value, idx) => Elem.el('div', { key: `${idx}`, style: { backgroundColor: '#0f0', width: '5px', height: `${(value * 50) / max}px` } }, ''))
+      lastThirthy.map((value, idx) => Elem.el('div', { key: `${idx}`, style: { backgroundColor: '#0f0', width: '5px', height: `${(value * 50) / max}px` }}, ''))
     )
   ]);
 }
@@ -140,7 +139,7 @@ function PerfMonitoring() {
   if (this.state.activated === true) {
     const innerPannel = this.state.selected ?
       Elem.el(SelectedPerfPanel, { selected: this.state.selected }) :
-      Elem.el(SelectionPanel, { measures: this.state.measures })
+      Elem.el(SelectionPanel, { measures: this.state.measures });
     return Elem.el('div', { style: { width: '600px', height: '240px', opacity: '0.8', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0' } }, [
       Elem.el('div', { key: 'close_perf_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#x25BC' }),
       innerPannel

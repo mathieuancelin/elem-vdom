@@ -59,7 +59,7 @@ export function markStop(name) {
   }
 }
 
-export function collectMeasures(clear = true) {
+export function collectMeasures(clearMeasures = true) {
   if (!perfs) return [];
   let results = [];
   names.filter(i => i !== ElemMeasure).forEach(name => {
@@ -73,9 +73,9 @@ export function collectMeasures(clear = true) {
     let calls = values.length;
     results = [...results, { name, minDuration, meanDuration, maxDuration, totalDuration, calls, values, timeline }];
   });
-  if (clear) Performances.clearMarks();
-  if (clear) Performances.clearMeasures();
-  if (clear) names = [ElemMeasure];
+  if (clearMeasures) Performances.clearMarks();
+  if (clearMeasures) Performances.clearMeasures();
+  if (clearMeasures) names = [ElemMeasure];
   return results;
 }
 
@@ -89,9 +89,9 @@ export function measures() {
   return collectMeasures(false);
 }
 
-export function printMeasures(clear = true) {
+export function printMeasures(clearMeasures = true) {
   if (!perfs) return;
-  console.table(collectMeasures(clear));
+  console.table(collectMeasures(clearMeasures));
 }
 
 export function mark(name, func) {
