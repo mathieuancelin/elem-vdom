@@ -81,21 +81,27 @@ function SelectedPerfPanel() {
       Elem.el('span', { style: { cursor: 'pointer' }, onClick: () => this.setState({ selected: undefined }) }, { __asHtml: '&#9668;&nbsp;&nbsp;' }),
       Elem.el('span', this.props.selected.name)
     ]),
-    Elem.el('p', { style }, `minimum duration: ${selectedLive.minDuration} ms.`),
-    Elem.el('p', { style }, `mean duration: ${selectedLive.meanDuration} ms.`),
-    Elem.el('p', { style }, `maximum duration: ${selectedLive.maxDuration} ms.`),
-    Elem.el('p', { style }, `total duration: ${selectedLive.totalDuration} ms.`),
-    Elem.el('p', { style }, `number of calls: ${selectedLive.calls}`),
-    Elem.el('p', { style }, `number of calls / sec: ${rate}`),
+    Elem.el('p', { style }, { __asHtml: `<b>minimum duration</b>: ${selectedLive.minDuration} ms.` }),
+    Elem.el('p', { style }, { __asHtml: `<b>mean duration</b>: ${selectedLive.meanDuration} ms.` }),
+    Elem.el('p', { style }, { __asHtml: `<b>maximum duration</b>: ${selectedLive.maxDuration} ms.` }),
+    Elem.el('p', { style }, { __asHtml: `<b>total duration</b>: ${selectedLive.totalDuration} ms.` }),
+    Elem.el('p', { style }, { __asHtml: `<b>number of calls</b>: ${selectedLive.calls}` }),
+    Elem.el('p', { style }, { __asHtml: `<b>number of calls / sec</b>: ${rate}` }),
+    Elem.el('div', { style: { marginTop: '20px'} }, [
+      Elem.el('span', { style: { float: 'right', marginRight: '20px' }}, `max: ${max.toFixed(3)} ms.`)
+    ]),
     Elem.el('div', { style: {
-        marginTop: '20px',
         width: '560px',
         height: '51px',
         display: 'flex',
         flexDirection: 'row-reverse',
         border: '1px solid #0f0'
       } },
-      lastThirthy.map((value, idx) => Elem.el('div', { key: `${idx}`, style: { backgroundColor: '#0f0', width: '5px', height: `${(value * 50) / max}px` }}, ''))
+      lastThirthy.map((value, idx) => {
+        let height = ((value * 46) / max) + 2;
+        let margin = 50 - height;
+        return Elem.el('div', { key: `${idx}`, style: { bottom: '0px', backgroundColor: '#0f0', width: '5px', height: `${height}px`, marginTop: `${margin}px` }}, '');
+      })
     )
   ]);
 }
@@ -140,7 +146,7 @@ function PerfMonitoring() {
     const innerPannel = this.state.selected ?
       Elem.el(SelectedPerfPanel, { selected: this.state.selected }) :
       Elem.el(SelectionPanel, { measures: this.state.measures });
-    return Elem.el('div', { style: { width: '600px', height: '240px', opacity: '0.8', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0' } }, [
+    return Elem.el('div', { style: { width: '600px', height: '260px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0' } }, [
       Elem.el('div', { key: 'close_perf_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#x25BC' }),
       innerPannel
     ]);
