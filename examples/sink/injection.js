@@ -40,10 +40,5 @@ Showcase.registerTile('No injectable HTML', container => {
     return Elem.el('div', items.map(item => Elem.el('input', { type: 'text', value: item.name }, [])));
   }
 
-  Elem.Perf.start();
-  Elem.Perf.markStart('perfs');
   Elem.render(display, container);
-  Elem.Perf.markStop('perfs');
-  Elem.Perf.printMeasures();
-  Elem.Perf.stop();
 });

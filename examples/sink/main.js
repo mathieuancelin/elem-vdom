@@ -111,7 +111,8 @@ function SelectedPerfPanel() {
     Elem.el('p', { style }, { __asHtml: `<b>number of calls</b>: ${selectedLive.calls}` }),
     Elem.el('p', { style }, { __asHtml: `<b>number of calls / sec</b>: ${rate}` }),
     Elem.el('div', { style: { marginTop: '20px'} }, [
-      Elem.el('span', { style: { float: 'right', marginRight: '20px' }}, `max: ${max.toFixed(3)} ms.`)
+      Elem.el('span', { style: { float: 'left' }}, `Duration timeline`),
+      Elem.el('span', { style: { float: 'right', marginRight: '20px' }}, `yAxis from 0 to ${max.toFixed(3)} ms.`)
     ]),
     Elem.el('div', { style: {
         width: '560px',
@@ -139,7 +140,10 @@ function SelectionPanel() {
     this.setState({ selected: measure });
   };
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
-    Elem.el('h4', 'Elem performances profiling'),
+    Elem.el('h4', [
+      Elem.el('span', { key: 'home_title' }, 'Elem performances profiling'),
+      Elem.el('small', { onClick: () => Elem.Perf.clear(), style: { marginRight: '20px', color: 'red', cursor: 'pointer', float: 'right' } }, { __asHtml: 'clear measures' })
+    ]),
     Elem.el('div', {}, [
       Elem.el('ul', { style: { overflowY: 'auto', height: '100%', position: 'absolute', listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
         actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m), style: { color: computeColor(m.name) } }, [
