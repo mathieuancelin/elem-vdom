@@ -100,7 +100,7 @@ function SelectedPerfPanel() {
       lastThirthy.map((value, idx) => {
         let height = ((value * 46) / max) + 2;
         let margin = 50 - height;
-        return Elem.el('div', { key: `${idx}`, style: { bottom: '0px', backgroundColor: '#0f0', width: '5px', height: `${height}px`, marginTop: `${margin}px` }}, '');
+        return Elem.el('div', { key: `${idx}`, title: `${value} ms`, style: { cursor: 'pointer', bottom: '0px', backgroundColor: '#0f0', width: '5px', height: `${height}px`, marginTop: `${margin}px` }}, '');
       })
     )
   ]);
@@ -118,7 +118,10 @@ function SelectionPanel() {
     Elem.el('h4', 'Perf measures'),
     Elem.el('div', {}, [
       Elem.el('ul', { style: { overflowY: 'auto', height: '100%', position: 'absolute', listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
-                actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m) }, m.name)))
+                actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m) }, [
+                  Elem.el('span', { __asHtml: '&#9658;&nbsp;' }),
+                  Elem.el('span', `${m.name} (${m.meanDuration.toFixed(2)} ms, ${m.calls} times)`)
+                ])))
     ])
   ]);
 }
@@ -147,14 +150,14 @@ function PerfMonitoring() {
       Elem.el(SelectedPerfPanel, { selected: this.state.selected }) :
       Elem.el(SelectionPanel, { measures: this.state.measures });
     return Elem.el('div', { style: { width: '600px', height: '260px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0' } }, [
-      Elem.el('div', { key: 'close_perf_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#x25BC' }),
+      Elem.el('div', { key: 'close_perf_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#9660;' }),
       innerPannel
     ]);
   } else {
     return Elem.el('div', { style: { opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0', padding: '10px', cursor: 'pointer' } }, [
       Elem.el('div', { }, [
         Elem.el('span', { onClick: activate }, 'Profiling '),
-        Elem.el('span', { onClick: activate }, { __asHtml: '&#x25B2' })
+        Elem.el('span', { onClick: activate }, { __asHtml: '&#9650;' })
       ])
     ]);
   }
