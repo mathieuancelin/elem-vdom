@@ -3,7 +3,7 @@ var Monitoring = Monitoring || (function() {
   var RenderRate = function () {
     var container = document.createElement( 'div' );
     container.id  = 'stats';
-    container.style.cssText = 'width:150px;opacity:0.9;cursor:pointer;position:fixed;right:80px;bottom:0px;';
+    container.style.cssText = 'width:90px;opacity:0.9;cursor:pointer;position:fixed;right:0px;top:0px;';
 
     var msDiv = document.createElement( 'div' );
     msDiv.id  = 'ms';
@@ -13,7 +13,7 @@ var Monitoring = Monitoring || (function() {
     var msText  = document.createElement( 'div' );
     msText.id = 'msText';
     msText.style.cssText = 'color:#0f0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px';
-    msText.innerHTML= 'Repaint rate: 0/sec';
+    msText.innerHTML= 'repaint: 0/sec';
     msDiv.appendChild( msText );
 
     var bucketSize = 20;
@@ -33,7 +33,7 @@ var Monitoring = Monitoring || (function() {
         for (var i = 0; i < bucket.length; i++) {
           sum = sum + bucket[i];
         }
-        msText.textContent = "Repaint rate: " + (sum / bucket.length).toFixed(2) + "/sec";
+        msText.textContent = "repaint: " + (sum / bucket.length).toFixed(2) + "/sec";
         lastTime = stop;
       }
     }

@@ -79,6 +79,12 @@ export function collectMeasures(clear = true) {
   return results;
 }
 
+export function clear() {
+  Performances.clearMarks();
+  Performances.clearMeasures();
+  names = [ElemMeasure];
+}
+
 export function measures() {
   return collectMeasures(false);
 }

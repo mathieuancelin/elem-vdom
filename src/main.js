@@ -306,7 +306,9 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   let node = selectorOrNode;
   let tree = elementOrFunction;
   if (_.isFunction(tree)) {
-    Perf.markStart('Elem.render.tree');
+    let funKey = `Elem.render.${tree.name || ''}.tree`;
+    Perf.markStart(funKey);
+    //Perf.markStart('Elem.render.tree');
     let functionAsComponentContext = {
       context: undefined,
       props
@@ -345,7 +347,8 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       functionAsComponentContext.context.state = {};
     }
     tree = reTree();
-    Perf.markStop('Elem.render.tree');
+    //Perf.markStop('Elem.render.tree');
+    Perf.markStop(funKey);
   }
   let doc = document;
   if (node.ownerDocument) {
