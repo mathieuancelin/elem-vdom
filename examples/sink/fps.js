@@ -47,9 +47,19 @@ Showcase.registerTile('Bubbles ...', container => {
 
   function Bubbles() {
     let { bubbles } = this.state;
+    let { number } = this.context;
     if (!bubbles) {
       bubbles = [];
       for (let i = 0; i < bubblesCount; i++) {
+        bubbles.push({ x: rnd(600), y: rnd(600), r: 10 + rnd(40), speed: baseSpeed, incrementX: baseSpeed, incrementY: baseSpeed, color: colors[parseInt(rnd(6), 10) - 1] });
+      }
+    }
+    if (number < bubbles.length) {
+      for (let i = 0; i < (bubbles.length - number); i++) {
+        bubbles.pop();
+      }
+    } else if (number > bubbles.length) {
+      for (let i = 0; i < (number - bubbles.length); i++) {
         bubbles.push({ x: rnd(600), y: rnd(600), r: 10 + rnd(40), speed: baseSpeed, incrementX: baseSpeed, incrementY: baseSpeed, color: colors[parseInt(rnd(6), 10) - 1] });
       }
     }
@@ -70,18 +80,8 @@ Showcase.registerTile('Bubbles ...', container => {
       bubble.y = bubble.y + bubble.incrementY;
     }
     requestAnimationFrame(() => this.setState({ bubbles: [...bubbles] }));
-    const changeBubbles = (number) => {
-      let currentBubbles = [...this.state.bubbles];
-      if (number < currentBubbles.length) {
-        for (let i = 0; i < (currentBubbles.length - number); i++) {
-          currentBubbles.pop();
-        }
-      } else if (number > currentBubbles.length) {
-        for (let i = 0; i < (number - currentBubbles.length); i++) {
-          currentBubbles.push({ x: rnd(600), y: rnd(600), r: 10 + rnd(40), speed: baseSpeed, incrementX: baseSpeed, incrementY: baseSpeed, color: colors[parseInt(rnd(6), 10) - 1] });
-        }
-      }
-      this.setState({ bubbles: currentBubbles, number });
+    const changeBubbles = (n) => {
+      this.context.number = n; // because we dont want to trigger another animation frame here
     };
     return Elem.el('div', [
       Elem.el('input', { type: 'range', min: '4', max: '10', value: this.state.number || '4', onChange: (e) => changeBubbles(e.target.value) }),

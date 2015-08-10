@@ -145,7 +145,7 @@ function SelectionPanel() {
     this.setState({ selected: measure });
   };
   const selectedElemRender = actualMeasures.filter(i => i.name === 'Elem.render')[0];
-  let rateLabel = '0.0 FPS';
+  let rateLabel = '0.0 RPS';
   if (selectedElemRender) {
     if (!this.context.bucketElemRender) {
       this.context.bucketElemRender = [];
@@ -160,7 +160,7 @@ function SelectionPanel() {
       this.context.bucketElemRender.shift();
     }
     const rate = (this.context.bucketElemRender.reduce((a, b) => a + b, 0) / this.context.bucketElemRender.length).toFixed(1);
-    rateLabel = `${rate} FPS`;
+    rateLabel = `${rate} RPS`;
   }
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
     Elem.el('h4', [
@@ -181,7 +181,18 @@ function SelectionPanel() {
           ])))
       ]),
       Elem.el('div', { style: { width: '150px', height: '200px' } }, [
-        Elem.el('span', { style: { fontSize: '25px', fontWeight: 'normal', paddingTop: '45%', textAlign: 'right' } }, rateLabel)
+        Elem.el('span',
+          {
+            title: 'current Elem.render per second',
+            style: {
+              fontSize: '25px',
+              fontWeight: 'normal',
+              paddingTop: '45%',
+              textAlign: 'right',
+              cursor: 'pointer'
+            }
+          },
+          rateLabel)
       ])
     ])
   ]);
