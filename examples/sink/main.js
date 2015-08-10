@@ -12,6 +12,7 @@ export const perfs = require('./perfs');
 export const Elem = require('../../src/main');
 export const Showcase = require('./showcase');
 export const Counter = require('./counter');
+export const FPS = require('./fps');
 export const StatefulCounter = require('./stateful/app');
 
 /* eslint no-extend-native: 0 */
@@ -30,6 +31,7 @@ if (!String.prototype.repeat) {
   };
 }
 
+let onExampleChange = [];
 let selectedContainer = 'foo';
 let app = '#app';
 
@@ -43,6 +45,7 @@ function render(tile) {
   Elem.unmount(app);
   try {
     Elem.Perf.clear();
+    onExampleChange.forEach(e => e());
     tile.render(app);
   } catch (e) {
     console.log(e);
@@ -141,23 +144,45 @@ function SelectionPanel() {
   const selectMeasure = (measure) => {
     this.setState({ selected: measure });
   };
+  const selectedElemRender = actualMeasures.filter(i => i.name === 'Elem.render')[0];
+  let rateLabel = '0.0 FPS';
+  if (selectedElemRender) {
+    if (!this.context.bucketElemRender) {
+      this.context.bucketElemRender = [];
+    }
+    if (!this.context.lastElemRender) {
+      this.context.lastElemRender = 0;
+    }
+    const sinceLastElemRender = selectedElemRender.calls - this.context.lastElemRender;
+    this.context.lastElemRender = selectedElemRender.calls;
+    this.context.bucketElemRender.push(sinceLastElemRender);
+    if (this.context.bucketElemRender.length > 10) {
+      this.context.bucketElemRender.shift();
+    }
+    const rate = (this.context.bucketElemRender.reduce((a, b) => a + b, 0) / this.context.bucketElemRender.length).toFixed(1);
+    rateLabel = `${rate} FPS`;
+  }
   return Elem.el('div', { style: { marginLeft: '20px' } }, [
     Elem.el('h4', [
       Elem.el('span', { key: 'home_title_icon', className: 'glyphicon glyphicon-dashboard' }, ''),
       Elem.nbsp(),
       Elem.el('span', { key: 'home_title' }, 'Elem performances profiling'),
       Elem.el('small', { onClick: () => Elem.Perf.clear(), style: { marginRight: '20px', color: 'red', cursor: 'pointer', float: 'right' } }, [
-        Elem.el('span', { className: 'glyphicon glyphicon-trash' }, ''),
-        Elem.nbsp(),
+        Elem.el('span', { className: 'glyphicon glyphicon-trash', style: { marginRight: '10px'} }, ''),
         Elem.el('span', 'clear measures')
       ])
     ]),
-    Elem.el('div', {}, [
-      Elem.el('ul', { style: { listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
-        actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m), style: { color: computeColor(m.name) } }, [
-          Elem.el('span', { __asHtml: '&#9658;&nbsp;' }),
-          Elem.el('span', `${m.name} (${m.meanDuration.toFixed(2)} ms, ${m.calls} times)`)
-        ])))
+    Elem.el('div', { style: { display: 'flex' } }, [
+      Elem.el('div', { style: { width: '450px' } }, [
+        Elem.el('ul', { style: { listStyleType: 'none', marginLeft: '0px', paddingLeft: '5px', cursor: 'pointer' } },
+          actualMeasures.map(m => Elem.el('li', { key: m.name, onClick: () => selectMeasure(m), style: { color: computeColor(m.name) } }, [
+            Elem.el('span', { __asHtml: '&#9658;&nbsp;' }),
+            Elem.el('span', `${m.name} (${m.meanDuration.toFixed(2)} ms, ${m.calls} times)`)
+          ])))
+      ]),
+      Elem.el('div', { style: { width: '150px', height: '200px' } }, [
+        Elem.el('span', { style: { fontSize: '25px', fontWeight: 'normal', paddingTop: '45%', textAlign: 'right' } }, rateLabel)
+      ])
     ])
   ]);
 }
@@ -179,11 +204,20 @@ function SinkPerfMonitoring() {
     clearInterval(this.context.refreshPerfPanelInterval);
     this.context.refreshPerfPanelInterval = undefined;
   };
+  if (!this.context.hooked) {
+    this.context.hooked = true;
+    this.context.bucketElemRender = [];
+    this.context.lastElemRender = 0;
+    onExampleChange.push(() => {
+      this.context.bucketElemRender = [];
+      this.context.lastElemRender = 0;
+    });
+  }
   if (this.state.activated === true) {
     const innerPannel = this.state.selected ?
       Elem.el(SelectedPerfPanel, { selected: this.state.selected }) :
       Elem.el(SelectionPanel, { measures: this.state.measures });
-    return Elem.el('div', { style: { width: '600px', height: '260px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0', overflowY: 'auto' } }, [
+    return Elem.el('div', { style: { width: '600px', height: '300px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0', overflowY: 'auto' } }, [
       Elem.el('div', { key: 'close_perf_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#9660;' }),
       innerPannel
     ]);
