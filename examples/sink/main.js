@@ -13,6 +13,7 @@ export const Elem = require('../../src/main');
 export const Showcase = require('./showcase');
 export const Counter = require('./counter');
 export const FPS = require('./fps');
+export const JSX = require('./jsx');
 export const StatefulCounter = require('./stateful/app');
 
 /* eslint no-extend-native: 0 */

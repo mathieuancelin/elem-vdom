@@ -49,7 +49,8 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader?stage=0&optional=runtime'
+        /* IMPORTANT : jsxPragma=Elem.jsx */
+        loader: 'babel-loader?stage=0&optional=runtime&jsxPragma=Elem.jsx'
       }
     ]
   },

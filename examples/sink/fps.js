@@ -42,7 +42,7 @@ Showcase.registerTile('Bubbles ...', container => {
 
   function Bubble() {
     let { x, y, r, color } = this.props;
-    return Elem.svg('circle', { cx: x, cy: y, r: r, fill: color });
+    return Elem.svg('circle', { cx: x, cy: y, r: r, fill: color, key: this.props.key });
   }
 
   function Bubbles() {
@@ -84,9 +84,9 @@ Showcase.registerTile('Bubbles ...', container => {
       this.context.number = n; // because we dont want to trigger another animation frame here
     };
     return Elem.el('div', [
-      Elem.el('input', { type: 'range', min: '4', max: '10', value: this.state.number || '4', onChange: (e) => changeBubbles(e.target.value) }),
+      Elem.el('input', { type: 'range', min: '4', max: '15', value: this.state.number || '4', onChange: (e) => changeBubbles(e.target.value) }),
       Elem.svg('svg', { xmlns: Elem.svgNS, version: '1.1', width: '600', height: '600', style: { borderStyle: 'solid', borderColor: 'black', height: '600px', width: '600px' } },
-        bubbles.map(bubble => Elem.el(Bubble, bubble))
+        bubbles.map((bubble, key) => Elem.el(Bubble, {...bubble, key}))
       )
     ]);
   }

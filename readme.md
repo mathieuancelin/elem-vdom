@@ -19,6 +19,20 @@ with npm do :
 npm install elem-vdom --save
 ```
 
+Examples
+--------
+
+If you want to run examples, just clone the project then :
+
+```
+git clone https://github.com/mathieuancelin/elem-vdom.git elem-vdom
+cd elem-vdom
+npm install
+npm start
+open http://localhost:8080/examples
+
+```
+
 API
 ----------
 
@@ -309,6 +323,29 @@ CompositeComponent().renderTo(container);
 ```
 
 The `component(props)` function returns a function (if you don't provide a container) that you can call to create component that will be rendered in the element tree. The main advantage of using `component` as factory is that when you change the state of the inner component, only that component will be re-rendered instead of the whole root component and its children.
+
+But, I like jsx syntax, how can I use it ?
+------------------------------------------
+
+If you use babel, add jsxPragma=Elem.jsx to options in your .babelrc or babel-loader.
+
+```javascript
+
+function Child() {
+  return <small>Just a child</small>;
+}
+
+function Parent() {
+  return (
+    <div>
+      <h1>Hello World!</h1>
+      <Child />
+    </div>
+  );
+}
+
+Elem.render(Parent, document.getElementById('app'));
+```
 
 But, how can I get an actual DOM node from inside my component ?
 ---------------------------------------
