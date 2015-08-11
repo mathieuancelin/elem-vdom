@@ -92,37 +92,36 @@ Showcase.registerTile('Performance JSX example', container => {
       // setTimeout(this.loadSamples, window.ENV.timeout);
     },
     render() {
-      let rows = this.state.databases.map(database => {
-        let base = [
-          <td className="dbname">{database.dbname}</td>,
-          <td className="query-count">
-            <span className={database.lastSample.countClassName}>{database.lastSample.queries.length}</span>
-          </td>
-        ].concat(
-          database.lastSample.topFiveQueries.map(query => {
-            return (
-              <td className={'Query ' + query.elapsedClassName}>
-                <span>{query.formatElapsed}</span>
-                <div className="popover left">
-                  <div className="popover-content">{query.query}</div>
-                  <div className="arrow"></div>
-                </div>
-              </td>
-            );
-          })
-        );
-        return (
-          <tr key={database.dbname}>
-            {base}
-          </tr>
-        );
-      });
       return (
         <div>
           <div id="theSlider"></div>
           <table className="table table-striped latest-data">
             <tbody>
-              {rows}
+              {
+                this.state.databases.map(database => {
+                  return (
+                    <tr key={database.dbname}>
+                      <td className="dbname">{database.dbname}</td>
+                      <td className="query-count">
+                        <span className={database.lastSample.countClassName}>{database.lastSample.queries.length}</span>
+                      </td>
+                      {
+                        database.lastSample.topFiveQueries.map(query => {
+                          return (
+                            <td className={'Query ' + query.elapsedClassName}>
+                              <span>{query.formatElapsed}</span>
+                              <div className="popover left">
+                                <div className="popover-content">{query.query}</div>
+                                <div className="arrow"></div>
+                              </div>
+                            </td>
+                          );
+                        })
+                      }
+                    </tr>
+                  );
+                })
+              }
             </tbody>
           </table>
         </div>

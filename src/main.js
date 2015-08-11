@@ -580,9 +580,6 @@ export function jsx(type, attributes, ...chldn) {
       children.push(value);
     }
   }
-  //if (children && children.length === 1 && _.isArray(children[0])) {
-  //  children = children[0];
-  //}
   let attrs = attributes || {};
   if (Array.includes(svgElements, type)) {
     return internalEl(type, attrs, children || [], attrs.key || undefined, svgNS);
