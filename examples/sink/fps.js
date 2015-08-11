@@ -1,6 +1,8 @@
 const Showcase = require('./showcase');
 const Elem = require('../../src/main');
 
+let requestId;
+
 Showcase.registerTile('One bubble', container => {
   const baseSpeed = 1;
   function Bubble() {
@@ -22,12 +24,15 @@ Showcase.registerTile('One bubble', container => {
       x: x + incrementX,
       y: y + incrementY
     };
-    requestAnimationFrame(() => this.setState(newState));
+    requestId = requestAnimationFrame(() => this.setState(newState));
     return Elem.svg('svg', { xmlns: Elem.svgNS, version: '1.1', width: '600', height: '600', style: { borderStyle: 'solid', borderColor: 'black', height: '600px', width: '600px' } }, [
       Elem.svg('circle', { cx: this.state.x, cy: this.state.y, r: this.state.r, fill: 'blue' }),
     ]);
   }
   Elem.render(Bubble, container, { initialState: { x: 300, y: 30, r: 30, incrementY: baseSpeed, incrementX: baseSpeed, speed: baseSpeed } });
+}, () => {
+  cancelAnimationFrame(requestId);
+  requestId = undefined;
 });
 
 Showcase.registerTile('Bubbles ...', container => {
@@ -79,7 +84,7 @@ Showcase.registerTile('Bubbles ...', container => {
       bubble.x = bubble.x + bubble.incrementX;
       bubble.y = bubble.y + bubble.incrementY;
     }
-    requestAnimationFrame(() => this.setState({ bubbles: [...bubbles] }));
+    requestId = requestAnimationFrame(() => this.setState({ bubbles: [...bubbles] }));
     const changeBubbles = (n) => {
       this.context.number = n; // because we dont want to trigger another animation frame here
     };
@@ -93,4 +98,7 @@ Showcase.registerTile('Bubbles ...', container => {
 
   Elem.render(Bubbles, container);
 
+}, () => {
+  cancelAnimationFrame(requestId);
+  requestId = undefined;
 });

@@ -552,6 +552,7 @@ export function component(comp) {
   factory.isElemComponentFactory = true;
   return factory;
 }
+
 let svgElements = ['altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
   'animateColor', 'animateMotion', 'animateTransform',
   'circle', 'clipPath', 'color-profile', 'cursor', 'defs',
