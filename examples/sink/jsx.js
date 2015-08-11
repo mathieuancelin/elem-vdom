@@ -16,6 +16,14 @@ Showcase.registerTile('JSX example', container => {
     );
   }
 
+  function Bordered() {
+    return (
+      <div style={{ borderStyle: 'solid', borderColor: this.props.color || 'black', borderWidth: this.props.width || '1px'}}>
+        {this.props.children}
+      </div>
+    );
+  }
+
   function Index() {
     return (
       <ul>
@@ -34,8 +42,10 @@ Showcase.registerTile('JSX example', container => {
     return (
       <div>
         <h1>Hello World!</h1>
-        <Child />
-        <Index />
+        <Bordered color="blue">
+          <Child />
+          <Index />
+        </Bordered>
         <SomeSVG />
       </div>
     );

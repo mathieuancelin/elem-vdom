@@ -64,3 +64,74 @@ Showcase.registerTile('Performance example', container => {
 }, () => {
   run = false;
 });
+
+
+Showcase.registerTile('Performance JSX example', container => {
+  run = true;
+  let DBMon = Elem.component({
+    init() {
+      this.loadSamples();
+    },
+    getInitialState() {
+      return {
+        databases: []
+      };
+    },
+    loadSamples() {
+      if (!run) return;
+      Elem.Perf.markStart('Samples.Perfs.loadSamples');
+      Elem.Perf.markStart('Samples.Perfs.generateData');
+      let db = window.ENV.generateData().toArray();
+      Elem.Perf.markStop('Samples.Perfs.generateData');
+      Elem.Perf.markStart('Samples.Perfs.setState');
+      this.setState({ databases: db });
+      Elem.Perf.markStop('Samples.Perfs.setState');
+      window.Monitoring.renderRate.ping();
+      requestAnimationFrame(this.loadSamples);
+      Elem.Perf.markStop('Samples.Perfs.loadSamples');
+      // setTimeout(this.loadSamples, window.ENV.timeout);
+    },
+    render() {
+      let rows = this.state.databases.map(database => {
+        let base = [
+          <td className="dbname">{database.dbname}</td>,
+          <td className="query-count">
+            <span className={database.lastSample.countClassName}>{database.lastSample.queries.length}</span>
+          </td>
+        ].concat(
+          database.lastSample.topFiveQueries.map(query => {
+            return (
+              <td className={'Query ' + query.elapsedClassName}>
+                <span>{query.formatElapsed}</span>
+                <div className="popover left">
+                  <div className="popover-content">{query.query}</div>
+                  <div className="arrow"></div>
+                </div>
+              </td>
+            );
+          })
+        );
+        return (
+          <tr key={database.dbname}>
+            {base}
+          </tr>
+        );
+      });
+      return (
+        <div>
+          <div id="theSlider"></div>
+          <table className="table table-striped latest-data">
+            <tbody>
+              {rows}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+  });
+  DBMon().renderTo(container);
+  let body = document.querySelector('#theSlider');
+  window.ENV.injectSlider(body);
+}, () => {
+  run = false;
+});

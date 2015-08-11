@@ -569,10 +569,20 @@ let svgElements = ['altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
   'text', 'textPath', 'tref', 'tspan', 'use', 'view', 'vkern'];
 
 export function jsx(type, attributes, ...chldn) {
-  let children = chldn;
-  if (children && children.length === 1 && _.isArray(children[0])) {
-    children = children[0];
+  let children = [];
+  for (let i = 0; i < chldn.length; i++) {
+    let value = chldn[i];
+    if (_.isArray(value)) {
+      for (let j = 0; j < value.length; j++) {
+        children.push(value[j]);
+      }
+    } else {
+      children.push(value);
+    }
   }
+  //if (children && children.length === 1 && _.isArray(children[0])) {
+  //  children = children[0];
+  //}
   let attrs = attributes || {};
   if (Array.includes(svgElements, type)) {
     return internalEl(type, attrs, children || [], attrs.key || undefined, svgNS);
