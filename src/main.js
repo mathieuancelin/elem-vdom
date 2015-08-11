@@ -567,7 +567,11 @@ let svgElements = ['altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
   'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch', 'symbol',
   'text', 'textPath', 'tref', 'tspan', 'use', 'view', 'vkern'];
 
-export function jsx(type, attributes, ...children) {
+export function jsx(type, attributes, ...chldn) {
+  let children = chldn;
+  if (children && children.length === 1 && _.isArray(children[0])) {
+    children = children[0];
+  }
   if (Array.includes(svgElements, type)) {
     return el(type, svgNS, attributes || {}, children || []);
   }

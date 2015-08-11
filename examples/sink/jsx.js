@@ -16,6 +16,16 @@ Showcase.registerTile('JSX example', container => {
     );
   }
 
+  function Index() {
+    return (
+      <ul>
+        {[1, 2, 3].map(index =>
+          <li>{index}</li>
+        )}
+      </ul>
+    );
+  }
+
   function Child() {
     return <small>Im a child</small>;
   }
@@ -25,6 +35,7 @@ Showcase.registerTile('JSX example', container => {
       <div>
         <h1>Hello World!</h1>
         <Child />
+        <Index />
         <SomeSVG />
       </div>
     );
