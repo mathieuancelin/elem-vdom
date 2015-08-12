@@ -22,6 +22,12 @@ const treeCache = {};
 let globalRefs = {};
 let currentComponentContext;
 
+function clearNode(node) {
+  while (!_.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+}
+
 function styleToString(attrs) {
   if (!attrs) return '';
   let attrsArray = [];
@@ -370,6 +376,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     if (!oldDom) {
       Perf.markStart('Elem.render.create');
       let rootNode = VDOMCreateElement(tree);
+      clearNode(node);
       node.appendChild(rootNode);
       treeCache[rootId] = {
         tree: tree,
@@ -393,9 +400,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   return {
     unmount() {
       delete node.rootId;
-      while (!_.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
-        node.removeChild(node.firstChild);
-      }
+      clearNode(node);
       delete treeCache[rootId];
     }
   };
@@ -410,9 +415,7 @@ export function unmount(theNode) {
   if (_.isString(node)) {
     node = doc.querySelector(node);
   }
-  while (!_.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
-    node.removeChild(node.firstChild);
-  }
+  clearNode(node);
   if (node.rootId) {
     delete treeCache[node.rootId];
     delete node.rootId;
