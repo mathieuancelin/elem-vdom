@@ -11,6 +11,7 @@ Showcase.registerTile('Style usage', container => {
     className: 'col-md-6'
   }, [
     Elem.el('h3', 'Hello World!'),
+    Elem.el('span', Elem.el('b', '...')),
     Elem.el('p', {
       style: {
         backgroundColor: 'red'

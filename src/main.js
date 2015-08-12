@@ -186,6 +186,10 @@ export function el(tagName, ...args) {
     // el('div', function)
     return el(name, args[0]()); // forced to recurse
   }
+  if (argsLength === 1 && (args[0] instanceof VNode)) {
+    // el('div', Elem.el(...))
+    return internalEl(name, {}, [args[0]], undefined, undefined); // forced to recurse
+  }
   if (argsLength === 1 && _.isArray(args[0])) {
     // el('div', [...])
     return internalEl(name, {}, args[0], undefined, undefined);
