@@ -13,7 +13,8 @@ Showcase.registerTile('Refs usage example', container => {
         onkeydown: context.refresh,
         onkeyup: context.refresh
       }),
-      Elem.el('span', {
+      Elem.el('span',
+        {
           style: {
             backgroundColor: 'lightgrey',
             width: '100%'

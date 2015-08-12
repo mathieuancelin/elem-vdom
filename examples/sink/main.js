@@ -120,13 +120,16 @@ function SelectedPerfPanel() {
       Elem.el('span', { style: { float: 'left' }}, `Duration timeline`),
       Elem.el('span', { style: { float: 'right', marginRight: '20px' }}, `yAxis from 0 to ${max.toFixed(3)} ms.`)
     ]),
-    Elem.el('div', { style: {
-        width: '560px',
-        height: '51px',
-        display: 'flex',
-        flexDirection: 'row-reverse',
-        border: '1px solid #0f0'
-      } },
+    Elem.el('div',
+      {
+        style: {
+          width: '560px',
+          height: '51px',
+          display: 'flex',
+          flexDirection: 'row-reverse',
+          border: '1px solid #0f0'
+        }
+      },
       lastThirthy.map((value, idx) => {
         let height = ((value * 46) / max) + 2;
         let margin = 50 - height;
