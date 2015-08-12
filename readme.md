@@ -180,25 +180,23 @@ I just want functions everywhere man ...
 Pretty easy actually, Elem is made for that :-)
 
 ```javascript
-let interval = null;
-
-function DateField(ctx, props) {
+function DateField() {
   return Elem.el('div', [
-    Elem.el('h1', moment().format(props.format))
+    Elem.el('h1', moment().format(this.props.format))
   ]);
 }
 
-function TimeField(ctx, props) {
+function TimeField() {
   return Elem.el('div', [
-    Elem.el('h2', moment().format(props.format))
+    Elem.el('h2', moment().format(this.props.format))
   ]);
 }
 
-function GraphicalClock(ctx, props) {
+function GraphicalClock() {
   const hoursRotation = 'rotate(' + (30 * moment().hours()) + (moment().minutes() / 2) + ')';
   const minutesRotation = 'rotate(' + (6 * moment().minutes()) + (moment().seconds() / 10) + ')';
   const secondsRotation = 'rotate(' + (6 * moment().seconds()) + ')';
-  return Elem.el('div', { className: "clock", style: { width: `${props.width}px`, height: `${props.height}px` } }, [
+  return Elem.el('div', { className: "clock", style: { width: `${this.props.width}px`, height: `${this.props.height}px` } }, [
     Elem.svg('svg', { xmlns: Elem.svgNS, version: "1.1", viewBox: "0 0 100 100"}, [
       Elem.svg('g', { transform: "translate(50,50)" }, [
         Elem.svg('circle', { className: "clock-face", r: "48", fill: 'white', stroke: '#333' }),
@@ -213,9 +211,9 @@ function GraphicalClock(ctx, props) {
   ]);
 }
 
-function Clock(ctx) {
-  if (interval === null) {
-    interval = setInterval(ctx.refresh, 1000);
+function Clock() {
+  if (this.context.interval === null) {
+    this.context.interval = setInterval(this.redraw, 1000);
   }
   return Elem.el('div', { style: { display: 'flex' } }, [
     Elem.el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
@@ -239,15 +237,33 @@ refresh or redraw: 'rerender the current function at the same place'
 setState: 'mutate the state with diff and trigger a refresh'
 replaceState: 'mutate the whole state and trigger a refresh'
 getDOMNode: 'return root DOM node of the current render tree'
+context: 'a multipurpose object shared by all the components in the tree'
 ```
 
 What about state and functions
 ------------------
 
-TODO :
+Stateless functions as components is the key pattern of `elem-vdom`, but sometimes you need more.
+When you render a function using `elem-vdom` with `Elem.render(Function, container)`, the function owns a context including a state.
+This state will trigger a rendering of the root function each time it is changed with `setState` and `replaceState`. The state is common to the whole component tree. If you want a component (a function) to get its own state, you just have to assign a key to it.
 
-* Elem.el(AFunction, { initialState: { ... } });
-* Substate with Elem.el(AFunction, { key: substatekey });
+```javascript
+Elem.el(MyButton, { key: "button1" })
+```
+
+Then the `this.state` passed to the function `MyButton` will be its own. You just have to be careful to assign the same key to the same component each time you render the tree so `elem-vdom` can track down the right sub state and pass it to the component.
+
+You can also specify an initialState to the sub-state of a component
+
+```javascript
+Elem.el(MyButton, { key: "button1", initialState: { done: false } })
+```
+
+it work also with the main render Function
+
+```javascript
+Elem.render(MyButton, container, { initialState: { done: false } });
+```
 
 But, I like jsx syntax, how can I use it ?
 ------------------------------------------
@@ -291,7 +307,7 @@ That's pretty easy, you just have to use refs. Refs give you access to any node 
 
 function MyComponent() {
 
-  function clickMe() {
+  const clickMe => () {
     console.log(Elem.findDOMNode(this.refs.myInputText).value);
   }
 
