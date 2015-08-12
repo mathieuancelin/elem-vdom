@@ -349,6 +349,8 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     tree = reTree();
     // Perf.markStop('Elem.render.tree');
     Perf.markStop(funKey);
+  } else if (_.isArray(tree)) {
+    tree = el('span', tree);
   }
   let doc = document;
   if (node.ownerDocument) {

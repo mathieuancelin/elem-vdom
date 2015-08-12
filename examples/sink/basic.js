@@ -6,6 +6,14 @@ Showcase.registerTile('Hello World example', container => {
   Elem.render(MyAwesomeNode, container);
 });
 
+Showcase.registerTile('Fix #9', container => {
+  let MyAwesomeNodes = [
+    Elem.el('h1', 'Hello World!'),
+    Elem.el('h2', 'Goodbye World!')
+  ];
+  Elem.render(MyAwesomeNodes, container);
+});
+
 Showcase.registerTile('Style usage', container => {
   let node = Elem.el('div', {
     className: 'col-md-6'
