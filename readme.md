@@ -229,9 +229,10 @@ function Clock(ctx) {
 Elem.render(Clock, container);
 ```
 
-Context (`ctx`) and `props` of the components are also available on `this`. Props are different for each components instance (each function call), the context is the same for the whole tree. The context contains the following.
+The whole context of the components are also available on `this`. Props are different for each components instance (each function call), the context is the same for the whole tree. The context contains the following.
 
 ```javascript
+props: 'props of the current element',
 refs: 'refs of DOM nodes inside the current render tree'
 state: 'mutable state of the current render tree'
 refresh or redraw: 'rerender the current function at the same place'
@@ -447,6 +448,30 @@ var Style = Elem.stylesheet({
 ```
 
 And use parts for inline styles of your component. Every stylesheet and stylesheet element owns an `extend` function to customize your styles on demand. You can also specify an `extend` member in a stylesheet element for declarative customization.
+
+```javascript
+let Style = Elem.stylesheet({
+  withBackground: {
+    backgroundColor: 'yellow',
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    borderColor: 'black'
+  }
+});
+let CustomBackground = Style.withBackground.extend({
+  backgroundColor: 'red',
+  borderRadius: '5px',
+  borderColor: 'blue'
+});
+let CustomStyle = Elem.stylesheet({
+  customBackground: {
+    extend: Style.withBackground,
+    backgroundColor: 'red',
+    borderRadius: '5px',
+    borderColor: 'blue'
+  }
+});
+```
 
 You can also use it as an actual stylesheet for your pages, just call `mount()` on a stylesheet object to mount it in the DOM. You can call `unmount()` to remove it.
 
