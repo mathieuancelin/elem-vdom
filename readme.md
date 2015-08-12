@@ -44,7 +44,6 @@ API
 * `Elem.render(elem, container)` : render an element to a container in the DOM
 * `Elem.renderToString(elem)` : render an element as an HTML string
 * `Elem.renderToJson(elem)` : render an element as JSON object
-* `Elem.component(options)` : Return a factory function for simple component model. See the component section for options
 * `Elem.predicate(predicate, elem)` : return element if predicate is true or undefined if false. Predicate can be a function
 * `Elem.stylesheet(obj)` : create an extendable set of CSS inline styles
 * `Elem.Perf` : performance measurement tools
@@ -235,94 +234,19 @@ Context (`ctx`) and `props` of the components are also available on `this`. Prop
 ```javascript
 refs: 'refs of DOM nodes inside the current render tree'
 state: 'mutable state of the current render tree'
-refresh: 'rerender the current function at the same place'
+refresh or redraw: 'rerender the current function at the same place'
 setState: 'mutate the state with diff and trigger a refresh'
 replaceState: 'mutate the whole state and trigger a refresh'
 getDOMNode: 'return root DOM node of the current render tree'
 ```
 
-But can I also create reusable components ?
------------------------------------
+What about state and functions
+------------------
 
-Of course you can. You just need to to something like
+TODO :
 
-```javascript
-const Timer = Elem.component({
-  init() {
-    this.setState({time: 0});
-    setInterval(() => this.setState({ time: this.state.time + 1 }), 1000);
-  },
-  render() {
-    return Elem.el('span', `Elapsed : ${this.state.time}`));
-  }
-});
-Timer().renderTo('#timer'); // render inside #timer div
-```
-
-when creating a component, you can define
-
-```javascript
-{
-  init: 'init function that receive the state and props as parameters'
-  initialState: 'function that returns the initial state of the component. If undefined, an empty one will be created'
-  defaultProps: 'function that returns the initial properties for the component, can be passed at instanciation if factory mode'
-  render: 'function that will return an Elem node'
-}
-```
-
-You can access a lot of pretty interesting stuff inside `Elem.component` like :
-
-```javascript
-this.state: 'the state of the component'
-this.props: 'props of the component'
-this.setState(diff): 'mutate the state with a diff and trigger a refresh'
-this.replaceState(newState): 'change the state and trigger a refresh'
-this.getDOMNode(): 'return root DOM node of the component'
-```
-
-Don't worry about `this`, every function in `Elem.component` is bound to the component object.
-
-```javascript
-
-const Hello = Elem.component({
-  render() {
-    return Elem.el('div', [
-      Elem.el('h3', "Hello " + this.props.name + "!")
-    ]);
-  }
-});
-
-Hello({ name: "World" }).renderTo('#hello'); // pass name: '...' as this.props
-Hello({ name: "World" }).renderToString();
-
-```
-
-You can also use a component into a tree of elements by using a component factory like :
-
-```javascript
-
-const InnerComponent = Elem.component({
-  render() {
-    return Elem.el('div', [
-      Elem.el('h3', "Hello " + this.props.name + "!")
-    ]);
-  }
-});
-
-const CompositeComponent = Elem.component({
-  render() {
-    return Elem.el('div', [
-      Elem.el('h3', 'Inner component demo'),
-      Elem.el(InnerComponent, { name: 'World'})
-    ]);
-  }
-});
-
-CompositeComponent().renderTo(container);
-
-```
-
-The `component(props)` function returns a function (if you don't provide a container) that you can call to create component that will be rendered in the element tree. The main advantage of using `component` as factory is that when you change the state of the inner component, only that component will be re-rendered instead of the whole root component and its children.
+* Elem.el(AFunction, { initialState: { ... } });
+* Substate with Elem.el(AFunction, { key: substatekey });
 
 But, I like jsx syntax, how can I use it ?
 ------------------------------------------
@@ -330,6 +254,14 @@ But, I like jsx syntax, how can I use it ?
 If you use babel, add jsxPragma=Elem.jsx to options in your .babelrc or babel-loader.
 
 ```javascript
+
+function Bordered() {
+  return (
+    <div style={{ borderStyle: 'solid', borderColor: this.props.color || 'black', borderWidth: this.props.width || '1px'}}>
+      {this.props.children}
+    </div>
+  );
+}
 
 function Child() {
   return <small>Just a child</small>;
@@ -339,7 +271,9 @@ function Parent() {
   return (
     <div>
       <h1>Hello World!</h1>
-      <Child />
+      <Bordered color="blue">
+        <Child />
+      </Bordered>
     </div>
   );
 }
@@ -381,31 +315,23 @@ First you can use `Elem.renderToString` on any `Elem.el` node you want.
 But you can also do the same on components, let's write a funny clock component;
 
 ```javascript
-export default Elem.component({
-  init() {
-    this.update();
-    setInterval(update, 1000);
-  },
-  update() {
-    this.setState({
-      seconds: (moment().seconds() % 60) * 6,
-      minutes: (moment().minutes() % 60) * 6,
-      hours: (moment().hours() % 12) * 30,
-    });
-  },
-  render() {
-    return Elem.el('div', { className: 'circle'}, [
-      Elem.el('div', { className: 'hour',
-          style: { transform: `rotate(${this.state.hours}deg)` }}, ''),
-      Elem.el('div', { className: 'minute',
-          style: { transform: `rotate(${this.state.minutes}deg)` }}, ''),
-      Elem.el('div', { className: 'second',
-          style: { transform: `rotate(${this.state.seconds}deg)` }}, ''),
-      Elem.el('span', { className: 'centered' },
-          `${moment().hours()} h ${moment().minutes()} m ${moment().seconds()} s`)
-    ]);
-  }
-});
+export default function Clock() {
+
+  const seconds = (moment().seconds() % 60) * 6;
+  const minutes = (moment().minutes() % 60) * 6;
+  const hours = (moment().hours() % 12) * 30;
+
+  return Elem.el('div', { className: 'circle'}, [
+    Elem.el('div', { className: 'hour',
+        style: { transform: `rotate(${this.state.hours}deg)` }}, ''),
+    Elem.el('div', { className: 'minute',
+        style: { transform: `rotate(${this.state.minutes}deg)` }}, ''),
+    Elem.el('div', { className: 'second',
+        style: { transform: `rotate(${this.state.seconds}deg)` }}, ''),
+    Elem.el('span', { className: 'centered' },
+        `${moment().hours()} h ${moment().minutes()} m ${moment().seconds()} s`)
+  ]);
+}
 ```
 
 Now we can instanciate it on the server side, and render it as an HTML string :
@@ -416,8 +342,7 @@ const app = express();
 const Clock = require('./clock');
 
 app.get('/clock.html', (req, res) => {
-  const clock = Clock(); // instanciate a component
-  res.send(clock.renderToString());
+  res.send(Elem.renderToString(Clock));
 });
 
 const server = app.listen(3000, () => {

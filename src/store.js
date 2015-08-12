@@ -10,7 +10,7 @@ export function createStore(reducer = {}, initialState = {}) {
       if (!_.isFunction(f)) {
         throw new Error('Store should be a function ...');
       }
-      let __name = f.name || `substate-${nameCounter++}`;
+      let __name = f.name || key || `substate-${nameCounter++}`;
       reducers.push({
         getNewState: f,
         name: __name
@@ -80,11 +80,11 @@ export function bindActionsToDispatch(actions, dispatch) {
 // export default const myStore = Store.handleActions({ ... }, { ... })
 export function handleActions(actions, initialState = {}) {
   return (state, action) => {
-    let actualAction = state[action];
+    let actualAction = actions[action.type];
     if (actualAction) {
       return actualAction(state, action);
     } else {
-      return initialState;
+      return state || initialState;
     }
   };
 }

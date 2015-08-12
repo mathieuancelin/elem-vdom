@@ -1,5 +1,5 @@
 import * as Utils from './utils';
-import * as Perf from './perfs';
+import * as Perf from './devtools/perfs';
 import * as Store from './store';
 import * as Devtools from './devtools';
 

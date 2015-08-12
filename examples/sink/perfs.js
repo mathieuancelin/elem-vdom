@@ -1,11 +1,12 @@
 const Showcase = require('./showcase');
 const Elem = require('../../src/main');
+const Component = require('../../src/component');
 
 let run = true;
 
 Showcase.registerTile('Performance example', container => {
   run = true;
-  let DBMon = Elem.component({
+  let DBMon = Component({
     init() {
       this.loadSamples();
     },
@@ -68,7 +69,7 @@ Showcase.registerTile('Performance example', container => {
 
 Showcase.registerTile('Performance JSX example', container => {
   run = true;
-  let DBMon = Elem.component({
+  let DBMon = Component({
     init() {
       this.loadSamples();
     },

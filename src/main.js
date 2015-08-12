@@ -1,6 +1,6 @@
 import * as Utils from './utils';
 import * as Docs from './docs';
-import * as Perf from './perfs';
+import * as Perf from './devtools/perfs';
 import * as WebComponents from './webcomponents';
 import _ from './lodash';
 
@@ -14,16 +14,9 @@ export const svgNS = 'http://www.w3.org/2000/svg';
 export const registerWebComponent = WebComponents.registerWebComponent;
 export const stylesheet = Utils.stylesheet;
 export const predicate = Utils.predicate;
-export const keyMirror = Utils.keyMirror;
 
 // export all sub namespace
 export * from './exporter';
-
-/** Remove these, api does too much already ??? **/
-export const uuid = Utils.uuid;
-export const invariant = Utils.invariant;
-export const invariantLog = Utils.invariantLog;
-/** **/
 
 const treeCache = {};
 let globalRefs = {};
@@ -454,103 +447,6 @@ export function renderToString(elementOrFunction, props = {}) {
   let str = rootNode.render();
   Perf.markStop('Elem.renderToString');
   return str;
-}
-
-/**
- * @deprecated ???
- */
-export function component(comp) {
-  const blueprint = {
-    state: {},
-    props: {},
-    setState() {},
-    replaceState() {},
-    init() {},
-    render() {},
-    initialState() { return {}; },
-    defaultProps() { return {}; }
-  };
-  let factory = (props) => {
-    let instance = Object.assign({...blueprint}, comp);
-    return {
-      isElemComponent: true,
-      renderToString() {
-        instance.props = instance.defaultProps.bind(instance)() || props;
-        instance.state = instance.initialState();
-        instance.setState = instance.state.set;
-        instance.replaceState = instance.state.replace;
-        instance.setState = (diffState, cb) => {
-          for (let key in diffState) {
-            instance.state[key] = diffState[key];
-          }
-          if (cb) cb();
-        };
-        instance.replaceState = (newState, cb) => {
-          instance.state = newState;
-          if (cb) cb();
-        };
-        instance.getDOMNode = () => null;
-        Object.keys(instance).forEach(k => {
-          if (k !== 'state' && _.isFunction(instance[k])) {
-            instance[k] = instance[k].bind(instance);
-          }
-        });
-        instance.init();
-        let tree = instance.render();
-        return renderToString(tree);
-      },
-      renderTo(node) {
-        Perf.markStart('Elem.component.init');
-        instance.props = instance.defaultProps.bind(instance)() || props;
-        instance.state = instance.initialState();
-        instance.setState = (diffState, cb) => {
-          for (let key in diffState) {
-            instance.state[key] = diffState[key];
-          }
-          instance.refresh();
-          if (cb) cb();
-        };
-        instance.replaceState = (newState, cb) => {
-          instance.state = newState;
-          instance.refresh();
-          if (cb) cb();
-        };
-        instance.getDOMNode = () => {
-          let doc = document;
-          if (node.ownerDocument) {
-            doc = node.ownerDocument;
-          }
-          if (_.isString(node)) {
-            return doc.querySelector(node);
-          }
-          return node;
-        };
-        Object.keys(instance).forEach(k => {
-          if (k !== 'state' && _.isFunction(instance[k])) {
-            instance[k] = instance[k].bind(instance);
-          }
-        });
-        instance.refresh = () => {
-          Perf.markStart('Elem.component.tree');
-          let tree = instance.render();
-          Perf.markStop('Elem.component.tree');
-          if (!_.isUndefined(node)) {
-            Perf.markStart('Elem.component.render');
-            let r = render(tree, node);
-            Perf.markStop('Elem.component.render');
-            return r;
-          } else {
-            return tree;
-          }
-        };
-        instance.init();
-        Perf.markStop('Elem.component.init');
-        return instance.refresh();
-      }
-    };
-  };
-  factory.isElemComponentFactory = true;
-  return factory;
 }
 
 let svgElements = ['altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',

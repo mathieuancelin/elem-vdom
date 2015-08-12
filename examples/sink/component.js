@@ -1,5 +1,6 @@
 const Showcase = require('./showcase');
 const Elem = require('../../src/main');
+const Component = require('../../src/component');
 const moment = require('moment');
 
 let interval;
@@ -80,7 +81,7 @@ let Style = Elem.stylesheet({
 });
 
 Showcase.registerTile('Component usage', container => {
-  let Clock = Elem.component({
+  let Clock = Component({
     init() {
       interval = setInterval(this.update, 1000);
     },
@@ -116,7 +117,7 @@ Showcase.registerTile('Component usage', container => {
 });
 
 Showcase.registerTile('Stateful component usage', container => {
-  let Counter = Elem.component({
+  let Counter = Component({
     init() {
       interval = setInterval(this.update, 1000);
     },
