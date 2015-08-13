@@ -56,7 +56,7 @@
     "usenode": "brew unlink iojs && brew link node",
     "gen-all-es5": "npm run es5 && babel tests --out-dir tests-es5",
     "premocha-tests": "npm run useiojs",
-    "mocha-tests": "mocha tests-es5/**/*.spec.js",
+    "mocha-tests": "mocha tests-es5/index.js",
     "postmocha-tests": "npm run usenode",
     "test": "npm run gen-all-es5 && npm run mocha-tests"
   }

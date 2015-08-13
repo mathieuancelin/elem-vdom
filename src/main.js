@@ -184,7 +184,7 @@ export function el(tagName, ...args) {
   let name = _.isString(tagName) ? (_.escape(tagName) || 'unknown') : tagName;
   // 1 args
   if (argsLength === 0) {
-    // el('div', undefined, {}, []);
+    // el('div');
     return internalEl(name, {}, [], undefined, undefined);
   }
   // 2 args

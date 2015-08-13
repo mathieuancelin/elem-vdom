@@ -1,7 +1,3 @@
-const env = require('./utils/env');
-
-env.setupEnv();
-
 const chai = require('chai');
 const Elem = require('../lib/main');
 const DOM = require('./utils/dom');
