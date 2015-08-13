@@ -2,5 +2,6 @@
 *.log
 src
 coverage
-test
+tests
+tests-es5
 examples
