@@ -4,12 +4,12 @@ import * as Utils from './utils';
 let registrationFunction;
 
 try {
-  registrationFunction = (document.registerElement || document.register).bind(document);
+  registrationFunction = (Utils.getGlobalObject().document.registerElement || Utils.getGlobalObject().document.register).bind(Utils.getGlobalObject().document);
 } catch (e) {}
 
 function registerWebComponent(tag, elemTree) {
   console.log(`registering WebComponent ${tag}`);
-  let thatDoc = document;
+  let thatDoc = Utils.getGlobalObject().document;
   let ElementProto = Object.create(HTMLElement.prototype);
 
   function renderElemTree(attrs, node) {

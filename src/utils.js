@@ -1,15 +1,15 @@
 import _ from './lodash';
 
-function getGlobalObject() {
-  // Workers don’t have `window`, only `self`
-  if (typeof self !== 'undefined') {
-    return self;
-  }
+export function getGlobalObject() {
   if (typeof global !== 'undefined') {
     return global;
   }
   if (typeof window !== 'undefined') {
     return window;
+  }
+  // Workers don’t have `window`, only `self`
+  if (typeof self !== 'undefined') {
+    return self;
   }
   // Not all environments allow eval and Function
   // Use only as a last resort:
@@ -153,18 +153,18 @@ export function stylesheet(obj, type, media) {
       }).join('\n');
   };
   result.mount = (asClasses) => {
-    if (!mounted && typeof document !== 'undefined') {
-      stylesheetElement = document.createElement('style');
+    if (!mounted && typeof Utils.getGlobalObject().document !== 'undefined') {
+      stylesheetElement = Utils.getGlobalObject().document.createElement('style');
       if (type) stylesheetElement.setAttribute('type', type);
       if (media) stylesheetElement.setAttribute('media', media);
       stylesheetElement.innerHTML = result.toString(asClasses);
-      document.head.appendChild(stylesheetElement);
+      Utils.getGlobalObject().document.head.appendChild(stylesheetElement);
       mounted = true;
     }
     return result;
   };
   result.unmount = () => {
-    if (mounted && typeof document !== 'undefined') {
+    if (mounted && typeof Utils.getGlobalObject().document !== 'undefined') {
       stylesheetElement.parentNode.removeChild(stylesheetElement);
       mounted = false;
     }

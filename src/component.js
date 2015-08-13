@@ -1,4 +1,5 @@
 import * as Elem from './main';
+import * as Utils from './utils';
 import * as Perf from './devtools/perfs';
 import _ from './lodash';
 
@@ -148,7 +149,7 @@ export default function component(comp) {
           if (cb) cb();
         };
         instance.getDOMNode = () => {
-          let doc = document;
+          let doc = Utils.getGlobalObject().document;
           if (node.ownerDocument) {
             doc = node.ownerDocument;
           }

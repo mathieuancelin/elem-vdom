@@ -270,7 +270,7 @@ function createComponentContext(refresh, renderNode, refs = {}) {
     refresh,
     redraw: refresh,
     getDOMNode() {
-      let doc = document;
+      let doc = Utils.getGlobalObject().document;
       if (renderNode.ownerDocument) {
         doc = renderNode.ownerDocument;
       }
@@ -358,7 +358,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   } else if (_.isArray(tree)) {
     tree = el('span', tree);
   }
-  let doc = document;
+  let doc = Utils.getGlobalObject().document;
   if (node.ownerDocument) {
     doc = node.ownerDocument;
   }
@@ -408,7 +408,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
 
 export function unmount(theNode) {
   let node = theNode;
-  let doc = document;
+  let doc = Utils.getGlobalObject().document;
   if (node.ownerDocument) {
     doc = node.ownerDocument;
   }
@@ -423,7 +423,7 @@ export function unmount(theNode) {
 }
 
 export function findDOMNode(ref) {
-  return document.querySelector(`[data-elemref="${ref}"]`);
+  return Utils.getGlobalObject().document.querySelector(`[data-elemref="${ref}"]`);
 }
 
 export function renderToJson(elementOrFunction, props = {}) {

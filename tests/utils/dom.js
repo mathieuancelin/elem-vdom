@@ -1,17 +1,37 @@
-let jsdom = require('jsdom');
+const Elem = require('../../lib/main');
+const Keysim = require('keysim');
 
-export default function setupEnv() {
-  let doc = jsdom.jsdom('<!doctype html><html><body><div id="app"></div></body></html>');
-  let win = doc.defaultView;
-  function propagateToGlobal(window) {
-    for (let key in window) {
-      if (!window.hasOwnProperty(key)) continue;
-      if (key in global) continue;
-      global[key] = window[key];
+export function html(of) {
+  return document.querySelector(of).innerHTML;
+}
+
+export function node(of) {
+  return document.querySelector(of);
+}
+
+export function nodes(of) {
+  return document.querySelectorAll(of);
+}
+
+export function click(on) {
+  document.querySelector(on).click();
+}
+
+export function renderComponent(c) {
+  return Elem.render(c, '#app');
+}
+
+export function cleanup() {
+  return Elem.unmount('#app');
+}
+
+export function type(el, str) {
+  let element = document.querySelector(el);
+  let keyboard = Keysim.Keyboard.US_ENGLISH;
+  keyboard.dispatchEventsForInput(str, element);
+  return {
+    then(cb) {
+      setTimeout(cb, 0);
     }
-  }
-  global.document = doc;
-  global.window = win;
-  propagateToGlobal(win);
-  console.log('\nENV setup is done !!!');
+  };
 }
