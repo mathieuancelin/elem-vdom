@@ -50,6 +50,8 @@
     "build": "npm run lint && npm run clean && npm run es5 && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d --progress",
     "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline --progress",
-    "test": "npm run es5 && rm -rf ./tests-es5 && babel tests --out-dir tests-es5 && mocha tests-es5/**/*.spec.js"
+    "useiojs": "brew unlink node && brew link --force iojs",
+    "usenode": "brew unlink iojs && brew link node",
+    "test": "npm run es5 && rm -rf ./tests-es5 && babel tests --out-dir tests-es5 && npm run useiojs && mocha tests-es5/**/*.spec.js && npm run usenode"
   }
 }
