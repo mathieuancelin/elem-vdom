@@ -1,3 +1,5 @@
+/* eslint no-unused-vars:0 */
+
 const env = require('./utils/env');
 
 env.setupEnv();
