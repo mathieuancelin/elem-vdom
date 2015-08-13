@@ -6,4 +6,4 @@ before_install:
 before_script:
   - npm install
 script:
-  - npm run safe-build
+  - npm run travis-build
