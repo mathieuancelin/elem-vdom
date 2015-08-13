@@ -15,7 +15,7 @@ describe('A simple component', () => {
       return Elem.el('h1', 'Hello World!');
     }
 
-    let component = DOM.renderComponent(SimpleComponent);
+    DOM.renderComponent(SimpleComponent);
     let node = DOM.node('h1');
     expect(node).to.exist;
     expect(node.innerHTML).to.be.a('string');
@@ -46,7 +46,7 @@ describe('A simple component', () => {
         return Elem.el('div', [
           Elem.el('button', { type: 'button', onClick: cb }, 'Click me !!!')
         ]);
-      }
+      };
     }
 
     let clicked = false;
@@ -68,7 +68,7 @@ describe('A simple component', () => {
         return Elem.el('div', [
           Elem.el('input', { type: 'text', onkeypress: cb })
         ]);
-      }
+      };
     }
     DOM.cleanup();
     DOM.renderComponent(TypableComponent((e) => {

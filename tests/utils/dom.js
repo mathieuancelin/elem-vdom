@@ -1,5 +1,10 @@
 const Elem = require('../../lib/main');
 const Keysim = require('keysim');
+const app = '#app';
+
+export function appHtml() {
+  return document.querySelector(app).innerHTML;
+}
 
 export function html(of) {
   return document.querySelector(of).innerHTML;
@@ -18,11 +23,11 @@ export function click(on) {
 }
 
 export function renderComponent(c) {
-  return Elem.render(c, '#app');
+  return Elem.render(c, app);
 }
 
 export function cleanup() {
-  return Elem.unmount('#app');
+  return Elem.unmount(app);
 }
 
 export function type(el, str) {
