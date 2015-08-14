@@ -9,3 +9,10 @@ const tests = [
   require('./el.spec.js'),
   require('./jsx.spec.js')
 ];
+
+// TODO : stylesheet
+// TODO : state
+// TODO : substate
+// TODO : refs
+// TODO : SVG
+// TODO : universal
