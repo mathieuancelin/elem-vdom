@@ -9,6 +9,7 @@ const tests = [
   require('./elem.spec.js'),
   require('./el.spec.js'),
   require('./jsx.spec.js'),
+  require('./state.spec.js'),
   require('./stylesheet.spec.js'),
   require('./universal.spec.js')
 ];
