@@ -13,7 +13,8 @@ const tests = [
   require('./universal.spec.js')
 ];
 
-// FIXME : stylesheet
+// FIXME : stylesheet, extend on extended clazz
+// FIXME : refs, n + 1 state ...
+
 // TODO : state
 // TODO : substate
-// FIXME : refs
