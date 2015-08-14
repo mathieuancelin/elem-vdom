@@ -108,7 +108,7 @@ describe('Elem.el', () => {
   });
   it('can handle 3 args with props and html', done => {
     DOM.cleanup();
-    DOM.renderComponent(Elem.el('span', { className: 'text' }, { __asHtml: '<span>Lorem ipsum</span>' }));
+    DOM.renderComponent(Elem.el('span', { className: 'text' }, {__asHtml: '<span>Lorem ipsum</span>' }));
     let node = DOM.node('span');
     expect(node).to.exist;
     expect(node.innerHTML).to.be.equal('<span>Lorem ipsum</span>');

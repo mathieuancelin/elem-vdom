@@ -46,14 +46,14 @@ describe('elem-vdom', () => {
     expect(node).to.exist;
     expect(node.childNodes.length).to.be.equal(5);
     expect(lis.length).to.be.equal(5);
-    expect(node.innerHTML).to.be.equal('<li id="zero">0</li><li id="1">1</li><li id="2">2</li><li id="3">3</li><li id="4">4</li>')
+    expect(node.innerHTML).to.be.equal('<li id="zero">0</li><li id="1">1</li><li id="2">2</li><li id="3">3</li><li id="4">4</li>');
     done();
   });
 
   it('can be used with even more complex JSX', done => {
 
     function Wrapper() {
-      return <div class="wrapper" id={this.props.id}>{this.props.children}</div>;
+      return <div className="wrapper" id={this.props.id}>{this.props.children}</div>;
     }
 
     function Element() {
