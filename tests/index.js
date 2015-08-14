@@ -15,6 +15,3 @@ const tests = [
 ];
 
 // FIXME : stylesheet, extend on extended clazz
-
-// TODO : state
-// TODO : substate
