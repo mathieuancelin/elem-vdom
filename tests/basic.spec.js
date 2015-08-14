@@ -3,7 +3,7 @@ const Elem = require('../lib/main');
 const DOM = require('./utils/dom');
 const expect = chai.expect;
 
-describe('A simple component', () => {
+describe('elem-vdom simple component', () => {
 
   it('can be rendered in the DOM', done => {
 
