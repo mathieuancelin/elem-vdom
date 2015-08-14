@@ -34,7 +34,6 @@
     "eslint-config-airbnb": "0.0.7",
     "eslint-loader": "1.0.0",
     "eslint-plugin-react": "^3.2.0",
-    "isparta": "^3.0.3",
     "jsdom": "^6.1.0",
     "json-beautify": "^1.0.1",
     "keysim": "^1.1.2",
@@ -55,7 +54,7 @@
     "build": "npm run lint && npm run clean && npm run es5 && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d --progress",
     "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline --progress",
-    
+
     "mocha-tests": "mocha --compilers js:babel/register tests/index.js",
     "test": "npm run mocha-tests",
 
