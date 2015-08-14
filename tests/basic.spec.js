@@ -61,12 +61,12 @@ describe('A simple component', () => {
   it('can use refs', done => {
 
     function ClickableComponent(cb) {
-      return () => {
+      return (ctx) => {
         return Elem.el('div', [
           Elem.el('span', { ref: 'reftest' }, 'Hello World'),
           Elem.el('button', { type: 'button', onClick: () => {
-            cb(this.refs.reftest || '');
-            this.refresh();
+            ctx.refresh();
+            cb(ctx.refs.reftest);
           } }, 'Click me !!!')
         ]);
       };
@@ -74,8 +74,7 @@ describe('A simple component', () => {
 
     let inner = '';
     DOM.cleanup();
-    DOM.renderComponent(ClickableComponent((ref) => {
-      console.log('ref', ref);
+    DOM.renderComponent(ClickableComponent(ref => {
       inner = Elem.findDOMNode(ref).innerHTML;
     }));
     let button = DOM.node('button');

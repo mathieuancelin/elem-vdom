@@ -9,10 +9,11 @@ const tests = [
   require('./elem.spec.js'),
   require('./el.spec.js'),
   require('./jsx.spec.js'),
+  require('./stylesheet.spec.js'),
   require('./universal.spec.js')
 ];
 
-// TODO : stylesheet
+// FIXME : stylesheet
 // TODO : state
 // TODO : substate
-// TODO : refs
+// FIXME : refs

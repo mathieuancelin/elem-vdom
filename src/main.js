@@ -339,7 +339,12 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       try {
         let refs = {...globalRefs};
         globalRefs = {};
-        functionAsComponentContext.context.refs = refs;
+        for (let key in functionAsComponentContext.context.refs) {
+          delete functionAsComponentContext.context.refs[key];
+        }
+        for (let key in refs) {
+          functionAsComponentContext.context.refs[key] = refs[key];
+        }
         currentComponentContext = functionAsComponentContext.context;
         let thisContext = {...functionAsComponentContext.context, props: functionAsComponentContext.props};
         return elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
@@ -362,8 +367,8 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       render(currentTree, node);
       Perf.markStop(funKey);
     };
-    let refs = {...globalRefs};
-    functionAsComponentContext.context = createComponentContext(refresh, node, refs);
+    // let refs = {...globalRefs};
+    functionAsComponentContext.context = createComponentContext(refresh, node, {});
     if (props.initialState) {
       functionAsComponentContext.context.state = props.initialState;
     } else {
