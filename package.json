@@ -3,6 +3,7 @@
   "description": "Simple tool to build UIs",
   "version": "0.0.14",
   "main": "lib/main.js",
+  "jsnext:main": "src/main.js",
   "homepage": "https://github.com/mathieuancelin/elem-vdom",
   "keywords": [
     "Virtual DOM",
@@ -33,6 +34,7 @@
     "eslint-config-airbnb": "0.0.7",
     "eslint-loader": "1.0.0",
     "eslint-plugin-react": "^3.2.0",
+    "isparta": "^3.0.3",
     "jsdom": "^6.1.0",
     "json-beautify": "^1.0.1",
     "keysim": "^1.1.2",
@@ -48,20 +50,18 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js src examples/sink tests",
     "dist": "NODE_ENV=production webpack --colors -p",
     "es5": "babel src --out-dir lib",
-    "travis-build": "npm run lint && npm run clean && npm run gen-all-es5 && mocha tests-es5/index.js && npm run dist",
-    "safe-build": "npm run lint && npm run clean && npm run gen-all-es5 && npm run mocha-tests && npm run dist",
+    "gen-all-es5": "npm run es5 && babel tests --out-dir tests-es5",
+    "travis-build": "npm run lint && npm run clean && npm run es5 && npm run mocha-tests && npm run dist",
     "build": "npm run lint && npm run clean && npm run es5 && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d --progress",
     "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline --progress",
-    "gen-all-es5": "npm run es5 && babel tests --out-dir tests-es5",
-    "mocha-tests": "mocha tests-es5/index.js",
-    "test": "npm run gen-all-es5 && npm run mocha-tests",
+    
+    "mocha-tests": "mocha --compilers js:babel/register tests/index.js",
+    "test": "npm run mocha-tests",
 
     "useiojs": "brew unlink node && brew link --force iojs",
     "usenode": "brew unlink iojs && brew link node",
-    "prembp-mocha-tests": "npm run useiojs",
-    "mbp-mocha-tests": "npm run mocha-tests",
-    "postmbp-mocha-tests": "npm run usenode",
-    "mbp-tests": "npm run gen-all-es5 && npm run mbp-mocha-tests"
+    "mbp-tests": "npm run useiojs && npm run mocha-tests && npm run usenode",
+    "safe-build": "npm run lint && npm run clean && npm run es5 && npm run useiojs && npm run mocha-tests && npm run usenode && npm run dist"
   }
 }

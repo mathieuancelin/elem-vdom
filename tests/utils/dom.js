@@ -1,4 +1,4 @@
-const Elem = require('../../lib/main');
+const Elem = require('../../src/main');
 const Keysim = require('keysim');
 const app = '#app';
 

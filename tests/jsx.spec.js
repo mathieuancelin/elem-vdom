@@ -1,6 +1,6 @@
 /* eslint no-unused-vars:0 */
 const chai = require('chai');
-const Elem = require('../lib/main');
+const Elem = require('../src/main');
 const DOM = require('./utils/dom');
 const expect = chai.expect;
 

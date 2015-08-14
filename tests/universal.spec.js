@@ -1,5 +1,5 @@
 const chai = require('chai');
-const Elem = require('../lib/main');
+const Elem = require('../src/main');
 const expect = chai.expect;
 
 describe('elem-vdom universal app support', () => {
