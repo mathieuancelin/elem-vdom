@@ -106,6 +106,24 @@ describe('Elem.el', () => {
     expect(node.className).to.be.equal('text');
     done();
   });
+  it('can handle 3 args with props and html', done => {
+    DOM.cleanup();
+    DOM.renderComponent(Elem.el('span', { className: 'text' }, { __asHtml: '<span>Lorem ipsum</span>' }));
+    let node = DOM.node('span');
+    expect(node).to.exist;
+    expect(node.innerHTML).to.be.equal('<span>Lorem ipsum</span>');
+    expect(node.className).to.be.equal('text');
+    done();
+  });
+  it('can handle 3 args with props and element', done => {
+    DOM.cleanup();
+    DOM.renderComponent(Elem.el('span', { className: 'text' }, Elem.el('span', 'Lorem ipsum')));
+    let node = DOM.node('span');
+    expect(node).to.exist;
+    expect(node.innerHTML).to.be.equal('<span>Lorem ipsum</span>');
+    expect(node.className).to.be.equal('text');
+    done();
+  });
   it('can handle 3 args with props and array of elements', done => {
     DOM.cleanup();
     DOM.renderComponent(Elem.el('p', { className: 'text' }, [
@@ -143,6 +161,24 @@ describe('Elem.el', () => {
     expect(node).to.exist;
     expect(node.className).to.be.equal('text');
     expect(node.innerHTML).to.be.equal('Lorem ipsum');
+    done();
+  });
+  it('can handle 4 args with namespace, props and element', done => {
+    DOM.cleanup();
+    DOM.renderComponent(Elem.el('svg', Elem.svgNS, { className: 'text' }, Elem.el('text', 'Lorem ipsum')));
+    let node = DOM.node('svg');
+    expect(node).to.exist;
+    expect(node.className).to.be.equal('text');
+    expect(node.innerHTML).to.be.equal('<text>Lorem ipsum</text>');
+    done();
+  });
+  it('can handle 4 args with namespace, props and html', done => {
+    DOM.cleanup();
+    DOM.renderComponent(Elem.el('svg', Elem.svgNS, { className: 'text' }, { __asHtml: '<text>Lorem ipsum</text>' }));
+    let node = DOM.node('svg');
+    expect(node).to.exist;
+    expect(node.className).to.be.equal('text');
+    expect(node.innerHTML).to.be.equal('<text>Lorem ipsum</text>');
     done();
   });
   it('can handle 4 args with namespace, props and array of elements', done => {

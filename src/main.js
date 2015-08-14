@@ -182,65 +182,83 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
 export function el(tagName, ...args) {
   let argsLength = args.length;
   let name = _.isString(tagName) ? (_.escape(tagName) || 'unknown') : tagName;
-  // 1 args
-  if (argsLength === 0) {
+  if (arguments.length === 2) {
+    // 2 args
+    if (argsLength === 1 && _.isString(args[0])) {
+      // el('div', 'Lorem Ipsum')
+      return internalEl(name, {}, [args[0]], undefined, undefined);
+    }
+    if (argsLength === 1 && (args[0] instanceof VNode)) {
+      // el('div', Elem.el(...))
+      return internalEl(name, {}, [args[0]], undefined, undefined);
+    }
+    if (argsLength === 1 && _.isArray(args[0])) {
+      // el('div', [...])
+      return internalEl(name, {}, args[0], undefined, undefined);
+    }
+    if (argsLength === 1 && _.isFunction(args[0])) {
+      // el('div', function)
+      return el(name, args[0]()); // forced to recurse
+    }
+    if (argsLength === 1 && _.isObject(args[0]) && args[0].__asHtml) {
+      // el('div', { __asHtml: '...' })
+      return internalEl(name, {}, [args[0]], undefined, undefined);
+    }
+    if (argsLength === 1 && _.isObject(args[0])) {
+      // el('div', {...})
+      return internalEl(name, args[0], [], args[0].key, undefined);
+    }
+  } else if (arguments.length === 3) {
+    // 3 args
+    if (argsLength === 2 && _.isObject(args[0]) && !_.isArray(args[1])) {
+      // el('div', {...}, 'lorem ipsum')
+      return internalEl(name, args[0], [args[1]], args[0].key, undefined);
+    }
+    if (argsLength === 2 && _.isObject(args[0]) && args[1] instanceof VNode) {
+      // el('div', {...}, Elem.el(...))
+      return internalEl(name, args[0], [args[1]], args[0].key, undefined);
+    }
+    if (argsLength === 2 && _.isObject(args[0]) && _.isArray(args[1])) {
+      // el('div', {...}, [...])
+      return internalEl(name, args[0], args[1], args[0].key, undefined);
+    }
+    if (argsLength === 2 && _.isObject(args[0]) && args[1].__asHtml) {
+      // el('div', {...}, { __asHtml: '...' })
+      return internalEl(name, args[0], args[1], args[0].key, undefined);
+    }
+    if (argsLength === 2 && _.isFunction(args[1])) {
+      // el('div', {...}, function)
+      return el(name, args[0], args[1]()); // forced to recurse
+    }
+    if (argsLength === 2 && _.isString(args[0]) && _.isObject(args[1])) {
+      // el('div', ns, {...})
+      return internalEl(name, args[1], [], args[1].key, args[0]);
+    }
+    if (argsLength === 2 && _.isString(args[0]) && !_.isObject(args[1]) && !_.isArray(args[1])) {
+      // el('div', ns, 'Lorem ipsum}')
+      return internalEl(name, {}, [args[1]], undefined, args[0]);
+    }
+  } else if (arguments.length === 4) {
+    // 4 args
+    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && !_.isArray(args[2])) {
+      // el('div', ns, {...}, 'lorem ipsum')
+      return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
+    }
+    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && args[2] instanceof VNode) {
+      // el('div', ns, {...}, Elem.el(...))
+      return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
+    }
+    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && args[2].__asHtml) {
+      // el('div', ns, {...}, { __asHtml: '...' })
+      return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
+    }
+    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && _.isArray(args[2])) {
+      // el('div', ns, {...}, [...])
+      return internalEl(name, args[1], args[2], args[1].key, args[0]);
+    }
+  } else if (argsLength === 0) { // 1 args
     // el('div');
     return internalEl(name, {}, [], undefined, undefined);
-  }
-  // 2 args
-  if (argsLength === 1 && _.isFunction(args[0])) {
-    // el('div', function)
-    return el(name, args[0]()); // forced to recurse
-  }
-  if (argsLength === 1 && (args[0] instanceof VNode)) {
-    // el('div', Elem.el(...))
-    return internalEl(name, {}, [args[0]], undefined, undefined); // forced to recurse
-  }
-  if (argsLength === 1 && _.isArray(args[0])) {
-    // el('div', [...])
-    return internalEl(name, {}, args[0], undefined, undefined);
-  }
-  if (argsLength === 1 && _.isObject(args[0]) && args[0].__asHtml) {
-    // el('div', { __asHtml: '...' })
-    return internalEl(name, {}, [args[0]], undefined, undefined);
-  }
-  if (argsLength === 1 && _.isObject(args[0])) {
-    // el('div', {...})
-    return internalEl(name, args[0], [], args[0].key, undefined);
-  }
-  if (argsLength === 1 && _.isString(args[0])) {
-    // el('div', 'Lorem Ipsum')
-    return internalEl(name, {}, [args[0]], undefined, undefined);
-  }
-  // 3 args
-  if (argsLength === 2 && _.isFunction(args[1])) {
-    // el('div', {...}, function)
-    return el(name, args[0], args[1]()); // forced to recurse
-  }
-  if (argsLength === 2 && _.isObject(args[0]) && !_.isArray(args[1])) {
-    // el('div', {...}, 'lorem ipsum')
-    return internalEl(name, args[0], [args[1]], args[0].key, undefined);
-  }
-  if (argsLength === 2 && _.isObject(args[0]) && _.isArray(args[1])) {
-    // el('div', {...}, [...])
-    return internalEl(name, args[0], args[1], args[0].key, undefined);
-  }
-  if (argsLength === 2 && _.isString(args[0]) && _.isObject(args[1])) {
-    // el('div', ns, {...})
-    return internalEl(name, args[1], [], args[1].key, args[0]);
-  }
-  if (argsLength === 2 && _.isString(args[0]) && !_.isObject(args[1]) && !_.isArray(args[1])) {
-    // el('div', ns, 'Lorem ipsum}')
-    return internalEl(name, {}, [args[1]], undefined, args[0]);
-  }
-  // 4 args
-  if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && !_.isArray(args[2])) {
-    // el('div', ns, {...}, 'lorem ipsum')
-    return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
-  }
-  if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && _.isArray(args[2])) {
-    // el('div', ns, {...}, [...])
-    return internalEl(name, args[1], args[2], args[1].key, args[0]);
   }
   console.warn('Unknown el expression ...', arguments);
   return internalEl(name, args[1], args[2], args[1].key, args[0]);

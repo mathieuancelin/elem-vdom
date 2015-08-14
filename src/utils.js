@@ -153,18 +153,18 @@ export function stylesheet(obj, type, media) {
       }).join('\n');
   };
   result.mount = (asClasses) => {
-    if (!mounted && typeof Utils.getGlobalObject().document !== 'undefined') {
-      stylesheetElement = Utils.getGlobalObject().document.createElement('style');
+    if (!mounted && typeof getGlobalObject().document !== 'undefined') {
+      stylesheetElement = getGlobalObject().document.createElement('style');
       if (type) stylesheetElement.setAttribute('type', type);
       if (media) stylesheetElement.setAttribute('media', media);
       stylesheetElement.innerHTML = result.toString(asClasses);
-      Utils.getGlobalObject().document.head.appendChild(stylesheetElement);
+      getGlobalObject().document.head.appendChild(stylesheetElement);
       mounted = true;
     }
     return result;
   };
   result.unmount = () => {
-    if (mounted && typeof Utils.getGlobalObject().document !== 'undefined') {
+    if (mounted && typeof getGlobalObject().document !== 'undefined') {
       stylesheetElement.parentNode.removeChild(stylesheetElement);
       mounted = false;
     }
