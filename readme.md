@@ -5,7 +5,6 @@ Simple and idiotic lib to build UI components. It's a component library promotin
 
 [![build status][1]][2]
 [![NPM version][3]][4]
-[![Coverage Status][5]][6]
 [![Dependency status][7]][8]
 [![Dev Dependency status][11]][12]
 [![Downloads][9]][10]
@@ -496,8 +495,6 @@ You can also use it as an actual stylesheet for your pages, just call `mount()` 
 [2]: https://api.travis-ci.org/mathieuancelin/elem-vdom
 [3]: https://badge.fury.io/js/elem-vdom.svg
 [4]: https://badge.fury.io/js/elem-vdom
-[5]: http://img.shields.io/coveralls/mathieuancelin/elem-vdom.svg
-[6]: https://coveralls.io/r/mathieuancelin/elem-vdom
 [7]: https://david-dm.org/mathieuancelin/elem-vdom.svg
 [8]: https://david-dm.org/mathieuancelin/elem-vdom
 [9]: https://img.shields.io/npm/dm/elem-vdom.svg
