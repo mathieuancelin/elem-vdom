@@ -337,6 +337,10 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     };
     let reTree = () => {
       try {
+        currentComponentContext = functionAsComponentContext.context;
+        let thisContext = {...functionAsComponentContext.context, props: functionAsComponentContext.props};
+        return elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
+      } finally {
         let refs = {...globalRefs};
         globalRefs = {};
         for (let key in functionAsComponentContext.context.refs) {
@@ -345,10 +349,6 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         for (let key in refs) {
           functionAsComponentContext.context.refs[key] = refs[key];
         }
-        currentComponentContext = functionAsComponentContext.context;
-        let thisContext = {...functionAsComponentContext.context, props: functionAsComponentContext.props};
-        return elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
-      } finally {
         currentComponentContext = undefined;
         if (functionAsComponentContext.context.__keys.length !== 0) {
           let diffs = functionAsComponentContext.context.__oldKeys.filter(value => !_.contains(functionAsComponentContext.context.__keys, value));
