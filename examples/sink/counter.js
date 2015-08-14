@@ -102,3 +102,31 @@ Showcase.registerTile('Redux like example simpler', container => {
 
   Elem.render(CounterWrapper, container);
 });
+
+Showcase.registerTile('Redux like example JSX', container => {
+  let store = Store.createStore({ counter: counter2 });
+
+  function CounterSelector(state) {
+    return {
+      counter: state.counter
+    };
+  }
+
+  function Counter() {
+    return (
+      <Store.Connector
+        store={store}
+        selector={CounterSelector}
+        actions={{ increment, decrement }}
+        render={ (ctx, props) =>
+          <div>
+            <p>count : {props.counter + ''}</p>
+            <button type="button" onClick={props.increment}>+1</button>
+            <button type="button" onClick={props.decrement}>-1</button>
+          </div>
+        } />
+    );
+  }
+
+  Elem.render(Counter, container);
+});

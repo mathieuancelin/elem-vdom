@@ -1,4 +1,5 @@
 import _ from './lodash';
+import * as Elem from './main';
 
 let nameCounter = 0;
 
@@ -101,10 +102,10 @@ export function withInitialState(initialState) {
 
 export function Connector(ctx, props) {
   let { store, selector, actions, render } = props;
-  if (!render) {
-    render = () => {
-      return props.children;
-    };
+  if (!render && _.isFunction(props.children[0])) {
+    render = props.children[0];
+  } else if (!render) {
+    render = () => Elem.el('span', props.children);
   }
   let newCtx = {...ctx};
   delete props.actions;
@@ -115,6 +116,10 @@ export function Connector(ctx, props) {
   let newProps = {...props, ...boundActions, ...selector(store.getState()), actions: boundActions};
   newCtx.store = store;
   newCtx.dispatch = store.dispatch;
+  newCtx.context.actions = boundActions;
+  newCtx.context.store = store;
+  newCtx.context.dispatch = store.dispatch;
+  newCtx.context.state = {...selector(store.getState())};
   let fakeCtx = {
     unsubscribe: null
   };
@@ -122,7 +127,7 @@ export function Connector(ctx, props) {
     ctx.refresh();
     fakeCtx.unsubscribe();
   });
-  return render(newCtx, newProps);
+  return render.bind({ ...newCtx, props: newProps })(newCtx, newProps);
 }
 
 export function ComposableConnector(store, selector, actions) {
