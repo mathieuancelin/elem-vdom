@@ -1,3 +1,4 @@
+/* eslint no-unused-vars:0 */
 const chai = require('chai');
 const Elem = require('../lib/main');
 const DOM = require('./utils/dom');
@@ -36,7 +37,7 @@ describe('elem-vdom components', () => {
   it('can be stateful with inner components', done => {
 
     function ClickerButton() {
-      return <button type="button" onClick={this.props.onClick}>Click</button>
+      return <button type="button" onClick={this.props.onClick}>Click</button>;
     }
 
     function Clicker() {
@@ -69,11 +70,10 @@ describe('elem-vdom components', () => {
 
     function ClickLine() {
       const click = () => this.setState({ count: (this.state.count || 0) + 1 });
-      return <button type="button" onClick={click}>Clicked {this.state.count || '0'} times</button>
+      return <button type="button" onClick={click}>Clicked {this.state.count || '0'} times</button>;
     }
 
     function Clicker() {
-      const click = () => this.setState({ count: (this.state.count || 0) + 1 });
       return (
         <div>
           <h1>Clicked {this.state.count || '999'} times</h1>
