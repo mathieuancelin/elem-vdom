@@ -5,6 +5,7 @@ node_modules
 *.iws
 npm-debug.log
 .module-cache
+.imdone
 /modularized
 /lib
 /stuff
