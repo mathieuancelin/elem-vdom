@@ -13,5 +13,3 @@ const tests = [
   require('./stylesheet.spec.js'),
   require('./universal.spec.js')
 ];
-
-// FIXME : stylesheet, extend on extended clazz

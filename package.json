@@ -1,7 +1,7 @@
 {
   "name": "elem-vdom",
   "description": "Simple tool to build UIs",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "main": "lib/main.js",
   "homepage": "https://github.com/mathieuancelin/elem-vdom",
   "keywords": [

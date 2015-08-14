@@ -106,6 +106,12 @@ export function predicate(p, what) {
   }
 }
 
+function autoExtend(base, custom) {
+  let final = Object.assign({}, base, custom);
+  final.extend = (custom2) => autoExtend(final, custom2);
+  return final;
+}
+
 export function stylesheet(obj, type, media) {
   let stylesheetElement;
   let mounted = false;
@@ -133,14 +139,14 @@ export function stylesheet(obj, type, media) {
       // Add an extend function to a 'class'
       result[key] = Object.assign({}, {
         extend(o) {
-          return Object.assign({}, clazz, o);
+          return autoExtend(clazz, o);
         }
       }, clazz);
     }
   });
   // Add an extend function to the sheet
   result.extend = (o) => {
-    return Object.assign({}, sheet, o);
+    return autoExtend(sheet, o);
   };
   result.toString = (asClasses) => {
     return Object.keys(result)
