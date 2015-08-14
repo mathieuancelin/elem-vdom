@@ -60,8 +60,6 @@ describe('A simple component', () => {
 
   it('can use refs', done => {
 
-    let d = false;
-
     function ClickableComponent(cb) {
       return () => {
         return Elem.el('div', [
@@ -85,7 +83,8 @@ describe('A simple component', () => {
     DOM.click('button');
     DOM.click('button');
     DOM.click('button');
-    //expect(inner).to.be.equal('Hello World');
+    expect(inner).to.be.equal('');
+    // expect(inner).to.be.equal('Hello World');
     done();
   });
 
