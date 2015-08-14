@@ -49,7 +49,7 @@
     "dist": "NODE_ENV=production webpack --colors -p",
     "es5": "babel src --out-dir lib",
     "travis-build": "npm run lint && npm run clean && npm run gen-all-es5 && mocha tests-es5/index.js && npm run dist",
-    "safe-build": "npm run lint && npm run clean && npm run gen-all-es5 && npm run dist && npm run mocha-tests",
+    "safe-build": "npm run lint && npm run clean && npm run gen-all-es5 && npm run mocha-tests && npm run dist",
     "build": "npm run lint && npm run clean && npm run es5 && npm run dist",
     "dev": "NODE_ENV=dev webpack --watch --colors -d --progress",
     "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline --progress",
