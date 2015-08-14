@@ -4,9 +4,9 @@ const Elem = require('../lib/main');
 const DOM = require('./utils/dom');
 const expect = chai.expect;
 
-describe('elem-vdom', () => {
+describe('elem-vdom JSX support', () => {
 
-  it('can be used with simple JSX', done => {
+  it('can render a simple JSX tree', done => {
 
     function SimpleComponent() {
       return <h1>Hello World!</h1>;
@@ -21,7 +21,7 @@ describe('elem-vdom', () => {
     done();
   });
 
-  it('can be used with more complex JSX', done => {
+  it('can render multiples arrays with flattening', done => {
 
     function Index() {
       return (
@@ -50,7 +50,7 @@ describe('elem-vdom', () => {
     done();
   });
 
-  it('can be used with even more complex JSX', done => {
+  it('can render component with children', done => {
 
     function Wrapper() {
       return <div className="wrapper" id={this.props.id}>{this.props.children}</div>;

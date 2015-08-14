@@ -122,11 +122,11 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   children = newChildren;
 
   if (_.isFunction(name) && name.isElemComponentFactory) {
+    // TODO : remove it
     let props = {...attrs};
     props.children = children;
     props.key = key;
     props.namespace = namespace;
-    // TODO : hook global resfesh on nested state and keep state ...
     return name(attrs).renderTo();
   }
   if (_.isFunction(name) && !name.isElemComponentFactory) {
@@ -363,7 +363,6 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       Perf.markStop(funKey);
     };
     let refs = {...globalRefs};
-    globalRefs = {};
     functionAsComponentContext.context = createComponentContext(refresh, node, refs);
     if (props.initialState) {
       functionAsComponentContext.context.state = props.initialState;

@@ -6,13 +6,13 @@ env.setupEnv();
 
 const tests = [
   require('./basic.spec.js'),
+  require('./elem.spec.js'),
   require('./el.spec.js'),
-  require('./jsx.spec.js')
+  require('./jsx.spec.js'),
+  require('./universal.spec.js')
 ];
 
 // TODO : stylesheet
 // TODO : state
 // TODO : substate
 // TODO : refs
-// TODO : SVG
-// TODO : universal

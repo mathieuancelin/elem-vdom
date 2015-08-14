@@ -3,7 +3,7 @@ const Elem = require('../lib/main');
 const DOM = require('./utils/dom');
 const expect = chai.expect;
 
-describe('Elem.el', () => {
+describe('Elem.el API', () => {
 
   it('can handle 2 args with a VNode', done => {
 
