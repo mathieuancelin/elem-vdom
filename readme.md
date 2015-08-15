@@ -62,8 +62,9 @@ A few other APIs are also available but :
   * `Elem.Store.bindActionsToDispatch(actions, dispatch)` :
   * `Elem.Store.handleActions(actions, initialState)` :
   * `Elem.Store.withInitialState(initialState)` :
+  * `Elem.Store.Provider(ctx, props)` :
+  * `Elem.Store.Selector(ctx, props)` :
   * `Elem.Store.Connector(ctx, props)` :
-  * `Elem.Store.ComposableConnector(store, selector, actions)` :
 
 * `Elem.Devtools` : tools for DX
   * `Elem.Devtools.Redbox(error)` :
