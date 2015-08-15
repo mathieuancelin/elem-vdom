@@ -377,7 +377,37 @@ Just use `Elem.registerWebComponent(name-with-a-dash, component)` and use it lik
 <my-awesomecomponent></my-awesomecomponent>
 ```
 
-What is this `stylesheet` function ?
+About `Elem.predicate`
+----------------------------------
+
+You can use `Elem.predicate` to render element if a predicate is true
+
+```javascript
+const somethingTrue = true;
+
+function somethingFalse() {
+  return false;
+}
+
+Elem.render(Elem.el('ul', [
+  Elem.predicate(somethingTrue, Elem.el('li', '1')),
+  Elem.el('li', '2'),
+  Elem.predicate(somethingFalse, Elem.el('li', '3')),
+  Elem.el('li', '4')
+]), container);
+```
+
+will produce :
+
+```html
+<ul>
+  <li>1</li>
+  <li>2</li>
+  <li>4</li>
+</ul>
+```
+
+About `Elem.stylesheet`
 -------------------------------
 
 The `Elem.stylesheet` function allows you to create something like
@@ -495,7 +525,7 @@ About Elem.Perf
 ```javascript
 const Perf = Elem.Perf
 const Perf = require('elem-vdom/lib/devtools/perfs');
-import * Perf from 'elem-vdom/lib/devtools/perfs';
+import * as Perf from 'elem-vdom/lib/devtools/perfs';
 ```
 
 The API is the following :
@@ -521,7 +551,7 @@ Just a bunch of tools to create stores (heavily inspired by Redux) available thr
 ```javascript
 const Store = Elem.Store
 const Store = require('elem-vdom/lib/store');
-import * Store from 'elem-vdom/lib/store';
+import * as Store from 'elem-vdom/lib/store';
 ```
 
 The API is the following :
@@ -587,8 +617,16 @@ function Counter() {
   return (
     <Store.Provider store={store} actions={{ increments, decrements }} render={ () =>
       <div>
-        <Store.Selector selector={CounterSelector1} actions={{ action: increments }} name="count1" render={CountLine} />
-        <Store.Selector selector={CounterSelector2} actions={{ action: decrements }} name="count2" render={CountLine} />
+        <Store.Selector
+          selector={CounterSelector1}
+          actions={{ action: increments }}
+          name="count1"
+          render={CountLine} />
+        <Store.Selector
+          selector={CounterSelector2}
+          actions={{ action: decrements }}
+          name="count2"
+          render={CountLine} />
         <button type="button" onClick={this.context.actions.increments}>+1</button>
         <button type="button" onClick={this.context.actions.decrements}>-1</button>
       </div>
@@ -608,13 +646,26 @@ Just a bunch of tools for DX available through
 ```javascript
 const Devtools = Elem.Devtools
 const Devtools = require('elem-vdom/lib/devtools');
-import * Devtools from 'elem-vdom/lib/devtools';
+import * as Devtools from 'elem-vdom/lib/devtools';
 ```
 
 The API is the following :
 
 * `Elem.Devtools.Redbox(error)` : A component that will display a JavaScript Error in a red box.
 * `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return.
+
+```javascript
+
+function App() {
+  return <h1>Hello World</h1>;
+}
+
+function DebugApp() {
+  return Elem.el(Devtools.ErrorMonitor(App), { prop1: 'propValue1' });
+}
+
+Elem.render(DebugApp, container);
+```
 
 ![The Redbox](https://github.com/mathieuancelin/elem-vdom/raw/master/redbox.png)
 
