@@ -1,4 +1,3 @@
-import _ from '../lodash';
 import * as Utils from '../utils';
 
 let globalObject = Utils.memoGobalObject();
@@ -51,7 +50,7 @@ export function markStop(name) {
     if (name) {
       Performances.mark(name + '_stop');
       Performances.measure(name, name + '_start', name + '_stop');
-      if (!_.contains(names, name)) names.push(name);
+      if (!Utils.contains(names, name)) names.push(name);
     } else {
       Performances.mark(ElemMeasureStop);
       Performances.measure(ElemMeasure, ElemMeasureStart, ElemMeasureStop);

@@ -1,7 +1,6 @@
 import * as Elem from './main';
 import * as Utils from './utils';
 import * as Perf from './devtools/perfs';
-import _ from './lodash';
 
 /**
  * @deprecated: prefer functional composition
@@ -124,7 +123,7 @@ export default function component(comp) {
         };
         instance.getDOMNode = () => null;
         Object.keys(instance).forEach(k => {
-          if (k !== 'state' && _.isFunction(instance[k])) {
+          if (k !== 'state' && Utils.isFunction(instance[k])) {
             instance[k] = instance[k].bind(instance);
           }
         });
@@ -153,13 +152,13 @@ export default function component(comp) {
           if (node.ownerDocument) {
             doc = node.ownerDocument;
           }
-          if (_.isString(node)) {
+          if (Utils.isString(node)) {
             return doc.querySelector(node);
           }
           return node;
         };
         Object.keys(instance).forEach(k => {
-          if (k !== 'state' && _.isFunction(instance[k])) {
+          if (k !== 'state' && Utils.isFunction(instance[k])) {
             instance[k] = instance[k].bind(instance);
           }
         });
@@ -167,7 +166,7 @@ export default function component(comp) {
           Perf.markStart('Elem.component.tree');
           let tree = instance.render();
           Perf.markStop('Elem.component.tree');
-          if (!_.isUndefined(node)) {
+          if (!Utils.isUndefined(node)) {
             Perf.markStart('Elem.component.render');
             let r = Elem.render(tree, node);
             Perf.markStop('Elem.component.render');

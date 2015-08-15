@@ -1,7 +1,6 @@
 import * as Utils from '../utils';
 import * as Elem from '../main';
 import ErrorStackParser from 'error-stack-parser';
-import _ from '../lodash';
 
 export const RedboxStyle = Utils.stylesheet({
 
@@ -59,7 +58,7 @@ export function Redbox(error) {
 }
 
 export function ErrorMonitor(wrapped) {
-  if (!_.isFunction(wrapped)) {
+  if (!Utils.isFunction(wrapped)) {
     throw new Error('ErrorMonitor should only wrap functions');
   }
   return (ctx, props) => {

@@ -1,4 +1,5 @@
-import _ from './lodash';
+/* eslint eqeqeq: 0 */
+import * as Utils from './utils';
 
 export function getGlobalObject() {
   if (typeof global !== 'undefined') {
@@ -91,7 +92,7 @@ export function keyMirror(obj, p) {
 }
 
 export function predicate(p, what) {
-  if (_.isFunction(p)) {
+  if (Utils.isFunction(p)) {
     if (p() === true) {
       return what;
     } else {
@@ -127,7 +128,7 @@ export function stylesheet(obj, type, media) {
   let keys = Object.keys(sheet);
   keys.forEach(key => {
     let clazz = sheet[key];
-    if (_.isObject(clazz)) {
+    if (Utils.isObject(clazz)) {
       // Handle 'class' that extends other 'classes'
       while (clazz.extend) {
         if (clazz.extend) {
@@ -206,3 +207,34 @@ export function invariantLog(condition, message, ...args) {
     console.error('Violation : ' + message.replace(/%s/g, () => { return args[argIndex++]; }));
   }
 }
+
+const escapeMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+  '`': '&#x60;'
+};
+const source = `(?:${Object.keys(escapeMap).join('|')})`;
+const testRegexp = RegExp(source);
+const replaceRegexp = RegExp(source, 'g');
+
+export function isObject(χ) {
+  return !!χ && (typeof χ == 'object' || typeof χ == 'function');
+}
+
+export function escape(value = '') {
+  let string = value === null ? '' : '' + value;
+  return testRegexp.test(string) ? string.replace(replaceRegexp, (match) => escapeMap[match]) : string;
+}
+
+export const isArray = Array.isArray;
+
+export const isUndefined = (χ) => χ === undefined;
+
+export const contains = Array.includes;
+
+export const isFunction = (χ) => isObject(χ) && Object.prototype.toString.call(χ) == '[object Function]';
+
+export const isString = (χ) => typeof χ == 'string' || ((!!χ && typeof χ == 'object') && Object.prototype.toString.call(χ) == '[object String]');

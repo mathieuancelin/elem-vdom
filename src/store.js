@@ -1,13 +1,13 @@
-import _ from './lodash';
+import * as Utils from './utils';
 
 let nameCounter = 0;
 
 export function createStore(reducer = {}, initialState = {}) {
   let reducers = [];
-  if (_.isObject(reducer)) {
+  if (Utils.isObject(reducer)) {
     for (let key in reducer) {
       let f = reducer[key];
-      if (!_.isFunction(f)) {
+      if (!Utils.isFunction(f)) {
         throw new Error('Store should be a function ...');
       }
       let __name = f.name || key || `substate-${nameCounter++}`;
@@ -16,7 +16,7 @@ export function createStore(reducer = {}, initialState = {}) {
         name: __name
       });
     }
-  } else if (_.isFunction(reducer)) {
+  } else if (Utils.isFunction(reducer)) {
     let name = reducer.name || 'reducer';
     reducers = [{
       getNewState: reducer,

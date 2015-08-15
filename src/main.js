@@ -2,7 +2,6 @@ import * as Utils from './utils';
 import * as Docs from './docs';
 import * as Perf from './devtools/perfs';
 import * as WebComponents from './webcomponents';
-import _ from './lodash';
 
 import diff from 'virtual-dom/diff';
 import patch from 'virtual-dom/patch';
@@ -23,7 +22,7 @@ let globalRefs = {};
 let currentComponentContext;
 
 function clearNode(node) {
-  while (!_.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
+  while (!Utils.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
     node.removeChild(node.firstChild);
   }
 }
@@ -39,7 +38,7 @@ function styleToString(attrs) {
       }
       let value = attrs[key];
       if (value) {
-        if (_.isFunction(value)) {
+        if (Utils.isFunction(value)) {
           value = value();
         }
         if (value) {
@@ -79,15 +78,15 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
       context.ref = attrs[key];
     } else {
       let value = attrs[key];
-      if (value && _.isFunction(value)) {
+      if (value && Utils.isFunction(value)) {
         value = value();
       }
       if (value) {
-        if (_.isObject(value) && keyName === 'style') {
+        if (Utils.isObject(value) && keyName === 'style') {
           attributesHash.style = styleToString(value);
-        } else if (_.isArray(value) && keyName === 'class') {
+        } else if (Utils.isArray(value) && keyName === 'class') {
           attributesHash[keyName] = value.join(' ');
-        } else if (_.isObject(value) && keyName === 'class') {
+        } else if (Utils.isObject(value) && keyName === 'class') {
           attributesHash[keyName] = classToArray(value).join(' ');
         } else {
           attributesHash[keyName] = value;
@@ -105,12 +104,12 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   for (let i in children) {
     let item = children[i];
     if (item) {
-      if (_.isFunction(item)) {
+      if (Utils.isFunction(item)) {
         item = item();
       }
       if (item) {
         if (item instanceof VNode) newChildren.push(item);
-        else if (_.isObject(item) && item.__asHtml) {
+        else if (Utils.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
           newChildren.push(new VText(''));
         } else {
@@ -121,7 +120,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   }
   children = newChildren;
 
-  if (_.isFunction(name) && name.isElemComponentFactory) {
+  if (Utils.isFunction(name) && name.isElemComponentFactory) {
     // TODO : remove it
     let props = {...attrs};
     props.children = children;
@@ -129,7 +128,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     props.namespace = namespace;
     return name(attrs).renderTo();
   }
-  if (_.isFunction(name) && !name.isElemComponentFactory) {
+  if (Utils.isFunction(name) && !name.isElemComponentFactory) {
     let funKey = `Elem.function.${name.name || '<anonymous function>'}.tree`;
     Perf.markStart(funKey);
     let props = {...attrs};
@@ -181,10 +180,10 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
 
 export function el(tagName, ...args) {
   let argsLength = args.length;
-  let name = _.isString(tagName) ? (_.escape(tagName) || 'unknown') : tagName;
+  let name = Utils.isString(tagName) ? (Utils.escape(tagName) || 'unknown') : tagName;
   if (arguments.length === 2) {
     // 2 args
-    if (argsLength === 1 && _.isString(args[0])) {
+    if (argsLength === 1 && Utils.isString(args[0])) {
       // el('div', 'Lorem Ipsum')
       return internalEl(name, {}, [args[0]], undefined, undefined);
     }
@@ -192,67 +191,67 @@ export function el(tagName, ...args) {
       // el('div', Elem.el(...))
       return internalEl(name, {}, [args[0]], undefined, undefined);
     }
-    if (argsLength === 1 && _.isArray(args[0])) {
+    if (argsLength === 1 && Utils.isArray(args[0])) {
       // el('div', [...])
       return internalEl(name, {}, args[0], undefined, undefined);
     }
-    if (argsLength === 1 && _.isFunction(args[0])) {
+    if (argsLength === 1 && Utils.isFunction(args[0])) {
       // el('div', function)
       return el(name, args[0]()); // forced to recurse
     }
-    if (argsLength === 1 && _.isObject(args[0]) && args[0].__asHtml) {
+    if (argsLength === 1 && Utils.isObject(args[0]) && args[0].__asHtml) {
       // el('div', { __asHtml: '...' })
       return internalEl(name, {}, [args[0]], undefined, undefined);
     }
-    if (argsLength === 1 && _.isObject(args[0])) {
+    if (argsLength === 1 && Utils.isObject(args[0])) {
       // el('div', {...})
       return internalEl(name, args[0], [], args[0].key, undefined);
     }
   } else if (arguments.length === 3) {
     // 3 args
-    if (argsLength === 2 && _.isObject(args[0]) && !_.isArray(args[1])) {
+    if (argsLength === 2 && Utils.isObject(args[0]) && !Utils.isArray(args[1])) {
       // el('div', {...}, 'lorem ipsum')
       return internalEl(name, args[0], [args[1]], args[0].key, undefined);
     }
-    if (argsLength === 2 && _.isObject(args[0]) && args[1] instanceof VNode) {
+    if (argsLength === 2 && Utils.isObject(args[0]) && args[1] instanceof VNode) {
       // el('div', {...}, Elem.el(...))
       return internalEl(name, args[0], [args[1]], args[0].key, undefined);
     }
-    if (argsLength === 2 && _.isObject(args[0]) && _.isArray(args[1])) {
+    if (argsLength === 2 && Utils.isObject(args[0]) && Utils.isArray(args[1])) {
       // el('div', {...}, [...])
       return internalEl(name, args[0], args[1], args[0].key, undefined);
     }
-    if (argsLength === 2 && _.isObject(args[0]) && args[1].__asHtml) {
+    if (argsLength === 2 && Utils.isObject(args[0]) && args[1].__asHtml) {
       // el('div', {...}, { __asHtml: '...' })
       return internalEl(name, args[0], args[1], args[0].key, undefined);
     }
-    if (argsLength === 2 && _.isFunction(args[1])) {
+    if (argsLength === 2 && Utils.isFunction(args[1])) {
       // el('div', {...}, function)
       return el(name, args[0], args[1]()); // forced to recurse
     }
-    if (argsLength === 2 && _.isString(args[0]) && _.isObject(args[1])) {
+    if (argsLength === 2 && Utils.isString(args[0]) && Utils.isObject(args[1])) {
       // el('div', ns, {...})
       return internalEl(name, args[1], [], args[1].key, args[0]);
     }
-    if (argsLength === 2 && _.isString(args[0]) && !_.isObject(args[1]) && !_.isArray(args[1])) {
+    if (argsLength === 2 && Utils.isString(args[0]) && !Utils.isObject(args[1]) && !Utils.isArray(args[1])) {
       // el('div', ns, 'Lorem ipsum}')
       return internalEl(name, {}, [args[1]], undefined, args[0]);
     }
   } else if (arguments.length === 4) {
     // 4 args
-    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && !_.isArray(args[2])) {
+    if (argsLength === 3 && (Utils.isUndefined(args[0]) || Utils.isString(args[0])) && Utils.isObject(args[1]) && !Utils.isArray(args[2])) {
       // el('div', ns, {...}, 'lorem ipsum')
       return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
     }
-    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && args[2] instanceof VNode) {
+    if (argsLength === 3 && (Utils.isUndefined(args[0]) || Utils.isString(args[0])) && Utils.isObject(args[1]) && args[2] instanceof VNode) {
       // el('div', ns, {...}, Elem.el(...))
       return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
     }
-    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && args[2].__asHtml) {
+    if (argsLength === 3 && (Utils.isUndefined(args[0]) || Utils.isString(args[0])) && Utils.isObject(args[1]) && args[2].__asHtml) {
       // el('div', ns, {...}, { __asHtml: '...' })
       return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
     }
-    if (argsLength === 3 && (_.isUndefined(args[0]) || _.isString(args[0])) && _.isObject(args[1]) && _.isArray(args[2])) {
+    if (argsLength === 3 && (Utils.isUndefined(args[0]) || Utils.isString(args[0])) && Utils.isObject(args[1]) && Utils.isArray(args[2])) {
       // el('div', ns, {...}, [...])
       return internalEl(name, args[1], args[2], args[1].key, args[0]);
     }
@@ -292,7 +291,7 @@ function createComponentContext(refresh, renderNode, refs = {}) {
       if (renderNode.ownerDocument) {
         doc = renderNode.ownerDocument;
       }
-      if (_.isString(renderNode)) {
+      if (Utils.isString(renderNode)) {
         return doc.querySelector(renderNode);
       }
       return renderNode;
@@ -327,7 +326,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   Perf.markStart('Elem.render');
   let node = selectorOrNode;
   let tree = elementOrFunction;
-  if (_.isFunction(tree)) {
+  if (Utils.isFunction(tree)) {
     let funKey = `Elem.${tree.name ? 'function' : 'render'}.${tree.name || ''}.tree`;
     Perf.markStart(funKey);
     // Perf.markStart('Elem.render.tree');
@@ -351,7 +350,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         }
         currentComponentContext = undefined;
         if (functionAsComponentContext.context.__keys.length !== 0) {
-          let diffs = functionAsComponentContext.context.__oldKeys.filter(value => !_.contains(functionAsComponentContext.context.__keys, value));
+          let diffs = functionAsComponentContext.context.__oldKeys.filter(value => !Utils.contains(functionAsComponentContext.context.__keys, value));
           for (let currentDiff in diffs) {
             let key = `substateof-${diffs[currentDiff]}`;
             delete functionAsComponentContext.context.state[key];
@@ -377,14 +376,14 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     tree = reTree();
     // Perf.markStop('Elem.render.tree');
     Perf.markStop(funKey);
-  } else if (_.isArray(tree)) {
+  } else if (Utils.isArray(tree)) {
     tree = el('span', tree);
   }
   let doc = Utils.getGlobalObject().document;
   if (node.ownerDocument) {
     doc = node.ownerDocument;
   }
-  if (_.isString(node)) {
+  if (Utils.isString(node)) {
     node = doc.querySelector(node);
   }
   let rootId;
@@ -434,7 +433,7 @@ export function unmount(theNode) {
   if (node.ownerDocument) {
     doc = node.ownerDocument;
   }
-  if (_.isString(node)) {
+  if (Utils.isString(node)) {
     node = doc.querySelector(node);
   }
   clearNode(node);
@@ -451,7 +450,7 @@ export function findDOMNode(ref) {
 export function renderToJson(elementOrFunction, props = {}) {
   Perf.markStart('Elem.renderToJson');
   let tree = elementOrFunction;
-  if (_.isFunction(tree)) {
+  if (Utils.isFunction(tree)) {
     let refs = {...globalRefs};
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
@@ -467,7 +466,7 @@ export function renderToJson(elementOrFunction, props = {}) {
 export function renderToString(elementOrFunction, props = {}) {
   Perf.markStart('Elem.renderToString');
   let tree = elementOrFunction;
-  if (_.isFunction(tree)) {
+  if (Utils.isFunction(tree)) {
     let refs = {...globalRefs};
     globalRefs = {};
     let componentContext = createComponentContext(() => {}, null, refs);
@@ -499,7 +498,7 @@ export function jsx(type, attributes, ...chldn) {
   let children = [];
   for (let i = 0; i < chldn.length; i++) {
     let value = chldn[i];
-    if (_.isArray(value)) {
+    if (Utils.isArray(value)) {
       for (let j = 0; j < value.length; j++) {
         children.push(value[j]);
       }

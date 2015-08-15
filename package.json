@@ -21,7 +21,6 @@
   "dependencies": {
     "babel-runtime": "^5.8.20",
     "error-stack-parser": "~1.2.0",
-    "lodash": "^3.10.0",
     "virtual-dom": "^2.0.1"
   },
   "devDependencies": {
