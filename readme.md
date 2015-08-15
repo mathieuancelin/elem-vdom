@@ -624,18 +624,20 @@ let store = Store.createStore({ counters });
 
 function CounterSelector1(state) {
   return {
-    counter: state.counters.value1
+    counter: state.counters.value1 // state.counters because we target the counters reducer
   };
 }
 
 function CounterSelector2(state) {
   return {
-    counter: state.counters.value2
+    counter: state.counters.value2 // state.counters because we target the counters reducer
   };
 }
 
 function CountLine() {
-  return <p onClick={this.props.action}>{this.props.name} : {this.props.counter + ''}</p>;
+  // here this.props.counter come from the store, throught the selector
+  // here this.prop.perform come from actions on the Store.Selector
+  return <p onClick={this.props.perform}>{this.props.name} : {this.props.counter + ''}</p>;
 }
 
 function Counter() {
@@ -644,12 +646,12 @@ function Counter() {
       <div>
         <Store.Selector
           selector={CounterSelector1}
-          actions={{ action: increments }}
+          actions={{ perform: increments }}
           name="count1"
           render={CountLine} />
         <Store.Selector
           selector={CounterSelector2}
-          actions={{ action: decrements }}
+          actions={{ perform: decrements }}
           name="count2"
           render={CountLine} />
         <button type="button" onClick={this.context.actions.increments}>+1</button>
