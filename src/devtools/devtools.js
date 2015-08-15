@@ -70,3 +70,5 @@ export function ErrorMonitor(wrapped) {
     }
   };
 }
+
+// TODO : state and props inspector API ?

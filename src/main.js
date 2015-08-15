@@ -104,10 +104,11 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   for (let i in children) {
     let item = children[i];
     if (item) {
-      if (Utils.isFunction(item)) {
+      if (Utils.isFunction(item)) { // TODO : avoid to call functions ?
         item = item();
       }
       if (item) {
+        // TODO : flatten inner arrays ?
         if (item instanceof VNode) newChildren.push(item);
         else if (Utils.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
