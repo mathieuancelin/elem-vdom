@@ -1,5 +1,4 @@
 import _ from './lodash';
-import * as Elem from './main';
 
 let nameCounter = 0;
 
@@ -49,11 +48,22 @@ export function createStore(reducer = {}, initialState = {}) {
     };
   }
 
+  function ephemeralSubscribe(listener) {
+    let ctx = {};
+    ctx.ephemeralListener = () => {
+      listener();
+      let index = listeners.indexOf(ctx.ephemeralListener);
+      listeners.splice(index, 1);
+    };
+    listeners.push(ctx.ephemeralListener);
+  }
+
   dispatch({ type: '@@init' });
 
   return {
     dispatch,
     subscribe,
+    ephemeralSubscribe,
     setState(newState) {
       state = newState;
       listeners.forEach(listener => listener());
@@ -100,13 +110,28 @@ export function withInitialState(initialState) {
   };
 }
 
+export function Provider(ctx, props) {
+  let { store, actions = {}, render } = props;
+  let boundActions = bindActionsToDispatch(actions, store.dispatch);
+  ctx.context.actions = boundActions;
+  ctx.context.store = store;
+  ctx.context.dispatch = store.dispatch;
+  ctx.context.getState = store.getState;
+  store.ephemeralSubscribe(() => ctx.refresh());
+  let bindContext = {...ctx, props };
+  return render.bind(bindContext)(ctx, props);
+}
+
+export function Selector(ctx, props) {
+  let { selector, actions = {}, render } = props;
+  let { store } = ctx.context;
+  let boundActions = bindActionsToDispatch(actions, store.dispatch);
+  let newProps = {...props, ...boundActions, ...selector(store.getState())};
+  return render.bind({ ctx, props: newProps })(ctx, newProps);
+}
+
 export function Connector(ctx, props) {
   let { store, selector, actions, render } = props;
-  if (!render && _.isFunction(props.children[0])) {
-    render = props.children[0];
-  } else if (!render) {
-    render = () => Elem.el('span', props.children);
-  }
   let newCtx = {...ctx};
   delete props.actions;
   delete props.render;
@@ -116,10 +141,6 @@ export function Connector(ctx, props) {
   let newProps = {...props, ...boundActions, ...selector(store.getState()), actions: boundActions};
   newCtx.store = store;
   newCtx.dispatch = store.dispatch;
-  newCtx.context.actions = boundActions;
-  newCtx.context.store = store;
-  newCtx.context.dispatch = store.dispatch;
-  newCtx.context.state = {...selector(store.getState())};
   let fakeCtx = {
     unsubscribe: null
   };

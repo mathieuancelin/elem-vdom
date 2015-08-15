@@ -45,7 +45,10 @@ API
 * `Elem.renderToJson(elem)` : render an element as JSON object
 * `Elem.predicate(predicate, elem)` : return element if predicate is true or undefined if false. Predicate can be a function
 * `Elem.stylesheet(obj)` : create an extendable set of CSS inline styles
-* `Elem.Perf` : performance measurement tools
+
+A few other APIs are also available but :
+
+* `Elem.Perf` : performance measurement tools (used in the examples to craft the Perf monitor)
   * `Elem.Perf.start` : enable performance measures
   * `Elem.Perf.stop` : disable performance measures
   * `Elem.Perf.markStart(name)` : mark the start of a measure
@@ -53,6 +56,18 @@ API
   * `Elem.Perf.mark(name, block)` : mark the start and stop of a measure around a block of code
   * `Elem.Perf.collectMeasures` : return all collected measures and clear the measures store
   * `Elem.Perf.printMeasures` : print collected measures and clear the measures store
+
+* `Elem.Store` : tools to create flux like store (heavily inspired by Redux)
+  * `Elem.Store.createStore(reducer, initialState)` :
+  * `Elem.Store.bindActionsToDispatch(actions, dispatch)` :
+  * `Elem.Store.handleActions(actions, initialState)` :
+  * `Elem.Store.withInitialState(initialState)` :
+  * `Elem.Store.Connector(ctx, props)` :
+  * `Elem.Store.ComposableConnector(store, selector, actions)` :
+
+* `Elem.Devtools` : tools for DX
+  * `Elem.Devtools.Redbox(error)` :
+  * `Elem.Devtools.ErrorMonitor(wrapped)` :
 
 Dependencies
 -------------
@@ -490,6 +505,31 @@ let CustomStyle = Elem.stylesheet({
 
 You can also use it as an actual stylesheet for your pages, just call `mount()` on a stylesheet object to mount it in the DOM. You can call `unmount()` to remove it.
 
+About Elem.Store
+---------------------
+
+available through
+
+```javascript
+const Store = Elem.Store
+const Store = require('elem-vdom/lib/store');
+import * Store from 'elem-vdom/lib/store';
+```
+
+Todo
+
+About Elem.Devtools
+---------------------
+
+available through
+
+```javascript
+const Devtools = Elem.Devtools
+const Devtools = require('elem-vdom/lib/devtools');
+import * Devtools from 'elem-vdom/lib/devtools';
+```
+
+Todo
 
 [1]: https://api.travis-ci.org/mathieuancelin/elem-vdom.svg
 [2]: https://api.travis-ci.org/mathieuancelin/elem-vdom

@@ -130,3 +130,59 @@ Showcase.registerTile('Redux like example JSX', container => {
 
   Elem.render(Counter, container);
 });
+
+Showcase.registerTile('Store provider and selector', container => {
+  const INCREMENT_COUNTERS = 'INCREMENT_COUNTERS';
+  const DECREMENT_COUNTERS = 'DECREMENT_COUNTERS';
+
+  function increments() {
+    return {
+      type: INCREMENT_COUNTERS
+    };
+  }
+
+  function decrements() {
+    return {
+      type: DECREMENT_COUNTERS
+    };
+  }
+
+  const counters = Store.withInitialState({ value1: 0, value2: 0 }).handleActions({
+    [INCREMENT_COUNTERS]: (state) => ({ value1: state.value1 + 1, value2: state.value2 + 2 }),
+    [DECREMENT_COUNTERS]: (state) => ({ value1: state.value1 - 1, value2: state.value2 - 2 })
+  });
+
+
+  let store = Store.createStore({ counters });
+
+  function CounterSelector1(state) {
+    return {
+      counter: state.counters.value1
+    };
+  }
+
+  function CounterSelector2(state) {
+    return {
+      counter: state.counters.value2
+    };
+  }
+
+  function Count() {
+    return <p>count : {this.props.counter + ''}</p>;
+  }
+
+  function Counter() {
+    return (
+      <Store.Provider store={store} actions={{ increments, decrements }} render={ () =>
+        <div>
+          <Store.Selector selector={CounterSelector1} render={Count} />
+          <Store.Selector selector={CounterSelector2} render={Count} />
+          <button type="button" onClick={this.context.actions.increments}>+1</button>
+          <button type="button" onClick={this.context.actions.decrements}>-1</button>
+        </div>
+      } />
+    );
+  }
+
+  Elem.render(Counter, container);
+});

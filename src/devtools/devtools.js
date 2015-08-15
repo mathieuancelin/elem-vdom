@@ -62,9 +62,9 @@ export function ErrorMonitor(wrapped) {
   if (!_.isFunction(wrapped)) {
     throw new Error('ErrorMonitor should only wrap functions');
   }
-  return (ctx) => {
+  return (ctx, props) => {
     try {
-      return wrapped(ctx);
+      return wrapped.bind({ ...ctx, propd })(ctx, props);
     } catch(e) {
       return Redbox(e);
     }
