@@ -551,15 +551,13 @@ const Monitor = require('elem-vdom/lib/devtools/perfmonitor');
 import * as Monitor from 'elem-vdom/lib/devtools/perfmonitor';
 
 function PerfMonitor() {
-  return Elem.el(Monitor,
-    {
-      initialState: {
-        activated: false,
-        measures: Elem.Perf.measures(),
-        selected: undefined
-      },
-      cleanupHook: onExampleChange
-    });
+  return Elem.el(Monitor, {
+    initialState: {
+      activated: false,
+      measures: Elem.Perf.measures(),
+      selected: undefined
+    }
+  });
 }
 
 Elem.render(PerfMonitor, container);
@@ -684,13 +682,12 @@ The API is the following :
 * `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return.
 
 ```javascript
-
 function App() {
-  return <h1>Hello World</h1>;
+  return <h1>Hello {this.props.who}!</h1>;
 }
 
 function DebugApp() {
-  return Elem.el(Devtools.ErrorMonitor(App), { prop1: 'propValue1' });
+  return Elem.el(Elem.Devtools.ErrorMonitor(App), { who: 'World' });
 }
 
 Elem.render(DebugApp, container);

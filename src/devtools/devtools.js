@@ -63,8 +63,9 @@ export function ErrorMonitor(wrapped) {
   }
   return (ctx, props) => {
     try {
-      return wrapped.bind({ ...ctx, propd })(ctx, props);
+      return wrapped.bind({ ...ctx, props })(ctx, props);
     } catch(e) {
+      console.log(e);
       return Redbox(e);
     }
   };

@@ -197,7 +197,7 @@ export function el(tagName, ...args) {
     }
     if (argsLength === 1 && Utils.isFunction(args[0])) {
       // el('div', function)
-      return el(name, args[0]()); // forced to recurse
+      return internalEl(name, {}, [args[0]], undefined, undefined);
     }
     if (argsLength === 1 && Utils.isObject(args[0]) && args[0].__asHtml) {
       // el('div', { __asHtml: '...' })
@@ -227,7 +227,7 @@ export function el(tagName, ...args) {
     }
     if (argsLength === 2 && Utils.isFunction(args[1])) {
       // el('div', {...}, function)
-      return el(name, args[0], args[1]()); // forced to recurse
+      return internalEl(name, args[0], [args[1]], args[0].key, undefined);
     }
     if (argsLength === 2 && Utils.isString(args[0]) && Utils.isObject(args[1])) {
       // el('div', ns, {...})
