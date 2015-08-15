@@ -523,8 +523,10 @@ About Elem.Perf
 `Elem.Perf` is a performance measurement tool available through
 
 ```javascript
-const Perf = Elem.Perf
+const Perf = Elem.Perf;
+// or
 const Perf = require('elem-vdom/lib/devtools/perfs');
+// or
 import * as Perf from 'elem-vdom/lib/devtools/perfs';
 ```
 
@@ -572,8 +574,10 @@ About Elem.Store
 Just a bunch of tools to create stores (heavily inspired by Redux) available through
 
 ```javascript
-const Store = Elem.Store
+const Store = Elem.Store;
+// or
 const Store = require('elem-vdom/lib/store');
+// or
 import * as Store from 'elem-vdom/lib/store';
 ```
 
@@ -667,8 +671,10 @@ About Elem.Devtools
 Just a bunch of tools for DX available through
 
 ```javascript
-const Devtools = Elem.Devtools
+const Devtools = Elem.Devtools;
+// or
 const Devtools = require('elem-vdom/lib/devtools');
+// or
 import * as Devtools from 'elem-vdom/lib/devtools';
 ```
 
