@@ -37,38 +37,20 @@ API
 
 * `Elem.el(name, attributes, children)` : Create a representation of an HTML element. Children can be a string/number/boolean, an `Elem.el`, an array of `Elem.el` or a `__asHtml` object.
 * `Elem.svg(name, attributes, children)` : Create a representation of a simple SVG element
-* `Elem.findDOMNode(ref)` : return an actual DOM node based on an element `ref`
-* `Elem.nbsp(times)` : creates a `<span>` containing one or more `&nbsp;`
-* `Elem.text(value)` : creates a `<span>value</span>`
 * `Elem.render(elem, container)` : render an element to a container in the DOM
 * `Elem.renderToString(elem)` : render an element as an HTML string
 * `Elem.renderToJson(elem)` : render an element as JSON object
-* `Elem.predicate(predicate, elem)` : return element if predicate is true or undefined if false. Predicate can be a function
+* `Elem.findDOMNode(ref)` : return an actual DOM node based on an element `ref`
 * `Elem.stylesheet(obj)` : create an extendable set of CSS inline styles
+* `Elem.nbsp(times)` : creates a `<span>` containing one or more `&nbsp;`
+* `Elem.text(value)` : creates a `<span>value</span>`
+* `Elem.predicate(predicate, elem)` : return element if predicate is true or undefined if false. Predicate can be a function
 
-A few other APIs are also available but :
+A few other APIs are also available but none are mandatory to use :
 
 * `Elem.Perf` : performance measurement tools (used in the examples to craft the Perf monitor)
-  * `Elem.Perf.start` : enable performance measures
-  * `Elem.Perf.stop` : disable performance measures
-  * `Elem.Perf.markStart(name)` : mark the start of a measure
-  * `Elem.Perf.markStop(name)` : mark the stop of a measure
-  * `Elem.Perf.mark(name, block)` : mark the start and stop of a measure around a block of code
-  * `Elem.Perf.collectMeasures` : return all collected measures and clear the measures store
-  * `Elem.Perf.printMeasures` : print collected measures and clear the measures store
-
 * `Elem.Store` : tools to create flux like store (heavily inspired by Redux)
-  * `Elem.Store.createStore(reducer, initialState)` :
-  * `Elem.Store.bindActionsToDispatch(actions, dispatch)` :
-  * `Elem.Store.handleActions(actions, initialState)` :
-  * `Elem.Store.withInitialState(initialState)` :
-  * `Elem.Store.Provider(ctx, props)` :
-  * `Elem.Store.Selector(ctx, props)` :
-  * `Elem.Store.Connector(ctx, props)` :
-
 * `Elem.Devtools` : tools for DX
-  * `Elem.Devtools.Redbox(error)` :
-  * `Elem.Devtools.ErrorMonitor(wrapped)` :
 
 Dependencies
 -------------
@@ -95,7 +77,7 @@ const node = Elem.el('div', { className: 'col-md-6' }, [
 Elem.render(node, '#container');
 ```
 
-As you construct the node tree with functions and arrays, it is pretty easy to map and filter model objects to render your components easily (see the Todo List example above).
+As you construct the node tree with functions and arrays, it is pretty easy to map and filter model objects to render your components easily.
 
 Attributes use camel case shaped keys, so something like `backgroundColor` will be rendered as `background-color`. Also, you can notice that the `class` attribute is named `className`. Also, you can provide an object for `className` value with boolean as values. Every key with a false value will not be rendered.
 
@@ -506,10 +488,33 @@ let CustomStyle = Elem.stylesheet({
 
 You can also use it as an actual stylesheet for your pages, just call `mount()` on a stylesheet object to mount it in the DOM. You can call `unmount()` to remove it.
 
+About Elem.Perf
+---------------------
+`Elem.Perf` is a performance measurement tool available through
+
+```javascript
+const Perf = Elem.Perf
+const Perf = require('elem-vdom/lib/devtools/perfs');
+import * Perf from 'elem-vdom/lib/devtools/perfs';
+```
+
+The API is the following :
+
+* `start` : enable performance measurement
+* `stop` : disable performance measurement
+* `markStart(name)` : mark the start of a measure
+* `markStop(name)` : mark the stop of a measure
+* `mark(name, function)` : mark the start and stop of a measure around a block of code
+* `measures` : return all collected measures
+* `collectMeasures(clear)` : return all collected measures and maybe clear the measures store
+* `printMeasures` : print collected measures and clear the measures store
+
+You can use the Perf API to build great perf analysis tools like here : https://github.com/mathieuancelin/elem-vdom/blob/master/examples/sink/main.js#L83-L247
+
 About Elem.Store
 ---------------------
 
-available through
+Just a bunch of tools to create stores (heavily inspired by Redux) available through
 
 ```javascript
 const Store = Elem.Store
@@ -517,12 +522,86 @@ const Store = require('elem-vdom/lib/store');
 import * Store from 'elem-vdom/lib/store';
 ```
 
-Todo
+The API is the following :
+
+* `createStore(reducer, initialState)` : Create a store from one or more reducers
+* `handleActions(actions, initialState)` : same than createStore with helpers to avoid switch case
+* `withInitialState(initialState)` : builder for `handleActions`
+* `Provider` : Component that will feed the context with the store and some actions
+* `Selector` : Component that will be use to wrap sub components to pass them state parts and actions
+
+```javascript
+
+const INCREMENT_COUNTERS = 'INCREMENT_COUNTERS';
+const DECREMENT_COUNTERS = 'DECREMENT_COUNTERS';
+
+function increments() {
+  return {
+    type: INCREMENT_COUNTERS
+  };
+}
+
+function decrements() {
+  return {
+    type: DECREMENT_COUNTERS
+  };
+}
+
+const counters = Store.withInitialState({ value1: 0, value2: 0 }).handleActions({
+  [INCREMENT_COUNTERS]: (state) => ({ value1: state.value1 + 1, value2: state.value2 + 2 }),
+  [DECREMENT_COUNTERS]: (state) => ({ value1: state.value1 - 1, value2: state.value2 - 2 })
+});
+
+function anotherWayToDefineCountersAsAReducer(state = 0, action) {
+  switch (action.type) {
+  case INCREMENT_COUNTERS:
+    return { value1: state.value1 + 1, value2: state.value2 + 2 };
+  case DECREMENT_COUNTERS:
+    return { value1: state.value1 - 1, value2: state.value2 - 2 };
+  default:
+    return state;
+  }
+}
+
+let store = Store.createStore({ counters });
+
+function CounterSelector1(state) {
+  return {
+    counter: state.counters.value1
+  };
+}
+
+function CounterSelector2(state) {
+  return {
+    counter: state.counters.value2
+  };
+}
+
+function CountLine() {
+  return <p onClick={this.props.action}>{this.props.name} : {this.props.counter + ''}</p>;
+}
+
+function Counter() {
+  return (
+    <Store.Provider store={store} actions={{ increments, decrements }} render={ () =>
+      <div>
+        <Store.Selector selector={CounterSelector1} actions={{ action: increments }} name="count1" render={CountLine} />
+        <Store.Selector selector={CounterSelector2} actions={{ action: decrements }} name="count2" render={CountLine} />
+        <button type="button" onClick={this.context.actions.increments}>+1</button>
+        <button type="button" onClick={this.context.actions.decrements}>-1</button>
+      </div>
+    } />
+  );
+}
+
+Elem.render(Counter, container);
+
+```
 
 About Elem.Devtools
 ---------------------
 
-available through
+Just a bunch of tools for DX available through
 
 ```javascript
 const Devtools = Elem.Devtools
@@ -530,7 +609,11 @@ const Devtools = require('elem-vdom/lib/devtools');
 import * Devtools from 'elem-vdom/lib/devtools';
 ```
 
-Todo
+The API is the following :
+
+* `Elem.Devtools.Redbox(error)` : A component that will display a JavaScript Error in a red box.
+* `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return.
+
 
 [1]: https://api.travis-ci.org/mathieuancelin/elem-vdom.svg
 [2]: https://api.travis-ci.org/mathieuancelin/elem-vdom

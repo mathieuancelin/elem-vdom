@@ -167,16 +167,16 @@ Showcase.registerTile('Store provider and selector', container => {
     };
   }
 
-  function Count() {
-    return <p>count : {this.props.counter + ''}</p>;
+  function CountLine() {
+    return <p onClick={this.props.action}>{this.props.name} : {this.props.counter + ''}</p>;
   }
 
   function Counter() {
     return (
       <Store.Provider store={store} actions={{ increments, decrements }} render={ () =>
         <div>
-          <Store.Selector selector={CounterSelector1} render={Count} />
-          <Store.Selector selector={CounterSelector2} render={Count} />
+          <Store.Selector selector={CounterSelector1} actions={{ action: increments }} name="count1" render={CountLine} />
+          <Store.Selector selector={CounterSelector2} actions={{ action: decrements }} name="count2" render={CountLine} />
           <button type="button" onClick={this.context.actions.increments}>+1</button>
           <button type="button" onClick={this.context.actions.decrements}>-1</button>
         </div>

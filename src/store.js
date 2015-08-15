@@ -79,7 +79,7 @@ export function bindActionsToDispatch(actions, dispatch) {
   let boundActions = {};
   for (let key in actions) {
     let value = actions[key];
-    let name = value.name || `boundaction-${nameCounter++}`;
+    let name = key || value.name || `boundaction-${nameCounter++}`;
     boundActions[name] = () => {
       let action = value.apply(null, arguments);
       dispatch(action);
@@ -149,12 +149,4 @@ export function Connector(ctx, props) {
     fakeCtx.unsubscribe();
   });
   return render.bind({ ...newCtx, props: newProps })(newCtx, newProps);
-}
-
-export function ComposableConnector(store, selector, actions) {
-  return (render) => {
-    return (ctx, props) => {
-      return Connector(ctx, { ...props, store, selector, actions, render });
-    };
-  };
 }
