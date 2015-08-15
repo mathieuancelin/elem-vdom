@@ -511,6 +511,8 @@ The API is the following :
 
 You can use the Perf API to build great perf analysis tools like here : https://github.com/mathieuancelin/elem-vdom/blob/master/examples/sink/main.js#L83-L247
 
+![The perf monitor](https://github.com/mathieuancelin/elem-vdom/raw/master/perfmonitor.gif)
+
 About Elem.Store
 ---------------------
 
@@ -613,6 +615,8 @@ The API is the following :
 
 * `Elem.Devtools.Redbox(error)` : A component that will display a JavaScript Error in a red box.
 * `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return.
+
+![The Redbox](https://github.com/mathieuancelin/elem-vdom/raw/master/redbox.png)
 
 
 [1]: https://api.travis-ci.org/mathieuancelin/elem-vdom.svg
