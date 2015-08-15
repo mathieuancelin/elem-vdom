@@ -11,9 +11,9 @@ const tests = [
   require('./jsx.spec.js'),
   require('./state.spec.js'),
   require('./stylesheet.spec.js'),
-  require('./universal.spec.js')
+  require('./universal.spec.js'),
+  require('./devtools.spec.js')
 ];
 
 // TODO : store
 // TODO : utils
-// TODO : devtools

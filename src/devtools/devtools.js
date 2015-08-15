@@ -52,8 +52,8 @@ export function Redbox(error) {
     ]);
   });
   return Elem.el('div', { style: RedboxStyle.redbox }, [
-    Elem.el('div', { style: RedboxStyle.message }, `${error.name}: ${error.message}`),
-    Elem.el('div', { style: RedboxStyle.stack }, frames)
+    Elem.el('div', { id: 'errorTitle', style: RedboxStyle.message }, `${error.name}: ${error.message}`),
+    Elem.el('div', { id: 'errorStack', style: RedboxStyle.stack }, frames)
   ]);
 }
 
