@@ -539,7 +539,30 @@ The API is the following :
 * `collectMeasures(clear)` : return all collected measures and maybe clear the measures store
 * `printMeasures` : print collected measures and clear the measures store
 
-You can use the Perf API to build great perf analysis tools like here : https://github.com/mathieuancelin/elem-vdom/blob/master/examples/sink/main.js#L83-L247
+You can use the Perf API to build great perf analysis tools like here : https://github.com/mathieuancelin/elem-vdom/blob/master/src/devtools/perfmonitor.js
+
+You can use it with
+
+```javascript
+const Monitor = require('elem-vdom/lib/devtools/perfmonitor');
+// or
+import * as Monitor from 'elem-vdom/lib/devtools/perfmonitor';
+
+function PerfMonitor() {
+  return Elem.el(Monitor,
+    {
+      initialState: {
+        activated: false,
+        measures: Elem.Perf.measures(),
+        selected: undefined
+      },
+      cleanupHook: onExampleChange
+    });
+}
+
+Elem.render(PerfMonitor, container);
+
+```
 
 ![The perf monitor](https://github.com/mathieuancelin/elem-vdom/raw/master/perfmonitor.gif)
 
