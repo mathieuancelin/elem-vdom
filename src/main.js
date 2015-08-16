@@ -141,7 +141,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     if (key) {
       functionContext.__keys.push(key);
       if (props.initialState && !functionContext.state[`substateof-${key}`]) {
-        functionContext.__internalSetState({ [`substateof-${key}`]: props.initialState });
+        functionContext.__internalSetState({ [`substateof-${key}`]: {...props.initialState} });
       }
       let setGlobalState = functionContext.setState;
       let replaceGlobalState = functionContext.replaceState;
@@ -379,7 +379,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     // let refs = {...globalRefs};
     functionAsComponentContext.context = createComponentContext(refresh, node, {});
     if (props.initialState) {
-      functionAsComponentContext.context.state = props.initialState;
+      functionAsComponentContext.context.state = {...props.initialState};
     } else {
       functionAsComponentContext.context.state = {};
     }

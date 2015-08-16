@@ -17,6 +17,7 @@ export const JSX = require('./jsx');
 export const StatefulCounter = require('./stateful/app');
 
 const SinkPerfMonitoring = require('../../src/devtools/perfmonitor');
+const Inspector = require('../../src/devtools/inspector');
 
 /* eslint no-extend-native: 0 */
 if (!String.prototype.includes) {
@@ -82,8 +83,27 @@ function SinkSidebar(ctx) {
   );
 }
 
+function TheInspector() {
+  const activate = () => this.setState({ show: true });
+  const deactivate = () => this.setState({ show: false });
+  if (this.state.show) {
+    return Elem.el('div', { style: { width: '900px', height: '500px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0', overflowY: 'auto' } }, [
+      Elem.el('div', { key: 'close_inspector_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#9660;' }),
+      Elem.el(Inspector, { filter: ['#test', '#perfs', '#inspector'] })
+    ]);
+  } else {
+    return Elem.el('div', { style: { opacity: '0.9', position: 'fixed', right: '100px', bottom: '0px', backgroundColor: '#020', color: '#0f0', padding: '10px', cursor: 'pointer' } }, [
+      Elem.el('div', { }, [
+        Elem.el('span', { onClick: activate }, 'Inspector '),
+        Elem.el('span', { onClick: activate }, { __asHtml: '&#9650;' })
+      ])
+    ]);
+  }
+}
+
 window.Sink = {
   init() {
+    Elem.render(TheInspector, '#inspector');
     Elem.render(SinkPerfMonitoring, '#perfs', { initialState: { activated: false, measures: Elem.Perf.measures(), selected: undefined }, cleanupHook: onExampleChange});
     if (window.location.hash) {
       selectedContainer = hashes[window.location.hash].container;
