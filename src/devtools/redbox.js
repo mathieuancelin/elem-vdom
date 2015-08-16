@@ -41,7 +41,7 @@ export const RedboxStyle = Utils.stylesheet({
   }
 });
 
-export function Redbox(error) {
+export default function Redbox(error) {
   const frames = ErrorStackParser.parse(error).map(f => {
     const link = `${f.fileName}#${f.lineNumber}:${f.columnNumber}`;
     return Elem.el('div', { style: RedboxStyle.stackframe }, [
@@ -56,19 +56,3 @@ export function Redbox(error) {
     Elem.el('div', { id: 'errorStack', style: RedboxStyle.stack }, frames)
   ]);
 }
-
-export function ErrorMonitor(wrapped) {
-  if (!Utils.isFunction(wrapped)) {
-    throw new Error('ErrorMonitor should only wrap functions');
-  }
-  return (ctx, props) => {
-    try {
-      return wrapped.bind({ ...ctx, props })(ctx, props);
-    } catch(e) {
-      console.log(e);
-      return Redbox(e);
-    }
-  };
-}
-
-// TODO : state and props inspector API ?

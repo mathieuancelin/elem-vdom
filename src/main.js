@@ -2,6 +2,7 @@ import * as Utils from './utils';
 import * as Docs from './docs';
 import * as Perf from './devtools/perfs';
 import * as WebComponents from './webcomponents';
+import * as InspectorAPI from './devtools/inspectorapi';
 
 import diff from 'virtual-dom/diff';
 import patch from 'virtual-dom/patch';
@@ -160,6 +161,9 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     }
     let thisContext = {...functionContext, props, children};
     let subTree = name.bind(thisContext)(functionContext, props, children);
+    if (InspectorAPI.isEnabled()) {
+      InspectorAPI.exposeChildrenStateAndProps(funKey, functionContext.state, attrs, functionContext.setState, functionContext.replaceState);
+    }
     Perf.markStop(funKey);
     return subTree;
   }
@@ -359,6 +363,9 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
           functionAsComponentContext.context.__oldKeys = [...functionAsComponentContext.context.__keys];
           functionAsComponentContext.context.__keys = [];
         }
+        if (InspectorAPI.isEnabled()) {
+          InspectorAPI.exposeStateAndProps(selectorOrNode.id || selectorOrNode, functionAsComponentContext.context.state, props, functionAsComponentContext.context.setState, functionAsComponentContext.context.replaceState);
+        }
       }
     };
     let refresh = () => {
@@ -424,6 +431,9 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       delete node.rootId;
       clearNode(node);
       delete treeCache[rootId];
+      if (InspectorAPI.isEnabled()) {
+        InspectorAPI.removeExposedComponent(selectorOrNode.id || selectorOrNode);
+      }
     }
   };
 }
@@ -441,6 +451,9 @@ export function unmount(theNode) {
   if (node.rootId) {
     delete treeCache[node.rootId];
     delete node.rootId;
+  }
+  if (InspectorAPI.isEnabled()) {
+    InspectorAPI.removeExposedComponent(theNode.id || theNode);
   }
 }
 

@@ -680,8 +680,10 @@ import * as Devtools from 'elem-vdom/lib/devtools';
 
 The API is the following :
 
-* `Elem.Devtools.Redbox(error)` : A component that will display a JavaScript Error in a red box.
-* `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return.
+* `Elem.Devtools.Perf`: the perf API as explained in [About Elem.Perf](#about-elemperf)
+* `Elem.Devtools.PerfMonitor`: the perf monitor as explained in [About Elem.Perf](#about-elemperf). Also available at `elem-vdom/lib/devtools/perfmonitor`
+* `Elem.Devtools.Redbox(error)` : A component that will display a JavaScript Error in a red box. Also available at `elem-vdom/lib/devtools/redbox`
+* `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return. Also available at `elem-vdom/lib/devtools/errormonitor`
 
 ```javascript
 function App() {
