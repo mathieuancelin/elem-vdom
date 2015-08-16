@@ -3,6 +3,8 @@ let globalStore = {};
 let childrenStore = [];
 let listeners = [];
 
+// TODO : create inspector GUI
+
 function callListeners() {
   listeners.forEach(l => l());
 }
@@ -48,14 +50,20 @@ export function exposeStateAndProps(name, state, props, setState, replaceState) 
   }
 }
 
-export function exposeChildrenStateAndProps(name, state, props, setState, replaceState) {
+export function exposeChildrenStateAndProps(name, state, props, setState, replaceState, collectChildren = false) {
   if (enabled) {
+    let children = [];
+    if (collectChildren) {
+      children = [...childrenStore];
+      childrenStore = [];
+    }
     childrenStore.push({
       name,
       state,
       props,
       setState,
-      replaceState
+      replaceState,
+      children
     });
   }
 }
@@ -66,4 +74,14 @@ export function subscribe(listener) {
     let index = listeners.indexOf(listener);
     listeners.splice(index, 1);
   };
+}
+
+export function ephemeralSubscribe(listener) {
+  let ctx = {};
+  ctx.ephemeralListener = () => {
+    listener();
+    let index = listeners.indexOf(ctx.ephemeralListener);
+    listeners.splice(index, 1);
+  };
+  listeners.push(ctx.ephemeralListener);
 }
