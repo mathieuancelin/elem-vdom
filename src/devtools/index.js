@@ -5,9 +5,6 @@ import * as Perf from './perfs';
 import * as InspectorAPI from './inspectorapi';
 import * as Inspector from './inspector';
 
-// TODO : remove that
-window.InspectorAPI = InspectorAPI;
-
 export default {
   ErrorMonitor,
   PerfMonitor,

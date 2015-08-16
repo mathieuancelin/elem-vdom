@@ -366,7 +366,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         if (InspectorAPI.isEnabled()) {
           let id = selectorOrNode.id || selectorOrNode;
           let funcName = elementOrFunction.name || '<anonymous function>';
-          InspectorAPI.exposeStateAndProps(`${id} > ${funcName}`, functionAsComponentContext.context.state, props, functionAsComponentContext.context.setState, functionAsComponentContext.context.replaceState);
+          InspectorAPI.exposeStateAndProps(`${id} > ${funcName}`, node, functionAsComponentContext.context.state, props, functionAsComponentContext.context.setState, functionAsComponentContext.context.replaceState);
         }
       }
     };

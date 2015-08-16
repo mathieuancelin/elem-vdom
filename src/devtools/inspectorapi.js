@@ -1,9 +1,9 @@
-let enabled = true;
+import * as Utils from '../utils';
+
+let enabled = false;
 let globalStore = {};
 let childrenStore = [];
 let listeners = [];
-
-// TODO : create inspector GUI
 
 function callListeners() {
   listeners.forEach(l => l());
@@ -34,12 +34,32 @@ export function getExposedStateAndProps() {
   return {...globalStore};
 }
 
-export function exposeStateAndProps(name, state, props, setState, replaceState) {
+export function cleanup() {
+  globalStore = {};
+  childrenStore = [];
+  callListeners();
+}
+
+export function cleanupGoneComponents() {
+  Object.keys(globalStore).forEach(key => {
+    if (!document.contains(globalStore[key].node)) {
+      delete globalStore[key];
+    }
+  });
+  callListeners();
+}
+
+export function exposeStateAndProps(name, maybeNode, state, props, setState, replaceState) {
   if (enabled) {
+    let node = maybeNode;
+    if (Utils.isString(node)) {
+      node = document.querySelector(node);
+    }
     let children = [...childrenStore];
     childrenStore = [];
     globalStore[name] = {
       name,
+      node,
       state,
       props,
       setState,

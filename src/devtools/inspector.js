@@ -112,7 +112,7 @@ function ElemRenderList() {
     <ul style={Style.nonBulletList}>
       {
         Object.keys(this.props.components).filter(avoid).map(key => {
-          return <li style={Style.listItem} onClick={() => this.setState({ elemSelected: key })}>{{ __asHtml: '&#9658;&nbsp;' }} Node at {key}</li>;
+          return <li key={key} style={Style.listItem} onClick={() => this.setState({ elemSelected: key })}>{{ __asHtml: '&#9658;&nbsp;' }} Node at {key}</li>;
         })
       }
     </ul>
@@ -123,7 +123,7 @@ function ComponentsList() {
   return (
     <div>
       <h5>
-        <span style={{ cursor: 'pointer' }} onClick={() => this.setState({ elemSelected: undefined })}>{{ __asHtml: '&#9668;&nbsp;&nbsp;' }}</span>
+        <span style={{ cursor: 'pointer' }} onClick={() => this.setState({ elemSelected: undefined, displayedPropsIdx: undefined, displayedPropsName: undefined })}>{{ __asHtml: '&#9668;&nbsp;&nbsp;' }}</span>
         <span>Components of {this.state.elemSelected}</span>
       </h5>
       <ul style={Style.nonBulletList}>
@@ -133,7 +133,7 @@ function ComponentsList() {
             if (idx === this.state.displayedPropsIdx) {
               style = style.extend(Style.selected);
             }
-            return <li style={style} onClick={() => this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name })}>{{ __asHtml: '&#9658;&nbsp;' }} {component.name} [{idx + ''}]</li>;
+            return <li key={component.name} style={style} onClick={() => this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name })}>{{ __asHtml: '&#9658;&nbsp;' }} {component.name} [{idx + ''}]</li>;
           })
         }
       </ul>
@@ -144,6 +144,7 @@ function ComponentsList() {
 export default function Inspector() {
   this.props = Object.assign({}, initialProps, this.props);
   this.state = Object.assign({}, defaultState, { components: InspectorAPI.getExposedStateAndProps() }, this.state);
+  InspectorAPI.cleanupGoneComponents();
   if (!this.context.clock) {
     this.context.clock = setInterval(this.redraw, this.props.update);
   }
@@ -164,10 +165,14 @@ export default function Inspector() {
       </div>
     );
   } else {
+    const toggle = () => {
+      InspectorAPI.isEnabled() ? InspectorAPI.stop() : InspectorAPI.start();
+      this.redraw();
+    };
     return (
       <div style={Style.inspector}>
         <div>
-          <h5>Elem inspector</h5>
+          <h5>Elem inspector <div onClick={toggle} style={Style.miniButton.extend({ float: 'right' })}>InspectorAPI is {InspectorAPI.isEnabled() ? 'enabled' : 'disabled'}</div></h5>
           <ElemRenderList components={this.state.components} filter={this.props.filter} />
         </div>
       </div>
