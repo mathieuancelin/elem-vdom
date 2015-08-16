@@ -1,4 +1,4 @@
-let enabled = false;
+let enabled = true;
 let globalStore = {};
 let childrenStore = [];
 let listeners = [];

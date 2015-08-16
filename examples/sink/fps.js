@@ -1,5 +1,6 @@
 const Showcase = require('./showcase');
 const Elem = require('../../src/main');
+const Inspector = require('../../src/devtools/inspector');
 
 let requestId;
 
@@ -97,6 +98,8 @@ Showcase.registerTile('Bubbles ...', container => {
   }
 
   Elem.render(Bubbles, container);
+  // TODO : remove that
+  Elem.render(Inspector, '#test');
 
 }, () => {
   cancelAnimationFrame(requestId);
