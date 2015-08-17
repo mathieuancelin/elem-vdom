@@ -66,7 +66,7 @@ function StateDisplay() {
   const update = () => {
     try {
       let newJson = JSON.parse(this.context.json);
-      this.props.element.setState(newJson);
+      this.props.element.replaceState(newJson);
     } catch(ex) {
       console.log(ex);
     }
@@ -125,6 +125,7 @@ function ComponentsList() {
       <h5>
         <span style={{ cursor: 'pointer' }} onClick={() => this.setState({ elemSelected: undefined, displayedPropsIdx: undefined, displayedPropsName: undefined })}>{{ __asHtml: '&#9668;&nbsp;&nbsp;' }}</span>
         <span>Components of {this.state.elemSelected}</span>
+        <div onClick={this.props.redraw} style={Style.miniButton.extend({ marginLeft: '20px' })}>redraw</div>
       </h5>
       <ul style={Style.nonBulletList}>
         {
@@ -133,12 +134,22 @@ function ComponentsList() {
             if (idx === this.state.displayedPropsIdx) {
               style = style.extend(Style.selected);
             }
-            return <li key={component.name} style={style} onClick={() => this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name })}>{{ __asHtml: '&#9658;&nbsp;' }} {component.name} [{idx + ''}]</li>;
+            style = style.extend({ paddingLeft: (5 + (component.rank * 10)) + 'px' });
+            const displayProps = () => this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name });
+            const key = component.name + '-' + idx;
+            return <li key={key} style={style} onClick={displayProps}>{{ __asHtml: '&#9658;&nbsp;' }} {'<' + component.name}{component.children.length === 0 ? ' />' : '>'}</li>;
           })
         }
       </ul>
     </div>
   );
+}
+
+function walkThroughChildren(elem, array) {
+  array.push(elem);
+  if (elem && elem.children) {
+    elem.children.forEach(e => walkThroughChildren(e, array));
+  }
 }
 
 export default function Inspector() {
@@ -149,12 +160,14 @@ export default function Inspector() {
     this.context.clock = setInterval(this.redraw, this.props.update);
   }
   if (this.state.elemSelected) {
+    let list = [];
+    walkThroughChildren(this.state.components[this.state.elemSelected], list);
     return (
       <div style={Style.inspectorCols}>
-        <div style={{ width: '40%' }}>
-          <ComponentsList list={this.state.components[this.state.elemSelected].children} />
+        <div style={{ width: '50%' }}>
+          <ComponentsList list={list} redraw={() => this.state.components[this.state.elemSelected].setState({})} />
         </div>
-        <div style={{ width: '60%', marginLeft: '10px' }}>
+        <div style={{ width: '50%', marginLeft: '10px' }}>
           <div>
             <PropsDisplay element={this.state.components[this.state.elemSelected]} />
           </div>

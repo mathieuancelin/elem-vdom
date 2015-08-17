@@ -49,6 +49,16 @@ export function cleanupGoneComponents() {
   callListeners();
 }
 
+export function exposeAt(name, data) {
+  if (enabled) {
+    if (Utils.isString(data.node)) {
+      data.node = document.querySelector(data.node);
+    }
+    globalStore[name] = data;
+    callListeners();
+  }
+}
+
 export function exposeStateAndProps(name, maybeNode, state, props, setState, replaceState) {
   if (enabled) {
     let node = maybeNode;

@@ -8,20 +8,20 @@ let interval = null;
 Showcase.registerTile('Function composition example', container => {
   function DateField(ctx, props) {
     return Elem.el('div', [
-      Elem.el('h1', moment().format(props.format))
+      Elem.el('h1', ctx.state.time.format(props.format))
     ]);
   }
 
   function TimeField(ctx, props) {
     return Elem.el('div', [
-      Elem.el('h2', moment().format(props.format))
+      Elem.el('h2', ctx.state.time.format(props.format))
     ]);
   }
 
   function GraphicalClock(ctx, props) {
-    let hoursRotation = 'rotate(' + ((moment().hours() % 12) * 30) + ')';
-    let minutesRotation = 'rotate(' + ((moment().minutes() % 60) * 6) + ')';
-    let secondsRotation = 'rotate(' + ((moment().seconds() % 60) * 6) + ')';
+    let hoursRotation = 'rotate(' + ((ctx.state.hours % 12) * 30) + ')';
+    let minutesRotation = 'rotate(' + ((ctx.state.minutes % 60) * 6) + ')';
+    let secondsRotation = 'rotate(' + ((ctx.state.seconds % 60) * 6) + ')';
     return Elem.el('div', { className: 'clock', style: { width: props.width + 'px', height: props.height + 'px' } }, [
       Elem.svg('svg', { xmlns: Elem.svgNS, version: '1.1', viewBox: '0 0 100 100'}, [
         Elem.svg('g', { transform: 'translate(50,50)' }, [
@@ -39,7 +39,8 @@ Showcase.registerTile('Function composition example', container => {
 
   function Clock(ctx) {
     if (interval === null) {
-      interval = setInterval(ctx.refresh, 1000);
+      const update = () => ctx.setState({ hours: moment().hours(), minutes: moment().minutes(), seconds: moment().seconds(), time: moment() });
+      interval = setInterval(update, 1000);
     }
     return Elem.el('div', { style: { display: 'flex' } }, [
       Elem.el('div', { style: { display: 'flex', flexDirection: 'column' } }, [
@@ -50,7 +51,7 @@ Showcase.registerTile('Function composition example', container => {
     ]);
   }
 
-  Elem.render(Clock, container);
+  Elem.render(Clock, container, { initialState: { hours: moment().hours(), minutes: moment().minutes(), seconds: moment().seconds(), time: moment() } });
 }, () => {
   clearInterval(interval);
   interval = null;

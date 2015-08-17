@@ -14,6 +14,34 @@ Showcase.registerTile('Fix #9', container => {
   Elem.render(MyAwesomeNodes, container);
 });
 
+Showcase.registerTile('Deep example', container => {
+  function Child1() {
+    return <div>{this.props.children}</div>;
+  }
+  function Child2() {
+    return <ul>{this.props.children}</ul>;
+  }
+  function Child3() {
+    return <span>Hello World</span>;
+  }
+  function Child4() {
+    return <span>Goodbye World</span>;
+  }
+  function App() {
+    return (
+      <Child1>
+        <Child2>
+          <Child3 />
+          <Child3 />
+          <Child3 />
+        </Child2>
+        <Child4 />
+      </Child1>
+    );
+  }
+  Elem.render(App, container);
+});
+
 Showcase.registerTile('Style usage', container => {
   let node = Elem.el('div', {
     className: 'col-md-6'

@@ -162,7 +162,15 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     let thisContext = {...functionContext, props, children};
     let subTree = name.bind(thisContext)(functionContext, props, children);
     if (InspectorAPI.isEnabled()) {
-      InspectorAPI.exposeChildrenStateAndProps(name.name || '<anonymous function>', functionContext.state, attrs, functionContext.setState, functionContext.replaceState, false); // children.length > 0);
+      subTree.inspectorContext = {
+        type: 'function',
+        name: name.name || '<anonymous function>',
+        state: functionContext.state,
+        props: attrs,
+        setState: functionContext.setState,
+        replaceState: functionContext.replaceState
+      };
+      // InspectorAPI.exposeChildrenStateAndProps(name.name || '<anonymous function>', functionContext.state, attrs, functionContext.setState, functionContext.replaceState, false); // children.length > 0);
     }
     Perf.markStop(funKey);
     return subTree;
@@ -340,10 +348,12 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       props
     };
     let reTree = () => {
+      let elems;
       try {
         currentComponentContext = functionAsComponentContext.context;
         let thisContext = {...functionAsComponentContext.context, props: functionAsComponentContext.props};
-        return elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
+        elems = elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
+        return elems;
       } finally {
         let refs = {...globalRefs};
         globalRefs = {};
@@ -366,7 +376,32 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         if (InspectorAPI.isEnabled()) {
           let id = selectorOrNode.id || selectorOrNode;
           let funcName = elementOrFunction.name || '<anonymous function>';
-          InspectorAPI.exposeStateAndProps(`${id} > ${funcName}`, node, functionAsComponentContext.context.state, props, functionAsComponentContext.context.setState, functionAsComponentContext.context.replaceState);
+          // InspectorAPI.exposeStateAndProps(`${id} > ${funcName}`, node, functionAsComponentContext.context.state, props, functionAsComponentContext.context.setState, functionAsComponentContext.context.replaceState);
+          const inspectChild = (n, children, rank) => {
+            if (n && n.inspectorContext) {
+              let currentNode = {...n.inspectorContext, children: [], rank: rank + 1};
+              if (n.children) {
+                n.children.forEach(c => inspectChild(c, currentNode.children, rank + 1));
+              }
+              children.push(currentNode);
+              return currentNode;
+            } else if (n && n.children) {
+              n.children.forEach(c => inspectChild(c, children, rank));
+            }
+          };
+          let exposeName = `${id} > ${funcName}`;
+          let root = {
+            name: funcName,
+            node: node,
+            state: functionAsComponentContext.context.state,
+            props: props,
+            setState: functionAsComponentContext.context.setState,
+            replaceState: functionAsComponentContext.context.replaceState,
+            rank: 0,
+            children: []
+          };
+          inspectChild(elems, root.children, 0);
+          InspectorAPI.exposeAt(exposeName, root);
         }
       }
     };
