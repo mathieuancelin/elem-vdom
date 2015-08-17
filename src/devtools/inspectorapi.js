@@ -16,6 +16,7 @@ export function start() {
 export function stop() {
   globalStore = {};
   enabled = false;
+  callListeners();
 }
 
 export function isEnabled() {

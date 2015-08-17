@@ -267,6 +267,16 @@ But, I like jsx syntax, how can I use it ?
 
 If you use babel, add jsxPragma=Elem.jsx to options in your .babelrc or babel-loader.
 
+see
+
+https://github.com/mathieuancelin/elem-vdom/blob/master/.babelrc#L5
+
+or
+
+https://github.com/mathieuancelin/elem-vdom/blob/master/webpack.config.js#L53
+
+then you can write stuff like :
+
 ```javascript
 
 function Bordered() {
