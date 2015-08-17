@@ -700,6 +700,9 @@ Elem.render(DebugApp, container);
 ![The Redbox](https://github.com/mathieuancelin/elem-vdom/raw/master/redbox.png)
 
 * `Elem.Devtools.Inspector` : An inspector element to browse component tree created by elem, inspect props and state, updating state live, trigger redraw, etc ... Just use it with `Elem.render(Elem.Devtools.Inspector, '#inspector', { __inspectorSilent: true })`. The '__inspectorSilent' is very important at the root of the tree that include the inspector to avoid the inspector to auto refresh itself.
+
+![The Inspector](https://github.com/mathieuancelin/elem-vdom/raw/master/inspector.png)
+
 * `Elem.Devtools.InspectorAPI` : API to get internal data about the rendered Elem trees. You can use the API to build tools like the Inpector.
   * `start()` : start inspection
   * `stop()` : stop inspection
@@ -708,9 +711,6 @@ Elem.render(DebugApp, container);
   * `cleanup()` : cleanup current internal data
   * `subscribe(listener)` : subscribe notification of changes of the internal data
   * `ephemeralSubscribe(listener)` : subscribe notification of changes of the internal data, but one shot
-
-
-![The Inspector](https://github.com/mathieuancelin/elem-vdom/raw/master/inspector.png)
 
 [1]: https://api.travis-ci.org/mathieuancelin/elem-vdom.svg
 [2]: https://api.travis-ci.org/mathieuancelin/elem-vdom
