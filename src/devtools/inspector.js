@@ -87,12 +87,12 @@ function StateDisplay() {
 }
 
 function PropsDisplay() {
-  let element = this.props.element.children[this.state.displayedPropsIdx] || this.props.element;
+  let element = this.props.list[this.state.displayedPropsIdx] || this.props.element;
   let props = {...element.props};
   delete props.initialState;
   return (
     <div>
-      <h5>Props of {this.state.displayedPropsName}[{this.state.displayedPropsIdx + ''}]</h5>
+      <h5>Props of {'<' + this.state.displayedPropsName + ' />'}</h5>
       <pre style={Style.editor}>{JSON.stringify(props, null, 2)}</pre>
     </div>
   );
@@ -169,7 +169,7 @@ export default function Inspector() {
         </div>
         <div style={{ width: '50%', marginLeft: '10px' }}>
           <div>
-            <PropsDisplay element={this.state.components[this.state.elemSelected]} />
+            <PropsDisplay list={list} element={this.state.components[this.state.elemSelected]} />
           </div>
           <div>
             <StateDisplay element={this.state.components[this.state.elemSelected]} />
