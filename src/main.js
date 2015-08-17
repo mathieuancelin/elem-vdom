@@ -170,7 +170,6 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         setState: functionContext.setState,
         replaceState: functionContext.replaceState
       };
-      // InspectorAPI.exposeChildrenStateAndProps(name.name || '<anonymous function>', functionContext.state, attrs, functionContext.setState, functionContext.replaceState, false); // children.length > 0);
     }
     Perf.markStop(funKey);
     return subTree;
@@ -376,7 +375,6 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         if (InspectorAPI.isEnabled()) {
           let id = selectorOrNode.id || selectorOrNode;
           let funcName = elementOrFunction.name || '<anonymous function>';
-          // InspectorAPI.exposeStateAndProps(`${id} > ${funcName}`, node, functionAsComponentContext.context.state, props, functionAsComponentContext.context.setState, functionAsComponentContext.context.replaceState);
           const inspectChild = (n, children, rank) => {
             if (n && n.inspectorContext) {
               let currentNode = {...n.inspectorContext, children: [], rank: rank + 1};
@@ -401,7 +399,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
             children: []
           };
           inspectChild(elems, root.children, 0);
-          InspectorAPI.exposeAt(exposeName, root);
+          InspectorAPI.exposeComponentTreeAt(exposeName, root);
         }
       }
     };
