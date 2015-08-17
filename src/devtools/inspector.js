@@ -1,4 +1,5 @@
 import * as Elem from '../main';
+import * as Utils from '../utils';
 import * as InspectorAPI from './inspectorapi';
 
 const Style = Elem.stylesheet({
@@ -129,12 +130,12 @@ function ComponentsList() {
       </h5>
       <ul style={Style.nonBulletList}>
         {
-          this.props.list.map((component, idx) => {
+          this.props.list.filter(c => !Utils.isUndefined(c)).map((component, idx) => {
             let style = Style.listItem;
             if (idx === this.state.displayedPropsIdx) {
               style = style.extend(Style.selected);
             }
-            style = style.extend({ paddingLeft: (5 + (component.rank * 10)) + 'px' });
+            style = style.extend({ paddingLeft: (5 + ((component.rank || 0) * 10)) + 'px' });
             const displayProps = () => this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name });
             const key = component.name + '-' + idx;
             return <li key={key} style={style} onClick={displayProps}>{{ __asHtml: '&#9658;&nbsp;' }} {'<' + component.name}{component.children.length === 0 ? ' />' : '>'}</li>;
@@ -155,10 +156,7 @@ function walkThroughChildren(elem, array) {
 export default function Inspector() {
   this.props = Object.assign({}, initialProps, this.props);
   this.state = Object.assign({}, defaultState, { components: InspectorAPI.getExposedStateAndProps() }, this.state);
-  InspectorAPI.cleanupGoneComponents();
-  if (!this.context.clock) {
-    this.context.clock = setInterval(this.redraw, this.props.update);
-  }
+  InspectorAPI.ephemeralSubscribe(this.redraw);
   if (this.state.elemSelected) {
     let list = [];
     walkThroughChildren(this.state.components[this.state.elemSelected], list);

@@ -36,13 +36,15 @@ export function cleanup() {
   callListeners();
 }
 
-export function cleanupGoneComponents() {
+export function cleanupGoneComponents(notify = false) {
   Object.keys(globalStore).forEach(key => {
     if (!document.contains(globalStore[key].node)) {
       delete globalStore[key];
     }
   });
-  callListeners();
+  if (notify) {
+    callListeners();
+  }
 }
 
 export function exposeComponentTreeAt(name, data) {
@@ -51,6 +53,7 @@ export function exposeComponentTreeAt(name, data) {
       data.node = document.querySelector(data.node);
     }
     globalStore[name] = data;
+    cleanupGoneComponents();
     callListeners();
   }
 }

@@ -372,7 +372,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
           functionAsComponentContext.context.__oldKeys = [...functionAsComponentContext.context.__keys];
           functionAsComponentContext.context.__keys = [];
         }
-        if (InspectorAPI.isEnabled()) {
+        if (InspectorAPI.isEnabled() && !(props.__inspectorSilent || false)) {
           let id = selectorOrNode.id || selectorOrNode;
           let funcName = elementOrFunction.name || '<anonymous function>';
           const inspectChild = (n, children, rank) => {
