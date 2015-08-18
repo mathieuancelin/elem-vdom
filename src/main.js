@@ -162,7 +162,10 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     let thisContext = {...functionContext, props, children};
     let subTree = name.bind(thisContext)(functionContext, props, children);
     if (InspectorAPI.isEnabled()) {
+      let selectorId = Math.random().toString(15).slice(10, 20) + '';
+      subTree.properties.attributes['data-inspector-selector'] = selectorId;
       subTree.inspectorContext = {
+        node: `[data-inspector-selector="${selectorId}"]`,
         type: 'function',
         name: name.name || '<anonymous function>',
         state: functionContext.state,

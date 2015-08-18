@@ -1,4 +1,5 @@
 node_modules
+/chrome-devtools
 .DS_Store
 *.iml
 *.ipr

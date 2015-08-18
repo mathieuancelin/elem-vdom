@@ -58,7 +58,8 @@ const initialProps = { filter: [], update: 200 };
 const defaultState = { edit: false };
 
 function StateDisplay() {
-  const json = JSON.stringify(this.props.element.state, null, 2);
+  let element = this.props.element || { state: {}};
+  const json = JSON.stringify(element.state || {}, null, 2);
   this.context.json = json;
   let height = json.split('\n').length * 20;
   if (height < 40) {
@@ -88,7 +89,7 @@ function StateDisplay() {
 }
 
 function PropsDisplay() {
-  let element = this.props.list[this.state.displayedPropsIdx] || this.props.element;
+  let element = this.props.list[this.state.displayedPropsIdx] || this.props.element || { props: {}};
   let props = {...element.props};
   delete props.initialState;
   return (
@@ -121,12 +122,24 @@ function ElemRenderList() {
 }
 
 function ComponentsList() {
+  const cleanSelection = () => {
+    if (this.context.previousSelectedComponent) {
+      this.context.previousSelectedComponent.style.outline = this.context.previousSelectedComponent.style.oldOutline || '';
+      this.context.previousSelectedComponent.style.oldOutline = '';
+      this.setState({ displayedPropsIdx: undefined, displayedPropsName: undefined });
+    }
+  };
+  const backToFirstPanel = () => {
+    cleanSelection();
+    this.setState({ elemSelected: undefined, displayedPropsIdx: undefined, displayedPropsName: undefined });
+  };
   return (
     <div>
       <h5>
-        <span style={{ cursor: 'pointer' }} onClick={() => this.setState({ elemSelected: undefined, displayedPropsIdx: undefined, displayedPropsName: undefined })}>{{ __asHtml: '&#9668;&nbsp;&nbsp;' }}</span>
+        <span style={{ cursor: 'pointer' }} onClick={backToFirstPanel}>{{ __asHtml: '&#9668;&nbsp;&nbsp;' }}</span>
         <span>Components of {this.state.elemSelected}</span>
         <div onClick={this.props.redraw} style={Style.miniButton.extend({ marginLeft: '20px' })}>redraw</div>
+        <div onClick={cleanSelection} style={Style.miniButton.extend({ marginLeft: '2px' })}>clean sel.</div>
       </h5>
       <ul style={Style.nonBulletList}>
         {
@@ -136,7 +149,14 @@ function ComponentsList() {
               style = style.extend(Style.selected);
             }
             style = style.extend({ paddingLeft: (5 + ((component.rank || 0) * 10)) + 'px' });
-            const displayProps = () => this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name });
+            const displayProps = () => {
+              let selectedComponent = Utils.isString(component.node) ? document.querySelector(component.node) : component.node;
+              cleanSelection();
+              this.context.previousSelectedComponent = selectedComponent;
+              selectedComponent.style.oldOutline = selectedComponent.style.outline;
+              selectedComponent.style.outline = '2px solid red';
+              this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name });
+            };
             const key = component.name + '-' + idx;
             return <li key={key} style={style} onClick={displayProps}>{{ __asHtml: '&#9658;&nbsp;' }} {'<' + component.name}{component.children.length === 0 ? ' />' : '>'}</li>;
           })
