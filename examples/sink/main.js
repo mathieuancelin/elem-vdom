@@ -86,12 +86,32 @@ function SinkSidebar(ctx) {
 }
 
 function TheInspector() {
+  let borderWidth = 10;
+  let width = this.state.width || 900;
+  let height = this.state.height || 400;
   const activate = () => this.setState({ show: true });
   const deactivate = () => this.setState({ show: false });
+  const resizeHeight = (e) => {
+    if ((e.which || e.button) === 1) {
+      let diffy = this.state.origin.y - e.clientY;
+      this.setState({ height: height + diffy, origin: { x: e.clientX, y: e.clientY } });
+    }
+  };
+  const resizeWidth = (e) => {
+    if ((e.which || e.button) === 1) {
+      let diffx = this.state.origin.x - e.clientX;
+      this.setState({ width: width + diffx, origin: { x: e.clientX, y: e.clientY } });
+    }
+  };
+  const enableResize = (e) => this.setState({ origin: { x: e.clientX, y: e.clientY } });
   if (this.state.show) {
-    return Elem.el('div', { style: { width: '900px', height: '500px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0', overflowY: 'auto' } }, [
-      Elem.el('div', { key: 'close_inspector_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#9660;' }),
-      Elem.el(Inspector, { filter: ['#test', '#perfs', '#inspector'] })
+    return Elem.el('div', { style: { display: 'flex', width: (width + borderWidth) + 'px', height: height + 'px', opacity: '0.9', position: 'fixed', right: '0px', bottom: '0px', backgroundColor: '#020', color: '#0f0', overflowY: 'auto' } }, [
+      Elem.el('div', { onmousedown: enableResize, onmousemove: resizeWidth, style: { width: borderWidth + 'px', height: (height + borderWidth) + 'px', cursor: 'ew-resize' }}),
+      Elem.el('div', { style: { width: (width - borderWidth) + 'px' }}, [
+        Elem.el('div', { onmousedown: enableResize, onmousemove: resizeHeight, style: { height: borderWidth + 'px', width: width + 'px', cursor: 'ns-resize' }}),
+        Elem.el('div', { key: 'close_inspector_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#9660;' }),
+        Elem.el(Inspector, { filter: ['#test', '#perfs', '#inspector'] })
+      ])
     ]);
   } else {
     return Elem.el('div', { style: { opacity: '0.9', position: 'fixed', right: '100px', bottom: '0px', backgroundColor: '#020', color: '#0f0', padding: '10px', cursor: 'pointer' } }, [
