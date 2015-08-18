@@ -711,7 +711,7 @@ Elem.render(DebugApp, container);
 
 * `Elem.Devtools.Inspector` : An inspector element to browse component tree created by elem, inspect props and state, updating state live, trigger redraw, etc ... Just use it with `Elem.render(Elem.Devtools.Inspector, '#inspector', { __inspectorSilent: true })`. The '__inspectorSilent' is very important at the root of the tree that include the inspector to avoid the inspector to auto refresh itself.
 
-![The Inspector](https://github.com/mathieuancelin/elem-vdom/raw/master/inspector.png)
+![The Inspector](https://github.com/mathieuancelin/elem-vdom/raw/master/inspector.gif)
 
 * `Elem.Devtools.InspectorAPI` : API to get internal data about the rendered Elem trees. You can use the API to build tools like the Inpector.
   * `start()` : start inspection
