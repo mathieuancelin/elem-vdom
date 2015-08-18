@@ -140,6 +140,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     let functionContext = {...currentComponentContext};
     if (key) {
       functionContext.__keys.push(key);
+      // TODO : remove initialState from props
       if (props.initialState && !functionContext.state[`substateof-${key}`]) {
         functionContext.__internalSetState({ [`substateof-${key}`]: {...props.initialState} });
       }
@@ -158,8 +159,23 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         }
         setGlobalState({ [`substateof-${key}`]: newState }, cb);
       };
+      functionContext.withInitialState = (initialState) => {
+        if (!globalState[`substateof-${key}`]) {
+          functionContext.__internalSetState({ [`substateof-${key}`]: {...initialState} });
+        }
+        return globalState[`substateof-${key}`];
+      };
     }
     let thisContext = {...functionContext, props, children};
+    thisContext.withInitialState = (initialState) => {
+      thisContext.state = functionContext.withInitialState(initialState);
+    };
+    thisContext.withInitialContext = (initialCtx) => {
+      thisContext.context = functionContext.withInitialContext(initialCtx);
+    };
+    thisContext.withDefaultProps = (defaultProps) => {
+      thisContext.props = Object.assign({}, defaultProps, thisContext.props);
+    };
     let subTree = name.bind(thisContext)(functionContext, props, children);
     if (InspectorAPI.isEnabled()) {
       let selectorId = Math.random().toString(15).slice(10, 20) + '';
@@ -298,6 +314,8 @@ export function text(spanText) {
 }
 
 function createComponentContext(refresh, renderNode, refs = {}) {
+  let initialized = false;
+  let initializedCtx = false;
   let context = {
     __keys: [],
     __oldKeys: [],
@@ -316,6 +334,24 @@ function createComponentContext(refresh, renderNode, refs = {}) {
       }
       return renderNode;
     }
+  };
+  context.__initialized = () => {
+    initialized = true;
+    initializedCtx = true;
+  };
+  context.withInitialState = (initialState = {}) => {
+    if (!initialized) {
+      initialized = true;
+      context.state = Object.assign({}, initialState, context.state);
+    }
+    return context.state;
+  };
+  context.withInitialContext = (initialCtx = {}) => {
+    if (!initializedCtx) {
+      initializedCtx = true;
+      context.context = Object.assign({}, initialCtx, context.context);
+    }
+    return context.context;
   };
   context.__internalSetState = (diffState) => {
     for (let key in diffState) {
@@ -359,6 +395,15 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
       try {
         currentComponentContext = functionAsComponentContext.context;
         let thisContext = {...functionAsComponentContext.context, props: functionAsComponentContext.props};
+        thisContext.withInitialState = (initialState) => {
+          thisContext.state = functionAsComponentContext.context.withInitialState(initialState);
+        };
+        thisContext.withInitialContext = (initialCtx) => {
+          thisContext.context = functionAsComponentContext.context.withInitialContext(initialCtx);
+        };
+        thisContext.withDefaultProps = (defaultProps) => {
+          thisContext.props = Object.assign({}, defaultProps, thisContext.props);
+        };
         elems = elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
         return elems;
       } finally {
@@ -422,12 +467,9 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     };
     // let refs = {...globalRefs};
     functionAsComponentContext.context = createComponentContext(refresh, node, {});
-    if (props.initialState) {
-      functionAsComponentContext.context.state = {...props.initialState};
-    } else {
-      functionAsComponentContext.context.state = {};
-    }
+    functionAsComponentContext.context.state = {};
     tree = reTree();
+    functionAsComponentContext.context.__initialized();
     // Perf.markStop('Elem.render.tree');
     Perf.markStop(funKey);
   } else if (Utils.isArray(tree)) {

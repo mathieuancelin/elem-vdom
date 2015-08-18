@@ -38,6 +38,7 @@ Showcase.registerTile('Function composition example', container => {
   }
 
   function Clock(ctx) {
+    ctx.withInitialState({ hours: moment().hours(), minutes: moment().minutes(), seconds: moment().seconds(), time: moment() });
     if (interval === null) {
       const update = () => ctx.setState({ hours: moment().hours(), minutes: moment().minutes(), seconds: moment().seconds(), time: moment() });
       interval = setInterval(update, 1000);
@@ -51,7 +52,7 @@ Showcase.registerTile('Function composition example', container => {
     ]);
   }
 
-  Elem.render(Clock, container, { initialState: { hours: moment().hours(), minutes: moment().minutes(), seconds: moment().seconds(), time: moment() } });
+  Elem.render(Clock, container);
 }, () => {
   clearInterval(interval);
   interval = null;
@@ -124,6 +125,7 @@ Showcase.registerTile('Substate with function composition', container => {
   }
 
   function Line() {
+    this.withInitialState({ value: '--' });
     return Elem.el('div', { style: { display: 'flex', marginTop: '4px' } }, [
       Elem.el('div', { className: 'btn-group' }, [
         Elem.el('button', { className: 'btn btn-xs btn-success', type: 'button', onClick: () => this.setState({ value: id() }) }, 'Update value'),
@@ -137,10 +139,11 @@ Showcase.registerTile('Substate with function composition', container => {
    * As it's the root component, this.state is the 'global state' of the component
    */
   function Lines() {
+    this.withInitialState({ lines: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] });
     // here, can call this.state, this.props, this.setState(...), this.redraw()
     const deleteLine = (key) => this.setState({ lines: this.state.lines.filter(i => i !== key) });
     // Create a Line component instance with its own state because of the key props. And provide an initial state value with prop initialState
-    const lines = this.state.lines.map(i => Elem.el(Line, { key: `${i}`, deleteLine, initialState: { value: '--' } }));
+    const lines = this.state.lines.map(i => Elem.el(Line, { key: `${i}`, deleteLine }));
     return Elem.el('div', [
       Elem.el('div', { className: 'btn-group', style: { marginTop: '20px', marginBottom: '20px' } }, [
         Elem.el('button', { className: 'btn btn-xs btn-success', type: 'button', onClick: () => this.setState({ lines: [...this.state.lines, `${Date.now()}`] }) }, 'Add a row'),
@@ -153,7 +156,7 @@ Showcase.registerTile('Substate with function composition', container => {
     ]);
   }
 
-  Elem.render(Lines, container, { initialState: { lines: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] } });
+  Elem.render(Lines, container);
 });
 
 
@@ -253,6 +256,7 @@ Showcase.registerTile('Todo app', container => {
   }
 
   function Todo() {
+    this.withInitialState({ tasks: [{ _id: '1', name: 'yo', done: false }], text: '' });
     return Elem.el('div', { className: 'col-md-5' }, [
       Elem.el('h3', 'Todo List'),
       Elem.el(NewTask),
@@ -260,5 +264,5 @@ Showcase.registerTile('Todo app', container => {
     ]);
   }
 
-  Elem.render(Todo, container, { initialState: { tasks: [{ _id: '1', name: 'yo', done: false }], text: '' } });
+  Elem.render(Todo, container);
 });

@@ -123,6 +123,7 @@ function SelectionPanel() {
 }
 
 export default function Monitor() {
+  this.withInitialState({ activated: false, measures: Elem.Perf.measures(), selected: undefined });
   const refreshPerfPanel = () => {
     this.setState({ measures: Elem.Perf.measures() });
   };

@@ -253,13 +253,20 @@ Then the `this.state` passed to the function `MyButton` will be its own. You jus
 You can also specify an initialState to the sub-state of a component
 
 ```javascript
-Elem.el(MyButton, { key: "button1", initialState: { done: false } })
+function MyButton() {
+  this.withInitialState({ done: false }); // only set once
+  ...
+}
 ```
 
-it work also with the main render Function
+it work also with the main render state
 
 ```javascript
-Elem.render(MyButton, container, { initialState: { done: false } });
+function MyButton() {
+  this.withInitialState({ done: false }); // only set once
+  ...
+}
+Elem.render(MyButton, container);
 ```
 
 But, I like jsx syntax, how can I use it ?
@@ -561,13 +568,7 @@ const Monitor = require('elem-vdom/lib/devtools/perfmonitor');
 import * as Monitor from 'elem-vdom/lib/devtools/perfmonitor';
 
 function PerfMonitor() {
-  return Elem.el(Monitor, {
-    initialState: {
-      activated: false,
-      measures: Elem.Perf.measures(),
-      selected: undefined
-    }
-  });
+  return Elem.el(Monitor);
 }
 
 Elem.render(PerfMonitor, container);

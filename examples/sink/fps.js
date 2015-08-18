@@ -6,6 +6,7 @@ let requestId;
 Showcase.registerTile('One bubble', container => {
   const baseSpeed = 1;
   function Bubble() {
+    this.withInitialState({ x: 300, y: 30, r: 30, incrementY: baseSpeed, incrementX: baseSpeed, speed: baseSpeed });
     let { x, y, incrementY, incrementX, speed } = this.state;
     speed = baseSpeed + (Math.random() * 5);
     if (x <= 30) {
@@ -29,7 +30,7 @@ Showcase.registerTile('One bubble', container => {
       Elem.svg('circle', { cx: this.state.x, cy: this.state.y, r: this.state.r, fill: 'blue' }),
     ]);
   }
-  Elem.render(Bubble, container, { initialState: { x: 300, y: 30, r: 30, incrementY: baseSpeed, incrementX: baseSpeed, speed: baseSpeed } });
+  Elem.render(Bubble, container);
 }, () => {
   cancelAnimationFrame(requestId);
   requestId = undefined;

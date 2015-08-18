@@ -126,7 +126,7 @@ function TheInspector() {
 window.Sink = {
   init() {
     Elem.render(TheInspector, '#inspector', {  __inspectorSilent: true });
-    Elem.render(SinkPerfMonitoring, '#perfs', { initialState: { activated: false, measures: Elem.Perf.measures(), selected: undefined }, cleanupHook: onExampleChange});
+    Elem.render(SinkPerfMonitoring, '#perfs', { cleanupHook: onExampleChange });
     if (window.location.hash) {
       selectedContainer = hashes[window.location.hash].container;
       Elem.render(SinkSidebar, '#sidebar');
