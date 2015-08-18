@@ -182,6 +182,11 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     attributes: {}
   };
   let ctx = transformAttrs(attrs, finalAttrs.attributes, finalAttrs);
+  if ((name === 'input' || name === 'INPUT') && attrs.value) {
+    finalAttrs.value = attrs.value;
+    finalAttrs.attributes.value = attrs.value;
+    finalAttrs.attributes.defaultValue = attrs.value;
+  }
   if (ctx.ref) {
     let refId = Utils.uniqueId('elemref-');
     finalAttrs.attributes['data-elemref'] = refId;

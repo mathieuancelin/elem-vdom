@@ -147,6 +147,13 @@ function ComponentsList() {
       this.setState({ displayedPropsIdx: undefined, displayedPropsName: undefined });
     }
   };
+  const outlineSelectedComponent = (component) => {
+    let selectedComponent = Utils.isString(component.node) ? document.querySelector(component.node) : component.node;
+    cleanSelection();
+    this.context.previousSelectedComponent = selectedComponent;
+    selectedComponent.style.oldOutline = selectedComponent.style.outline;
+    selectedComponent.style.outline = '2px solid red';
+  };
   const backToFirstPanel = () => {
     cleanSelection();
     this.setState({ elemSelected: undefined, displayedPropsIdx: undefined, displayedPropsName: undefined });
@@ -159,10 +166,7 @@ function ComponentsList() {
       let cleanList = this.props.list.filter(c => !Utils.isUndefined(c));
       let selectedComponent = cleanList.filter(c => c.node === query || c.node === target)[0];
       if (selectedComponent) {
-        cleanSelection();
-        this.context.previousSelectedComponent = target;
-        target.style.oldOutline = target.style.outline;
-        target.style.outline = '2px solid red';
+        outlineSelectedComponent(selectedComponent);
         this.setState({ displayedPropsIdx: cleanList.indexOf(selectedComponent), displayedPropsName: selectedComponent.name });
       } else {
         console.log(`[elem-inspect] not found ${query}`, cleanList.map(c => c.node));
@@ -207,11 +211,7 @@ function ComponentsList() {
             }
             style = style.extend({ paddingLeft: (5 + ((component.rank || 0) * 10)) + 'px' });
             const displayProps = () => {
-              let selectedComponent = Utils.isString(component.node) ? document.querySelector(component.node) : component.node;
-              cleanSelection();
-              this.context.previousSelectedComponent = selectedComponent;
-              selectedComponent.style.oldOutline = selectedComponent.style.outline;
-              selectedComponent.style.outline = '2px solid red';
+              outlineSelectedComponent(component);
               this.setState({ displayedPropsIdx: idx, displayedPropsName: component.name });
             };
             const key = component.name + '-' + idx;

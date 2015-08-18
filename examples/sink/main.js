@@ -110,7 +110,7 @@ function TheInspector() {
       Elem.el('div', { style: { width: (width - borderWidth) + 'px' }}, [
         Elem.el('div', { onmousedown: enableResize, onmousemove: resizeHeight, style: { height: borderWidth + 'px', width: width + 'px', cursor: 'ns-resize' }}),
         Elem.el('div', { key: 'close_inspector_panel', style: { cursor: 'pointer', margin: '3px', float: 'right' }, onClick: deactivate }, { __asHtml: '&#9660;' }),
-        Elem.el(Inspector, { filter: ['#test', '#perfs', '#inspector'] })
+        Elem.el(Inspector, { filter: ['#test', '#perfs', '#inspector', '#sidebar'] })
       ])
     ]);
   } else {
