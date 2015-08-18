@@ -68,6 +68,7 @@ function StateDisplay() {
   const update = () => {
     try {
       let newJson = JSON.parse(this.context.json);
+      Elem.unmount(this.getDOMNode());
       this.props.element.replaceState(newJson);
     } catch(ex) {
       console.log(ex);
@@ -83,7 +84,7 @@ function StateDisplay() {
           <div style={Style.miniButton.extend({ float: 'right' })} onClick={update} >update</div>
         </div>
       </div>
-      <textarea style={Style.editor.extend({ height: height + 'px' })} onChange={(e) => this.context.json = e.target.value}>{json}</textarea>
+      <textarea key="StateDisplayTA" style={Style.editor.extend({ height: height + 'px' })} onChange={(e) => this.context.json = e.target.value}>{json}</textarea>
     </div>
   );
 }
@@ -95,7 +96,7 @@ function PropsDisplay() {
   return (
     <div>
       <h5>Props of {'<' + this.state.displayedPropsName + ' />'}</h5>
-      <pre style={Style.editor}>{JSON.stringify(props, null, 2)}</pre>
+      <pre key="PropsDisplayPre" style={Style.editor}>{JSON.stringify(props, null, 2)}</pre>
     </div>
   );
 }
