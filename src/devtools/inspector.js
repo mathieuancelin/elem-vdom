@@ -196,7 +196,7 @@ function ComponentsList() {
         <span>Components of {this.state.elemSelected}</span>
         <div onClick={this.props.redraw} style={Style.miniButtonIcon.extend({ marginLeft: '20px' })} title="redraw">{{ __asHtml: '&#x27f3;' }}</div>
         <div onClick={cleanSelection} style={Style.miniButtonIcon} title="clean selection">{{ __asHtml: '&#x2718;' }}</div>
-        <div onClick={selectElement} style={Style.miniButtonIcon.extend({ backgroundColor: this.state.modeSelection ? 'rgb(92, 184, 92)' : 'rgb(217, 83, 79)' })} title="select element">{{ __asHtml: '&#x279a;'}}</div>
+        <div onClick={selectElement} style={Style.miniButtonIcon.extend({ backgroundColor: this.state.modeSelection ? 'rgb(92, 184, 92)' : 'rgb(217, 83, 79)' })} title="select element">{{ __asHtml: '&#x25ce;'}}</div>
       </h5>
       <ul style={Style.nonBulletList}>
         {
