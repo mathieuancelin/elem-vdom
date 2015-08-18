@@ -396,9 +396,12 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
             }
           };
           let exposeName = `${id} > ${funcName}`;
+          let selectorId = Math.random().toString(15).slice(10, 20) + '';
+          elems.properties.attributes['data-inspector-selector'] = selectorId;
           let root = {
             name: funcName,
             node: node,
+            selectableNode: `[data-inspector-selector="${selectorId}"]`,
             state: functionAsComponentContext.context.state,
             props: props,
             setState: functionAsComponentContext.context.setState,

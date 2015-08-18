@@ -164,7 +164,7 @@ function ComponentsList() {
     if (selectorId) {
       let query = `[data-inspector-selector="${selectorId}"]`;
       let cleanList = this.props.list.filter(c => !Utils.isUndefined(c));
-      let selectedComponent = cleanList.filter(c => c.node === query || c.node === target)[0];
+      let selectedComponent = cleanList.filter(c => c.node === query || c.selectableNode === query)[0];
       if (selectedComponent) {
         outlineSelectedComponent(selectedComponent);
         this.setState({ displayedPropsIdx: cleanList.indexOf(selectedComponent), displayedPropsName: selectedComponent.name });
