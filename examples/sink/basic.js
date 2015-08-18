@@ -22,7 +22,7 @@ Showcase.registerTile('Deep example', container => {
     return <ul>{this.props.children}</ul>;
   }
   function Child3() {
-    return <span>Hello World</span>;
+    return <li>Hello World</li>;
   }
   function Child4() {
     return <span>Goodbye World</span>;

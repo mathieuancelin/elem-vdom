@@ -35,6 +35,8 @@ if (!String.prototype.repeat) {
   };
 }
 
+Elem.Devtools.InspectorAPI.start();
+
 let onExampleChange = [];
 let selectedContainer = 'foo';
 let app = '#app';

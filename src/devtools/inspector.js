@@ -37,6 +37,23 @@ const Style = Elem.stylesheet({
     textAlign: 'center',
     verticalAlign: 'baseline'
   },
+  miniButtonIcon: {
+    backgroundColor: 'rgb(217, 83, 79)',
+    fontFamily: 'Menlo,Monaco,Consolas,"Courier New",monospace',
+    paddingBottom: '3px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    paddingTop: '0px',
+    fontSize: '20px',
+    height: '25px',
+    color: 'white',
+    cursor: 'pointer',
+    display: 'inline',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    verticalAlign: 'baseline',
+    marginLeft: '2px'
+  },
   editor: {
     fontFamily: 'Menlo,Monaco,Consolas,"Courier New",monospace',
     display: 'block',
@@ -134,13 +151,52 @@ function ComponentsList() {
     cleanSelection();
     this.setState({ elemSelected: undefined, displayedPropsIdx: undefined, displayedPropsName: undefined });
   };
+  const selectElementForWindow = (target) => {
+    this.setState({ modeSelection: false });
+    let selectorId = target.getAttribute('data-inspector-selector');
+    if (selectorId) {
+      let query = `[data-inspector-selector="${selectorId}"]`;
+      let cleanList = this.props.list.filter(c => !Utils.isUndefined(c));
+      let selectedComponent = cleanList.filter(c => c.node === query || c.node === target)[0];
+      if (selectedComponent) {
+        cleanSelection();
+        this.context.previousSelectedComponent = target;
+        target.style.oldOutline = target.style.outline;
+        target.style.outline = '2px solid red';
+        this.setState({ displayedPropsIdx: cleanList.indexOf(selectedComponent), displayedPropsName: selectedComponent.name });
+      } else {
+        console.log(`[elem-inspect] not found ${query}`, cleanList.map(c => c.node));
+      }
+      return true;
+    }
+    return false;
+  };
+  const selectElement = (evt) => {
+    evt.preventDefault();
+    this.setState({ modeSelection: true });
+    let oldCursor = document.body.style.cursor;
+    document.body.style.cursor = 'crosshair';
+    let ctx = {};
+    ctx.callback = (e) => {
+      let target = e.target;
+      let found = false;
+      while (target.parentNode && !found) {
+        found = selectElementForWindow(target);
+        target = target.parentNode;
+      }
+      document.removeEventListener('click', ctx.callback);
+      document.body.style.cursor = oldCursor || '';
+    };
+    setTimeout(() => document.addEventListener('click', ctx.callback), 200);
+  };
   return (
     <div>
       <h5>
         <span style={{ cursor: 'pointer' }} onClick={backToFirstPanel}>{{ __asHtml: '&#9668;&nbsp;&nbsp;' }}</span>
         <span>Components of {this.state.elemSelected}</span>
-        <div onClick={this.props.redraw} style={Style.miniButton.extend({ marginLeft: '20px' })}>redraw</div>
-        <div onClick={cleanSelection} style={Style.miniButton.extend({ marginLeft: '2px' })}>clean sel.</div>
+        <div onClick={this.props.redraw} style={Style.miniButtonIcon.extend({ marginLeft: '20px' })} title="redraw">{{ __asHtml: '&#x27f3;' }}</div>
+        <div onClick={cleanSelection} style={Style.miniButtonIcon} title="clean selection">{{ __asHtml: '&#x2718;' }}</div>
+        <div onClick={selectElement} style={Style.miniButtonIcon.extend({ backgroundColor: this.state.modeSelection ? 'rgb(92, 184, 92)' : 'rgb(217, 83, 79)' })} title="select element">{{ __asHtml: '&#x279a;'}}</div>
       </h5>
       <ul style={Style.nonBulletList}>
         {
