@@ -5,4 +5,5 @@ coverage
 tests
 tests-es5
 examples
+small-lib
 .imdone

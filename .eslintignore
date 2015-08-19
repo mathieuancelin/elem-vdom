@@ -2,3 +2,4 @@
 **/webpack.config.js
 examples/js
 lib
+small-lib

@@ -60,6 +60,9 @@
     "useiojs": "brew unlink node && brew link --force iojs",
     "usenode": "brew unlink iojs && brew link node",
     "mbp-tests": "npm run useiojs && npm run mocha-tests && npm run usenode",
-    "safe-build": "npm run lint && npm run clean && npm run es5 && npm run useiojs && npm run mocha-tests && npm run usenode && npm run dist"
+    "safe-build": "npm run lint && npm run clean && npm run es5 && npm run useiojs && npm run mocha-tests && npm run usenode && npm run dist",
+
+    "prepare-small-lib": "sh ./small.sh",
+    "small-build": "npm run prepare-small-lib && NODE_ENV=production webpack --colors -p --config webpack.config.small.js"
   }
 }
