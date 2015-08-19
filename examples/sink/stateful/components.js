@@ -16,10 +16,9 @@ function Counter(ctx, props) {
 }
 
 export default function CounterWrapper(ctx, props) {
-  return Elem.el(Store.Connector, {
+  return Elem.el(Store.Provider, {
     store: props.store,
-    selector,
     actions,
-    render: Counter
+    render: () => Elem.el(Store.Selector, { selector, render: Counter })
   });
 }

@@ -133,26 +133,3 @@ export function Selector(ctx, props) {
   let newProps = {...props, ...boundActions, ...selector(store.getState())};
   return render.bind({ ctx, props: newProps })(ctx, newProps);
 }
-
-// TODO : remove ???
-export function Connector(ctx, props) {
-  let { store, selector, actions, render } = props;
-  let newCtx = {...ctx};
-  delete props.actions;
-  delete props.render;
-  delete props.store;
-  delete props.selector;
-  let boundActions = bindActionsToDispatch(actions, store.dispatch);
-  let newProps = {...props, ...boundActions, ...selector(store.getState()), actions: boundActions};
-  newCtx.store = store;
-  newCtx.dispatch = store.dispatch;
-  let fakeCtx = {
-    unsubscribe: null
-  };
-  fakeCtx.unsubscribe = store.subscribe(() => {
-    ctx.refresh();
-    fakeCtx.unsubscribe();
-  });
-  console.warn('Store.Connector is deprecated, you should use combination of Store.Provider and Store.Selector');
-  return render.bind({ ...newCtx, props: newProps })(newCtx, newProps);
-}
