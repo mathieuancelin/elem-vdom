@@ -159,8 +159,9 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         }
         setGlobalState({ [`substateof-${key}`]: newState }, cb);
       };
-      functionContext.withInitialState = (initialState) => {
+      functionContext.withInitialState = (is) => {
         if (!globalState[`substateof-${key}`]) {
+          let initialState = Utils.isFunction(is) ? is() : is;
           functionContext.__internalSetState({ [`substateof-${key}`]: {...initialState} });
         }
         return globalState[`substateof-${key}`];
@@ -173,7 +174,8 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     thisContext.withInitialContext = (initialCtx) => {
       thisContext.context = functionContext.withInitialContext(initialCtx);
     };
-    thisContext.withDefaultProps = (defaultProps) => {
+    thisContext.withDefaultProps = (dp) => {
+      let defaultProps = Utils.isFunction(dp) ? dp() : dp;
       thisContext.props = Object.assign({}, defaultProps, thisContext.props);
     };
     let subTree = name.bind(thisContext)(functionContext, props, children);
@@ -339,15 +341,17 @@ function createComponentContext(refresh, renderNode, refs = {}) {
     initialized = true;
     initializedCtx = true;
   };
-  context.withInitialState = (initialState = {}) => {
+  context.withInitialState = (is = {}) => {
     if (!initialized) {
+      let initialState = Utils.isFunction(is) ? is() : is;
       initialized = true;
       context.state = Object.assign({}, initialState, context.state);
     }
     return context.state;
   };
-  context.withInitialContext = (initialCtx = {}) => {
+  context.withInitialContext = (ic = {}) => {
     if (!initializedCtx) {
+      let initialCtx = Utils.isFunction(ic) ? ic() : ic;
       initializedCtx = true;
       context.context = Object.assign({}, initialCtx, context.context);
     }
@@ -401,7 +405,8 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         thisContext.withInitialContext = (initialCtx) => {
           thisContext.context = functionAsComponentContext.context.withInitialContext(initialCtx);
         };
-        thisContext.withDefaultProps = (defaultProps) => {
+        thisContext.withDefaultProps = (dp) => {
+          let defaultProps = Utils.isFunction(dp) ? dp() : dp;
           thisContext.props = Object.assign({}, defaultProps, thisContext.props);
         };
         elems = elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
