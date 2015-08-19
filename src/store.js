@@ -120,7 +120,7 @@ export function Provider(ctx, props) {
   ctx.context.getState = store.getState;
   store.ephemeralSubscribe(() => ctx.refresh());
   if (InspectorAPI.isEnabled()) {
-    ctx.__internalSetState({ storeStateFromProvider: {...store.getState()} });
+    ctx.__internalSetState({ storeStateFromProviderRO: {...store.getState()} });
   }
   let bindContext = {...ctx, props };
   return render.bind(bindContext)(ctx, props);
