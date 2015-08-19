@@ -105,7 +105,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   for (let i in children) {
     let item = children[i];
     if (item) {
-      if (Utils.isFunction(item)) { // TODO : avoid to call functions ?
+      if (Utils.isFunction(item)) {
         item = item();
       }
       if (item) {
@@ -122,8 +122,9 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   }
   children = newChildren;
 
+  // TODO : remove it
   if (Utils.isFunction(name) && name.isElemComponentFactory) {
-    // TODO : remove it
+    console.warn('Elem component usage is deprecated and will be remove soon. Just use regular functions as components');
     let props = {...attrs};
     props.children = children;
     props.key = key;
@@ -140,10 +141,6 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     let functionContext = {...currentComponentContext};
     if (key) {
       functionContext.__keys.push(key);
-      // TODO : remove initialState from props
-      if (props.initialState && !functionContext.state[`substateof-${key}`]) {
-        functionContext.__internalSetState({ [`substateof-${key}`]: {...props.initialState} });
-      }
       let setGlobalState = functionContext.setState;
       let replaceGlobalState = functionContext.replaceState;
       let globalState = functionContext.state;

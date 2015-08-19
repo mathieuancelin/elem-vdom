@@ -71,9 +71,25 @@ const Style = Elem.stylesheet({
   }
 });
 
+function prepareObject(source, destination = {}) {
+  for (let key in source) {
+    let value = source[key];
+    if (Utils.isFunction(value)) {
+      destination[key] = 'fn(...)';
+    } else if (Utils.isObject(value)) {
+      destination[key] = {};
+      prepareObject(source[key], destination[key]);
+    } else {
+      destination[key] = source[key];
+    }
+  }
+  return destination;
+}
+
 const initialProps = { filter: [], update: 200 };
 const defaultState = { edit: false };
 
+// TODO : show component context ???
 function StateDisplay() {
   let element = this.props.element || { state: {}};
   const json = JSON.stringify(element.state || {}, null, 2);
@@ -109,11 +125,10 @@ function StateDisplay() {
 function PropsDisplay() {
   let element = this.props.list[this.state.displayedPropsIdx] || this.props.element || { props: {}};
   let props = {...element.props};
-  delete props.initialState;
   return (
     <div>
       <h5>Props of {'<' + this.state.displayedPropsName + ' />'}</h5>
-      <pre key="PropsDisplayPre" style={Style.editor}>{JSON.stringify(props, null, 2)}</pre>
+      <pre key="PropsDisplayPre" style={Style.editor}>{JSON.stringify(prepareObject(props), null, 2)}</pre>
     </div>
   );
 }
@@ -151,8 +166,10 @@ function ComponentsList() {
     let selectedComponent = Utils.isString(component.node) ? document.querySelector(component.node) : component.node;
     cleanSelection();
     this.context.previousSelectedComponent = selectedComponent;
-    selectedComponent.style.oldOutline = selectedComponent.style.outline;
-    selectedComponent.style.outline = '2px solid red';
+    if (selectedComponent && selectedComponent.style) {
+      selectedComponent.style.oldOutline = selectedComponent.style.outline;
+      selectedComponent.style.outline = '2px solid red';
+    }
   };
   const backToFirstPanel = () => {
     cleanSelection();

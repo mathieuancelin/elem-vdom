@@ -1,4 +1,5 @@
 import * as Utils from './utils';
+import * as InspectorAPI from './devtools/inspectorapi';
 
 let nameCounter = 0;
 
@@ -118,6 +119,9 @@ export function Provider(ctx, props) {
   ctx.context.dispatch = store.dispatch;
   ctx.context.getState = store.getState;
   store.ephemeralSubscribe(() => ctx.refresh());
+  if (InspectorAPI.isEnabled()) {
+    ctx.__internalSetState({ storeStateFromProvider: {...store.getState()} });
+  }
   let bindContext = {...ctx, props };
   return render.bind(bindContext)(ctx, props);
 }
@@ -130,6 +134,7 @@ export function Selector(ctx, props) {
   return render.bind({ ctx, props: newProps })(ctx, newProps);
 }
 
+// FIXME : deprecate ???
 export function Connector(ctx, props) {
   let { store, selector, actions, render } = props;
   let newCtx = {...ctx};
@@ -148,5 +153,6 @@ export function Connector(ctx, props) {
     ctx.refresh();
     fakeCtx.unsubscribe();
   });
+  console.warn('Store.Connector is deprecated, you should use combination of Store.Provider and Store.Selector');
   return render.bind({ ...newCtx, props: newProps })(newCtx, newProps);
 }
