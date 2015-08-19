@@ -109,7 +109,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         item = item();
       }
       if (item) {
-        // TODO : flatten inner arrays ?
+        // TODO : flatten inner arrays like JSX ?
         if (item instanceof VNode) newChildren.push(item);
         else if (Utils.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
@@ -122,15 +122,6 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   }
   children = newChildren;
 
-  // TODO : remove it
-  if (Utils.isFunction(name) && name.isElemComponentFactory) {
-    console.warn('Elem component usage is deprecated and will be remove soon. Just use regular functions as components');
-    let props = {...attrs};
-    props.children = children;
-    props.key = key;
-    props.namespace = namespace;
-    return name(attrs).renderTo();
-  }
   if (Utils.isFunction(name) && !name.isElemComponentFactory) {
     let funKey = `Elem.function.${name.name || '<anonymous function>'}.tree`;
     Perf.markStart(funKey);
@@ -599,17 +590,7 @@ let svgElements = ['altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
   'text', 'textPath', 'tref', 'tspan', 'use', 'view', 'vkern'];
 
 export function jsx(type, attributes, ...chldn) {
-  let children = [];
-  for (let i = 0; i < chldn.length; i++) {
-    let value = chldn[i];
-    if (Utils.isArray(value)) {
-      for (let j = 0; j < value.length; j++) {
-        children.push(value[j]);
-      }
-    } else {
-      children.push(value);
-    }
-  }
+  let children = [].concat.apply([], chldn);
   let attrs = attributes || {};
   if (Array.includes(svgElements, type)) {
     return internalEl(type, attrs, children || [], attrs.key || undefined, svgNS);
