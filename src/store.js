@@ -134,7 +134,7 @@ export function Selector(ctx, props) {
   return render.bind({ ctx, props: newProps })(ctx, newProps);
 }
 
-// FIXME : deprecate ???
+// TODO : remove ???
 export function Connector(ctx, props) {
   let { store, selector, actions, render } = props;
   let newCtx = {...ctx};

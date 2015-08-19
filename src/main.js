@@ -100,7 +100,7 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
 
 function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   let innerHTML;
-  let children = childrenArray;
+  let children = [].concat.apply([], childrenArray); // perf issue hint : replace with childrenArray;
   let newChildren = [];
   for (let i in children) {
     let item = children[i];
@@ -109,7 +109,6 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         item = item();
       }
       if (item) {
-        // TODO : flatten inner arrays like JSX ?
         if (item instanceof VNode) newChildren.push(item);
         else if (Utils.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
