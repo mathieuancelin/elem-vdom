@@ -139,7 +139,7 @@ export function Provider(ctx, props) {
   ctx.context.getState = store.getState;
   store.ephemeralSubscribe(() => ctx.refresh());
   if (InspectorAPI.isEnabled()) {
-    ctx.__internalSetState({ storeStateFromProviderRO: {...store.getState()} });
+    ctx.__internalSetState({ storeStateReadOnly: {...store.getState()} });
   }
   return Elem.el(render, props);
 }
