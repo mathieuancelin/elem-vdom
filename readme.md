@@ -580,7 +580,7 @@ Elem.render(PerfMonitor, container);
 About Elem.Store
 ---------------------
 
-Just a bunch of tools to create stores (heavily inspired by Redux) available through
+Just a bunch of tools to create stores (heavily inspired by [Redux](http://rackt.github.io/redux/)) available through
 
 ```javascript
 const Store = Elem.Store;
@@ -595,6 +595,8 @@ The API is the following :
 * `createStore(reducer, initialState)` : Create a store from one or more reducers
 * `handleActions(actions, initialState)` : same than createStore with helpers to avoid switch case
 * `withInitialState(initialState)` : builder for `handleActions`
+* `enrichCreateStoreWith(plugins...)`: return a new `createStore` function with enhanced dispatch
+* `Plugins` : Plugins to enhance stores with `enrichCreateStoreWith`.
 * `Provider` : Component that will feed the context with the store and some actions
 * `Selector` : Component that will be use to wrap sub components to pass them state parts and actions
 
@@ -675,6 +677,38 @@ function Counter() {
 Elem.render(Counter, container);
 
 ```
+
+If you want to play with enhanced store, write something like the following
+
+```javascript
+const INCREMENT_COUNTERS = 'INCREMENT_COUNTERS';
+const DECREMENT_COUNTERS = 'DECREMENT_COUNTERS';
+
+function increments() {
+  return {
+    type: INCREMENT_COUNTERS
+  };
+}
+
+function decrements() {
+  return {
+    type: DECREMENT_COUNTERS
+  };
+}
+
+const counters = Store.withInitialState({ value1: 0, value2: 0 }).handleActions({
+  [INCREMENT_COUNTERS]: (state) => ({ value1: state.value1 + 1, value2: state.value2 + 2 }),
+  [DECREMENT_COUNTERS]: (state) => ({ value1: state.value1 - 1, value2: state.value2 - 2 })
+});
+
+let createStore = Store.enrichCreateStoreWith(Store.Plugins.Logger);
+let store = createStore({ counters });
+
+...
+```
+
+The Logger plugin will be plugged into the `dispatch` function of the store and will be executed before the actual dispatch. This allows you to control the actions, pass it to the dispatch, or stop dispatch, or dispatch later.
+You can check out the code of existing plugins at https://github.com/mathieuancelin/elem-vdom/blob/master/src/storeplugins.js
 
 About Elem.Devtools
 ---------------------
