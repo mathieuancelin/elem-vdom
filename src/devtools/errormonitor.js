@@ -1,3 +1,4 @@
+import * as Elem from '../main';
 import * as Utils from '../utils';
 import Redbox from './redbox';
 
@@ -7,7 +8,7 @@ export default function ErrorMonitor(wrapped) {
   }
   return (ctx, props) => {
     try {
-      return wrapped.bind({ ...ctx, props })(ctx, props);
+      return Elem.el(wrapped, props);
     } catch(e) {
       console.log(e);
       return Redbox(e);

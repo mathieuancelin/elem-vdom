@@ -9,7 +9,7 @@ describe('elem-vdom devtool', () => {
 
     function App() {
       yo;
-      return <h1>Hello {this.props.who}!</h1>;
+      return <h1 id="pouet">Hello {this.props.who}!</h1>;
     }
 
     function DebugApp() {
