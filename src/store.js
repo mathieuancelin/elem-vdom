@@ -76,6 +76,26 @@ export function createStore(reducer = {}, initialState = {}) {
   };
 }
 
+export function enrichCreateStoreWith(...stuff) {
+  return (reducer = {}, initialState = {}) => {
+    console.log('enrichCreateStoreWith');
+    let store = createStore(reducer, initialState);
+    console.log('store created');
+    let dispatch = store.dispatch;
+    let chain = [];
+    let api = {
+      getState: store.getState,
+      dispatch: (action) => dispatch(action)
+    };
+    console.log('map');
+    chain = stuff.map(f => f(api));
+    console.log('reduce');
+    dispatch = [...chain, store.dispatch].reduceRight((composed, f) => f(composed));
+    console.log('enhanced store ready');
+    return { ...store, dispatch };
+  };
+}
+
 export function bindActionsToDispatch(actions, dispatch) {
   let boundActions = {};
   for (let key in actions) {
@@ -133,3 +153,29 @@ export function Selector(ctx, props) {
   let newProps = {...props, ...boundActions, ...selector(store.getState())};
   return render.bind({ ctx, props: newProps })(ctx, newProps);
 }
+
+export const Plugins = {
+  Logger: store => next => action => {
+    console.group(action.type);
+    console.info('Dispatching', action);
+    let result = next(action);
+    console.log('Next state', store.getState());
+    console.groupEnd(action.type);
+    return result;
+  },
+  PromiseFieldHandler: store => next => action => { // eslint-disable-line no-unused-vars
+    if (!action.promise) {
+      return next(action);
+    }
+    function makeAction(ready, data) {
+      let newAction = Object.assign({}, action, { ready }, data);
+      delete newAction.promise;
+      return newAction;
+    }
+    next(makeAction(false));
+    return action.promise.then(
+      result => next(makeAction(true, { result })),
+      error => next(makeAction(true, { error }))
+    );
+  }
+};

@@ -148,8 +148,8 @@ Showcase.registerTile('Store provider and selector', container => {
     [DECREMENT_COUNTERS]: (state) => ({ value1: state.value1 - 1, value2: state.value2 - 2 })
   });
 
-
-  let store = Store.createStore({ counters });
+  let createStore = Store.enrichCreateStoreWith(Store.Plugins.Logger);
+  let store = createStore({ counters });
 
   function CounterSelector1(state) {
     return {
