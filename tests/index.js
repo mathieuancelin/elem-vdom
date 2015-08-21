@@ -12,8 +12,10 @@ const tests = [
   require('./state.spec.js'),
   require('./stylesheet.spec.js'),
   require('./universal.spec.js'),
+  require('./store.spec.js'),
   require('./devtools.spec.js')
 ];
 
 // TODO : store
 // TODO : utils
+// TODO : more devtools
