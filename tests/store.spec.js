@@ -140,4 +140,166 @@ describe('elem-vdom Store API', () => {
     done();
   });
 
+  it('provides helpers to connect with stores (RAW)', done => {
+
+    const counter = Store.withInitialState(0).handleActions({
+      [INCREMENT_COUNTER]: (state) => state + 1
+    });
+
+    let store = Store.createStore({ counter });
+
+    function CountLabel() {
+      return <p id="label">{this.context.getState().counter + ''}</p>;
+    }
+
+    function Clicker() {
+      return (
+        <Store.Provider store={store} actions={{ increment }} render={ () =>
+          <div>
+            <Store.Selector render={CountLabel} />
+            <button type="button" onClick={this.context.actions.increment}>+1</button>
+          </div>
+        } />
+      );
+    }
+
+    DOM.cleanup();
+    DOM.renderComponent(Clicker);
+
+    let node = DOM.node('#label');
+    expect(node).to.exist;
+    expect(node.innerHTML).to.be.equal('0');
+    store.dispatch(increment());
+    expect(DOM.node('#label').innerHTML).to.be.equal('1');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('2');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('3');
+
+    done();
+  });
+
+  it('provides helpers to connect with stores (auto selector)', done => {
+
+    const counter = Store.withInitialState(0).handleActions({
+      [INCREMENT_COUNTER]: (state) => state + 1
+    });
+
+    let store = Store.createStore({ counter });
+
+    function CountLabel() {
+      return (
+        <div>
+          <p id="label">{this.props.counter + ''}</p>
+          <button type="button" onClick={this.props.increment}>+1</button>
+        </div>
+      );
+    }
+
+    function Clicker() {
+      return (
+        <Store.Provider store={store} actions={{ increment }} render={ () =>
+          <Store.Selector render={CountLabel} />
+        } />
+      );
+    }
+
+    DOM.cleanup();
+    DOM.renderComponent(Clicker);
+
+    let node = DOM.node('#label');
+    expect(node).to.exist;
+    expect(node.innerHTML).to.be.equal('0');
+    store.dispatch(increment());
+    expect(DOM.node('#label').innerHTML).to.be.equal('1');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('2');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('3');
+
+    done();
+  });
+
+  it('provides helpers to connect with stores (actions selector)', done => {
+
+    const counter = Store.withInitialState(0).handleActions({
+      [INCREMENT_COUNTER]: (state) => state + 1
+    });
+
+    let store = Store.createStore({ counter });
+
+    function CountLabel() {
+      return (
+        <div>
+          <p id="label">{this.props.counter + ''}</p>
+          <button type="button" onClick={this.props.increment}>+1</button>
+        </div>
+      );
+    }
+
+    function Clicker() {
+      return (
+        <Store.Provider store={store} render={ () =>
+          <Store.Selector actions={{ increment }} render={CountLabel} />
+        } />
+      );
+    }
+
+    DOM.cleanup();
+    DOM.renderComponent(Clicker);
+
+    let node = DOM.node('#label');
+    expect(node).to.exist;
+    expect(node.innerHTML).to.be.equal('0');
+    store.dispatch(increment());
+    expect(DOM.node('#label').innerHTML).to.be.equal('1');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('2');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('3');
+
+    done();
+  });
+
+  it('provides helpers to connect with stores (state selector)', done => {
+
+    const counter = Store.withInitialState(0).handleActions({
+      [INCREMENT_COUNTER]: (state) => state + 1
+    });
+
+    let store = Store.createStore({ counter });
+
+    function CountLabel() {
+      return (
+        <div>
+          <p id="label">{this.props.value + ''}</p>
+          <button type="button" onClick={this.props.increment}>+1</button>
+        </div>
+      );
+    }
+
+    function Clicker() {
+      return (
+        <Store.Provider store={store} render={ () =>
+          <Store.Selector actions={{ increment }} selector={(s) => ({ value: s.counter })} render={CountLabel} />
+        } />
+      );
+    }
+
+    DOM.cleanup();
+    DOM.renderComponent(Clicker);
+
+    let node = DOM.node('#label');
+    expect(node).to.exist;
+    expect(node.innerHTML).to.be.equal('0');
+    store.dispatch(increment());
+    expect(DOM.node('#label').innerHTML).to.be.equal('1');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('2');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('3');
+
+    done();
+  });
+
 });
