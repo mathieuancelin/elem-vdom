@@ -145,7 +145,7 @@ export function Provider(ctx, props) {
 }
 
 export function Selector(ctx, props) {
-  let { selector, actions = {}, render } = props;
+  let { selector = (s) => ({...s}), actions = ctx.context.actions, render } = props;
   let { store } = ctx.context;
   let boundActions = bindActionsToDispatch(actions, store.dispatch);
   let newProps = {...props, ...boundActions, ...selector(store.getState())};

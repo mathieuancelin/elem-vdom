@@ -16,6 +16,4 @@ const tests = [
   require('./devtools.spec.js')
 ];
 
-// TODO : store
-// TODO : utils
 // TODO : more devtools
