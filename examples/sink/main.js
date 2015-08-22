@@ -47,6 +47,11 @@ Showcase.getTiles().forEach(i => {
   hashes[hash] = i;
 });
 
+Elem.setErrorCallback((e) => {
+  Elem.unmount(app);
+  Elem.render(Elem.Devtools.Redbox(e), app);
+});
+
 function render(tile) {
   Elem.unmount(app);
   try {

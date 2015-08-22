@@ -21,6 +21,31 @@ export * from './exporter';
 const treeCache = {};
 let globalRefs = {};
 let currentComponentContext;
+let errorCallback = (e) => {
+  throw e;
+};
+
+export function setErrorCallback(cb) {
+  errorCallback = cb;
+}
+
+export function resetErrorCallback() {
+  errorCallback = (e) => {
+    throw e;
+  };
+}
+
+function eventHandlerWrapper(handler) {
+  return (...args) => {
+    try {
+      // TODO : add devtools integration here
+      // TODO : auto bind to context ?
+      return handler.apply(null, args);
+    } catch(e) {
+      errorCallback(e);
+    }
+  };
+}
 
 function clearNode(node) {
   while (!Utils.isUndefined(node) && !Object.is(node, null) && node.firstChild) {
@@ -74,7 +99,7 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
       keyName = 'class';
     }
     if (Utils.startsWith(keyName, 'on')) {
-      handlersHash[key.toLowerCase()] = attrs[key];
+      handlersHash[key.toLowerCase()] = eventHandlerWrapper(attrs[key]);
     } else if (keyName === 'ref') {
       context.ref = attrs[key];
     } else {
