@@ -618,8 +618,7 @@ let svgElements = ['altGlyph', 'altGlyphDef', 'altGlyphItem', 'animate',
   'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch', 'symbol',
   'text', 'textPath', 'tref', 'tspan', 'use', 'view', 'vkern'];
 
-export function jsx(type, attributes, ...chldn) {
-  let children = [].concat.apply([], chldn);
+export function jsx(type, attributes, ...children) {
   let attrs = attributes || {};
   if (Array.includes(svgElements, type)) {
     return internalEl(type, attrs, children || [], attrs.key || undefined, svgNS);
