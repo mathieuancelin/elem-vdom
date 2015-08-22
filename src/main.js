@@ -21,6 +21,7 @@ export * from './exporter';
 const treeCache = {};
 let globalRefs = {};
 let currentComponentContext;
+let currentThisContext;
 let errorCallback = (e) => {
   throw e;
 };
@@ -36,11 +37,11 @@ export function resetErrorCallback() {
 }
 
 function eventHandlerWrapper(handler) {
+  let ctx = currentThisContext || null;
   return (...args) => {
     try {
       // TODO : add devtools integration here
-      // TODO : auto bind to context ?
-      return handler.apply(null, args);
+      return handler.apply(ctx, args);
     } catch(e) {
       errorCallback(e);
     }
@@ -145,7 +146,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     }
   }
   children = newChildren;
-
+  let oldThisContext = currentThisContext;
   if (Utils.isFunction(name) && !name.isElemComponentFactory) {
     let funKey = `Elem.function.${name.name || '<anonymous function>'}.tree`;
     Perf.markStart(funKey);
@@ -190,6 +191,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
       let defaultProps = Utils.isFunction(dp) ? dp() : dp;
       thisContext.props = Object.assign({}, defaultProps, thisContext.props);
     };
+    currentThisContext = thisContext;
     let subTree = name.bind(thisContext)(functionContext, props, children);
     if (InspectorAPI.isEnabled()) {
       let selectorId = Math.random().toString(15).slice(10, 20) + '';
@@ -212,6 +214,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     attributes: {}
   };
   let ctx = transformAttrs(attrs, finalAttrs.attributes, finalAttrs);
+  currentThisContext = oldThisContext;
   if ((name === 'input' || name === 'INPUT') && attrs.value) {
     finalAttrs.value = attrs.value;
     finalAttrs.attributes.value = attrs.value;
@@ -421,7 +424,9 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
           let defaultProps = Utils.isFunction(dp) ? dp() : dp;
           thisContext.props = Object.assign({}, defaultProps, thisContext.props);
         };
+        currentThisContext = undefined;
         elems = elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
+        currentThisContext = undefined;
         return elems;
       } finally {
         let refs = {...globalRefs};

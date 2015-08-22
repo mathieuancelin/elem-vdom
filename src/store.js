@@ -151,3 +151,9 @@ export function Selector(ctx, props) {
   let newProps = {...props, ...boundActions, ...selector(store.getState())};
   return Elem.el('span', Elem.el(render, newProps));
 }
+
+export function connect(selector = (s) => ({...s}), actions) {
+  return (render) => {
+    return () => Elem.el(Selector, { selector, actions, render });
+  };
+}

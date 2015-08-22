@@ -302,4 +302,49 @@ describe('elem-vdom Store API', () => {
     done();
   });
 
+  it('provides helpers to connect with stores (connect)', done => {
+
+    const counter = Store.withInitialState(0).handleActions({
+      [INCREMENT_COUNTER]: (state) => state + 1
+    });
+
+    let store = Store.createStore({ counter });
+
+    function CountLabel() {
+      return (
+        <div>
+          <p id="label">{this.props.value + ''}</p>
+          <button type="button" onClick={this.props.increment}>+1</button>
+        </div>
+      );
+    }
+
+    const CountLabelWrapper = Store.connect((s) => ({ value: s.counter }), { increment })(CountLabel);
+
+    function Clicker() {
+      return (
+        <Store.Provider store={store} render={ () =>
+          <span>
+            <CountLabelWrapper />
+          </span>
+        } />
+      );
+    }
+
+    DOM.cleanup();
+    DOM.renderComponent(Clicker);
+
+    let node = DOM.node('#label');
+    expect(node).to.exist;
+    expect(node.innerHTML).to.be.equal('0');
+    store.dispatch(increment());
+    expect(DOM.node('#label').innerHTML).to.be.equal('1');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('2');
+    DOM.click('button');
+    expect(DOM.node('#label').innerHTML).to.be.equal('3');
+
+    done();
+  });
+
 });
