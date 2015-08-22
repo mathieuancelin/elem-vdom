@@ -2,26 +2,25 @@
 const chai = require('chai');
 const Elem = require('../src/main');
 const DOM = require('./utils/dom');
+const Tests = require('./utils/tests');
 const expect = chai.expect;
 
 describe('elem-vdom JSX support', () => {
 
-  it('can render a simple JSX tree', done => {
+  Tests.it('can render a simple JSX tree', () => {
 
     function SimpleComponent() {
       return <h1>Hello World!</h1>;
     }
 
-    DOM.cleanup();
     DOM.renderComponent(SimpleComponent);
     let node = DOM.node('h1');
     expect(node).to.exist;
     expect(node.innerHTML).to.be.a('string');
     expect(node.innerHTML).to.be.equal('Hello World!');
-    done();
   });
 
-  it('can render multiples arrays with flattening', done => {
+  Tests.it('can render multiples arrays with flattening', () => {
 
     function Index() {
       return (
@@ -37,7 +36,6 @@ describe('elem-vdom JSX support', () => {
       );
     }
 
-    DOM.cleanup();
     DOM.renderComponent(Index);
     let node = DOM.node('#list');
     let lis = DOM.nodes('li');
@@ -47,10 +45,9 @@ describe('elem-vdom JSX support', () => {
     expect(node.childNodes.length).to.be.equal(5);
     expect(lis.length).to.be.equal(5);
     expect(node.innerHTML).to.be.equal('<li id="zero">0</li><li id="1">1</li><li id="2">2</li><li id="3">3</li><li id="4">4</li>');
-    done();
   });
 
-  it('can render component with children', done => {
+  Tests.it('can render component with children', () => {
 
     function Wrapper() {
       return <div className="wrapper" id={this.props.id}>{this.props.children}</div>;
@@ -71,7 +68,6 @@ describe('elem-vdom JSX support', () => {
       );
     }
 
-    DOM.cleanup();
     DOM.renderComponent(Component);
     let component = DOM.node('#component');
     let theWrapper = DOM.node('#theWrapper');
@@ -81,7 +77,6 @@ describe('elem-vdom JSX support', () => {
     expect(theWrapper.childNodes.length).to.be.equal(2);
     expect(component.innerHTML).to.be.equal('<div class="wrapper" id="theWrapper"><span>Element</span><span>Element</span></div>');
     expect(theWrapper.innerHTML).to.be.equal('<span>Element</span><span>Element</span>');
-    done();
   });
 
 });
