@@ -701,13 +701,33 @@ const counters = Store.withInitialState({ value1: 0, value2: 0 }).handleActions(
   [DECREMENT_COUNTERS]: (state) => ({ value1: state.value1 - 1, value2: state.value2 - 2 })
 });
 
-let createStore = Store.enrichCreateStoreWith(Store.Plugins.Logger);
+let createStore = Store.enrichCreateStoreWith(Store.Plugins.Logger, ...);
 let store = createStore({ counters });
 
 ...
 ```
 
 The Logger plugin will be plugged into the `dispatch` function of the store and will be executed before the actual dispatch. This allows you to control the actions, pass it to the dispatch, or stop dispatch, or dispatch later.
+
+You can require the plugins from
+
+```javascript
+const Plugins = Elem.Store.Plugins;
+// or
+const Devtools = require('elem-vdom/lib/storeplugins');
+// or
+import * as Devtools from 'elem-vdom/lib/storeplugins';
+```
+
+A simple example is action logging
+
+```javascript
+const logger = store => next => action => {
+  console.log('Dispatching', action);
+  return next(action);
+};
+```
+
 You can check out the code of existing plugins at https://github.com/mathieuancelin/elem-vdom/blob/master/src/storeplugins.js
 
 About Elem.Devtools
