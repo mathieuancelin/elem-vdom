@@ -1,4 +1,5 @@
 const Elem = require('../../src/main');
+const simulant = require('simulant');
 const Keysim = require('keysim');
 const app = '#app';
 
@@ -18,16 +19,31 @@ export function nodes(of) {
   return document.querySelectorAll(of);
 }
 
-export function click(on) {
-  document.querySelector(on).click();
-}
-
 export function renderComponent(c) {
   return Elem.render(c, app);
 }
 
 export function cleanup() {
   return Elem.unmount(app);
+}
+
+export function on(selector) {
+  let domNode = node(selector);
+  function simulate(name, payload = {}) {
+    simulant.fire(domNode, name, payload);
+    return { simulate };
+  }
+  return { simulate };
+}
+
+export function change(selector, value) {
+  node(selector).value = value;
+  on(selector).simulate('change');
+}
+
+export function click(selector) {
+  // document.querySelector(on).click();
+  on(selector).simulate('click');
 }
 
 export function type(el, str) {

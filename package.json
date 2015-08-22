@@ -39,6 +39,7 @@
     "mocha": "^2.2.5",
     "moment": "^2.10.3",
     "node-libs-browser": "^0.5.2",
+    "simulant": "^0.1.5",
     "webpack": "^1.10.1",
     "webpack-dev-server": "^1.10.1"
   },
@@ -53,15 +54,12 @@
     "build": "npm run lint && npm run clean && npm run es5 && npm run dist && npm run small-build",
     "dev": "NODE_ENV=dev webpack --watch --colors -d --progress",
     "start": "NODE_ENV=dev webpack-dev-server -d --colors --hot --inline --progress",
-
     "mocha-tests": "mocha --compilers js:babel/register tests/index.js",
     "test": "npm run mocha-tests",
-
     "useiojs": "brew unlink node && brew link --force iojs",
     "usenode": "brew unlink iojs && brew link node",
     "mbp-tests": "npm run useiojs && npm run mocha-tests && npm run usenode",
     "safe-build": "npm run lint && npm run clean && npm run es5 && npm run useiojs && npm run mocha-tests && npm run usenode && npm run dist && npm run small-build",
-
     "prepare-small-lib": "sh ./small.sh",
     "small-build": "npm run prepare-small-lib && NODE_ENV=production webpack --colors -p --config webpack.config.small.js"
   }

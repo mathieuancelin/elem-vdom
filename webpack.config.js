@@ -10,6 +10,7 @@ var devOnlyPlugins = [
 ];
 
 var plugins = [
+  new webpack.optimize.DedupePlugin(),
   new webpack.optimize.OccurenceOrderPlugin(),
   new webpack.DefinePlugin({
     '__DEV__': process.env.NODE_ENV === 'production' ? false : true,
