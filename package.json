@@ -35,7 +35,6 @@
     "eslint-plugin-react": "^3.2.0",
     "jsdom": "^6.1.0",
     "json-beautify": "^1.0.1",
-    "keysim": "^1.1.2",
     "mocha": "^2.2.5",
     "moment": "^2.10.3",
     "node-libs-browser": "^0.5.2",

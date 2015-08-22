@@ -28,7 +28,7 @@ export function cleanup() {
 }
 
 export function on(selector) {
-  let domNode = node(selector);
+  let domNode = (typeof selector === 'string') ? node(selector) : selector;
   function simulate(name, payload = {}) {
     simulant.fire(domNode, name, payload);
     return { simulate };
@@ -37,22 +37,12 @@ export function on(selector) {
 }
 
 export function change(selector, value) {
-  node(selector).value = value;
+  let domNode = (typeof selector === 'string') ? node(selector) : selector;
+  domNode.value = value;
   on(selector).simulate('change');
 }
 
 export function click(selector) {
   // document.querySelector(on).click();
   on(selector).simulate('click');
-}
-
-export function type(el, str) {
-  let element = document.querySelector(el);
-  let keyboard = Keysim.Keyboard.US_ENGLISH;
-  keyboard.dispatchEventsForInput(str, element);
-  return {
-    then(cb) {
-      setTimeout(cb, 0);
-    }
-  };
 }

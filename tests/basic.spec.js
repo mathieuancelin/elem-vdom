@@ -93,21 +93,19 @@ describe('elem-vdom simple component', () => {
     function TypableComponent(cb) {
       return () => {
         return Elem.el('div', [
-          Elem.el('input', { type: 'text', onkeypress: cb })
+          Elem.el('input', { type: 'text', onchange: cb })
         ]);
       };
     }
     DOM.cleanup();
     DOM.renderComponent(TypableComponent((e) => {
-      targetText = targetText + String.fromCharCode(e.charCode);
+      targetText = e.target.value;
     }));
     let input = DOM.node('input');
     expect(input).to.exist;
-    DOM.type('input', text).then(() => {
-      expect(targetText).to.be.equal(text);
-      done();
-    });
-
+    DOM.change(input, text);
+    expect(targetText).to.be.equal(text);
+    done();
   });
 
 });
