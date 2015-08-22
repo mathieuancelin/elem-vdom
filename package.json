@@ -44,7 +44,7 @@
     "webpack-dev-server": "^1.10.1"
   },
   "scripts": {
-    "clean": "rm -rf ./dist && rm -rf ./lib && rm -rf tests-es5",
+    "clean": "rm -rf ./dist && rm -rf ./lib && rm -rf tests-es5 && rm -rf ./small-lib",
     "examples": "open -a 'Google Chrome Canary' http://localhost:8080/examples/",
     "lint": "node ./node_modules/eslint/bin/eslint.js src examples/sink tests",
     "dist": "NODE_ENV=production webpack --colors -p",
@@ -61,6 +61,6 @@
     "mbp-tests": "npm run useiojs && npm run mocha-tests && npm run usenode",
     "safe-build": "npm run lint && npm run clean && npm run es5 && npm run useiojs && npm run mocha-tests && npm run usenode && npm run dist && npm run small-build",
     "prepare-small-lib": "sh ./small.sh",
-    "small-build": "npm run prepare-small-lib && NODE_ENV=production webpack --colors -p --config webpack.config.small.js"
+    "small-build": "npm run prepare-small-lib && NODE_ENV=production webpack --colors -p --config webpack.config.small.js && rm -rf small-lib"
   }
 }
