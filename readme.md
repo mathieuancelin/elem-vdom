@@ -480,7 +480,7 @@ The DOM API is the following :
 * `change(selector, value)` : fire a change event on the selected input
 * `click(selector)` : click on the selected node
 * `childrenOf(selector).count().shouldBe(5)` : assert number of children of selected node
-* `htmlOf(selector).shouldBe(<div><span>Hello World!</span></div>)` :
+* `htmlOf(selector).shouldBe(<div><span>Hello World!</span></div>)` : assert the content of the selected node
 
 About `Elem.predicate`
 ----------------------------------
