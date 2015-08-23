@@ -469,20 +469,18 @@ so if you need to write an async test and use the `done` function when you need 
 
 The DOM API is the following :
 
-```javascript
-`appHtml()` : return '#app' innerHTML
-`html(of)` : return innerHTML of the selected node
-`children(of)` : return chidren of the selected node as an array
-`node(of)` : return selected node
-`nodes(of)` : return selected nodes as an array
-`renderComponent(component)` : render an `Elem` component in the '#app' node
-`cleanup()` : empty the '#app' node
-`on(selector).simulate('keyup', { charCode: 42 })` : fire an event on the selected node
-`change(selector, value)` : fire a change event on the selected input
-`click(selector)` : click on the selected node
-`childrenOf(selector).count().shouldBe(5)` : assert number of children of selected node
-`htmlOf(selector).shouldBe(<div><span>Hello World!</span></div>)` :
-```
+* `appHtml()` : return '#app' innerHTML
+* `html(of)` : return innerHTML of the selected node
+* `children(of)` : return chidren of the selected node as an array
+* `node(of)` : return selected node
+* `nodes(of)` : return selected nodes as an array
+* `renderComponent(component)` : render an `Elem` component in the '#app' node
+* `cleanup()` : empty the '#app' node
+* `on(selector).simulate('keyup', { charCode: 42 })` : fire an event on the selected node
+* `change(selector, value)` : fire a change event on the selected input
+* `click(selector)` : click on the selected node
+* `childrenOf(selector).count().shouldBe(5)` : assert number of children of selected node
+* `htmlOf(selector).shouldBe(<div><span>Hello World!</span></div>)` :
 
 About `Elem.predicate`
 ----------------------------------
