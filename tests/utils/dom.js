@@ -1,6 +1,5 @@
 const Elem = require('../../src/main');
 const simulant = require('simulant');
-const Keysim = require('keysim');
 const app = '#app';
 
 export function appHtml() {
@@ -9,6 +8,10 @@ export function appHtml() {
 
 export function html(of) {
   return document.querySelector(of).innerHTML;
+}
+
+export function children(of) {
+  return document.querySelector(of).childNodes;
 }
 
 export function node(of) {
