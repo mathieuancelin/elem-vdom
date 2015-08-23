@@ -18,6 +18,18 @@ with npm do :
 npm install elem-vdom --save
 ```
 
+Build
+---------
+
+If you want to build the project yourself, you need to install io.js and do the following :
+
+```
+git clone https://github.com/mathieuancelin/elem-vdom.git elem-vdom
+cd elem-vdom
+npm install
+npm run build
+```
+
 Examples
 --------
 
@@ -29,7 +41,6 @@ cd elem-vdom
 npm install
 npm start
 open http://localhost:8080/examples
-
 ```
 
 API

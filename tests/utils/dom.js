@@ -1,5 +1,7 @@
 const Elem = require('../../src/main');
 const simulant = require('simulant');
+const chai = require('chai');
+const expect = chai.expect;
 const app = '#app';
 
 export function appHtml() {
@@ -48,4 +50,24 @@ export function change(selector, value) {
 export function click(selector) {
   // document.querySelector(on).click();
   on(selector).simulate('click');
+}
+
+export function childrenOf(selector) {
+  return {
+    count() {
+      return {
+        shouldBe(number) {
+          expect(children(selector).length).to.be.equal(number);
+        }
+      };
+    }
+  };
+}
+
+export function htmlOf(selector) {
+  return {
+    shouldBe(vnode) {
+      expect(node(selector).parentNode.innerHTML).to.be.equal(Elem.renderToString(vnode));
+    }
+  };
 }
