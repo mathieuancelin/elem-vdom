@@ -417,7 +417,7 @@ npm install --save-dev mocha chai jsdom simulant
 then create a folder for your tests and create a main file that will run all the tests
 
 ```javascript
-const env = require('elem-vdom/test/env');
+const env = require('elem-vdom/lib/test/env');
 
 env.setupEnv();
 
@@ -430,16 +430,14 @@ const tests = [
 you need to do so, because the `setupEnv` function need to be called before the first loading of `Elem`. Then in you test file, write something like :
 
 ```javascript
-const chai = require('chai');
-const Elem = require('elem-vdom');
-const DOM = require('elem-vdom/test/dom');
-const it = require('elem-vdom/test/desc').it;
-const expect = chai.expect;
+import { expect } from 'chai';
+import Elem from 'elem-vdom';
+import DOM from 'elem-vdom/lib/test/dom';
+import { it } from 'elem-vdom/lib/test/desc';
 
-const Clicker = require('../components/clicker');
+import Clicker from '../components/clicker';
 
 describe('my awsome cliker component', () => {
-
   it('can be clicked', () => {
     DOM.renderComponent(Clicker);
     expect(DOM.html('#label')).to.be.equal('0');
@@ -448,7 +446,6 @@ describe('my awsome cliker component', () => {
     DOM.click('button');
     expect(DOM.html('#label')).to.be.equal('2');
   });
-
 });
 ```
 
@@ -479,8 +476,28 @@ The DOM API is the following :
 * `on(selector).simulate('keyup', { charCode: 42 })` : fire an event on the selected node
 * `change(selector, value)` : fire a change event on the selected input
 * `click(selector)` : click on the selected node
-* `childrenOf(selector).count().shouldBe(5)` : assert number of children of selected node
-* `htmlOf(selector).shouldBe(<div><span>Hello World!</span></div>)` : assert the content of the selected node
+* `select(selector)` : return a fluent API to assert on selected node
+  * `id()`
+    * `get()` : return the id of the selected node
+    * `shouldBe(value)` : assert on the id of the selected node
+  * `className()`
+    * `get()` : return the className of the selected node
+    * `shouldBe(value)` : assert on the className of the selected node
+  * `html()`
+    * `get()` : return the innerHTML of the selected node
+    * `shouldBe(value)` : assert on the innerHTML of the selected node
+  * `children()`
+    * `get()` : return the children of the selected node
+    * `shouldBe(value)` : assert on the children of the selected node
+    * `count()`
+      * `get()` : return the number of children of the selected node
+      * `shouldBe(value)` : assert on the number of children of the selected node
+  * `click()` : fire a click event on the selected node
+  * `change(value)` : fire a change event on the selected node
+  * `shouldExist()` : assert if the selected node exists
+  * `shouldNotExist()` : assert if the selected node does not exists
+  * `shouldBe(value)` : assert if the innerHTML of the parent of the selected node is equals to the value (string or el)
+  * `simulate(name, event)` : simulate any event on the selected node
 
 About `Elem.predicate`
 ----------------------------------
