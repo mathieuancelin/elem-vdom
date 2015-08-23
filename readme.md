@@ -464,7 +464,7 @@ export function it(what, block) {
 
 so if you need to write an async test and use the `done` function when you need it, don't use that, but don't forget to call `DOM.cleanup()` to be sure to work on a clean page.
 
-The DOM API is the following :
+The DOM API is just a bunch of helpers to find nodes in the current document. If you're confortable with those API, you are not forced to use the DOM API. Just mount your component in the #app node and don't forget to unmount everything between each test. The API is the following :
 
 * `appHtml()` : return '#app' innerHTML
 * `html(of)` : return innerHTML of the selected node
