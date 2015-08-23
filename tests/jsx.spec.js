@@ -1,8 +1,8 @@
 /* eslint no-unused-vars:0 */
 const chai = require('chai');
 const Elem = require('../src/main');
-const DOM = require('./utils/dom');
-const Tests = require('./utils/tests');
+const DOM = require('../src/test/dom');
+const Tests = require('../src/test/desc');
 const expect = chai.expect;
 
 describe('elem-vdom JSX support', () => {

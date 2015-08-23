@@ -2,7 +2,7 @@
 const chai = require('chai');
 const Elem = require('../src/main');
 const Store = Elem.Store;
-const DOM = require('./utils/dom');
+const DOM = require('../src/test/dom');
 const expect = chai.expect;
 
 const INCREMENT_COUNTER = 'INCREMENT_COUNTER';

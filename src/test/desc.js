@@ -6,7 +6,8 @@ export function it(what, block) {
   expect(block).to.exist;
   global.it(what, done => {
     DOM.cleanup();
-    block();
+    block(DOM, expect);
+    DOM.cleanup();
     done();
   });
 }

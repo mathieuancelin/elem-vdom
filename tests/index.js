@@ -1,6 +1,6 @@
 /* eslint no-unused-vars:0 */
 
-const env = require('./utils/env');
+const env = require('../src/test/env');
 
 env.setupEnv();
 

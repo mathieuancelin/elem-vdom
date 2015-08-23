@@ -1,6 +1,6 @@
 const chai = require('chai');
 const Elem = require('../src/main');
-const DOM = require('./utils/dom');
+const DOM = require('../src/test/dom');
 const expect = chai.expect;
 
 describe('elem-vdom devtool', () => {

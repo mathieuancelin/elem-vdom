@@ -405,6 +405,68 @@ Just use `Elem.registerWebComponent(name-with-a-dash, component)` and use it lik
 <my-awesomecomponent></my-awesomecomponent>
 ```
 
+How can I test my components
+---------------------------------
+
+We recommand to write your tests with `mocha` and `chai`. You will need to use `io.js` instead of `node` because `jsdom` requires it. First, install everything :
+
+```
+npm install --save-dev mocha chai jsdom simulant
+```
+
+then create a folder for your tests and create a main file that will run all the tests
+
+```javascript
+const env = require('elem-vdom/test/env');
+
+env.setupEnv();
+
+const tests = [
+  require('./myfirsttest.js'),
+  require('./mysecondtest.js')
+];
+```
+
+you need to do so, because the `setupEnv` function need to be called before the first loading of `Elem`. Then in you test file, write something like :
+
+```javascript
+const chai = require('chai');
+const Elem = require('elem-vdom');
+const DOM = require('elem-vdom/test/dom');
+const it = require('elem-vdom/test/desc').it;
+const expect = chai.expect;
+
+const Clicker = require('../components/clicker');
+
+describe('my awsome cliker component', () => {
+
+  it('can be clicked', () => {
+    DOM.renderComponent(Clicker);
+    expect(DOM.html('#label')).to.be.equal('0');
+    DOM.click('button');
+    expect(DOM.html('#label')).to.be.equal('1');
+    DOM.click('button');
+    expect(DOM.html('#label')).to.be.equal('2');
+  });
+
+});
+```
+
+Here we use a custom `it` function that is written like :
+
+```javascript
+export function it(what, block) {
+  global.it(what, done => {
+    DOM.cleanup();
+    block(DOM, expect);
+    DOM.cleanup();
+    done();
+  });
+}
+```
+
+so if you need to write an async test and use the `done` function when you need it, don't use that, but don't forget to call `DOM.cleanup()` to be sure to work on a clean page.
+
 About `Elem.predicate`
 ----------------------------------
 
