@@ -408,7 +408,7 @@ Just use `Elem.registerWebComponent(name-with-a-dash, component)` and use it lik
 How can I test my components
 ---------------------------------
 
-We recommand to write your tests with `mocha` and `chai`. You will need to use `io.js` instead of `node` because `jsdom` requires it. First, install everything :
+We recommand to write your tests with `mocha` and `chai` with a headless browser named `jsdom`. You will need to use `io.js` instead of `node` because `jsdom` requires it. First, install everything :
 
 ```
 npm install --save-dev mocha chai jsdom simulant
@@ -427,7 +427,9 @@ const tests = [
 ];
 ```
 
-you need to do so, because the `setupEnv` function need to be called before the first loading of `Elem`. Then in you test file, write something like :
+you need to do so, because the `setupEnv` function need to be called before the first loading of `Elem`. This will setup everything you need to create global `window` and `document` objects based on working with `jsdom`. If you want to use a real browser or something like `phantomjs`, you don't need to call `setupEnv`, just use an HTML document with a `<div id="app"></div>`.
+
+Then in you test file, you can test the behavior of your components :
 
 ```javascript
 import { expect } from 'chai';

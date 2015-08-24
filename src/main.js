@@ -15,6 +15,8 @@ export const registerWebComponent = WebComponents.registerWebComponent;
 export const stylesheet = Utils.stylesheet;
 export const predicate = Utils.predicate;
 
+// TODO : handle thirdparty integration
+
 // export all sub namespace
 export * from './exporter';
 
@@ -37,7 +39,7 @@ export function resetErrorCallback() {
 }
 
 function eventHandlerWrapper(handler) {
-  let ctx = currentThisContext || null;
+  let ctx = {...currentThisContext} || null;
   return (...args) => {
     try {
       // TODO : add devtools integration here
@@ -193,6 +195,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     };
     currentThisContext = thisContext;
     let subTree = name.bind(thisContext)(functionContext, props, children);
+    currentThisContext = oldThisContext;
     if (InspectorAPI.isEnabled()) {
       let selectorId = Math.random().toString(15).slice(10, 20) + '';
       subTree.properties.attributes['data-inspector-selector'] = selectorId;
@@ -214,7 +217,6 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     attributes: {}
   };
   let ctx = transformAttrs(attrs, finalAttrs.attributes, finalAttrs);
-  currentThisContext = oldThisContext;
   if ((name === 'input' || name === 'INPUT') && attrs.value) {
     finalAttrs.value = attrs.value;
     finalAttrs.attributes.value = attrs.value;
@@ -424,7 +426,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
           let defaultProps = Utils.isFunction(dp) ? dp() : dp;
           thisContext.props = Object.assign({}, defaultProps, thisContext.props);
         };
-        currentThisContext = undefined;
+        currentThisContext = thisContext;
         elems = elementOrFunction.bind(thisContext)(functionAsComponentContext.context, functionAsComponentContext.props);
         currentThisContext = undefined;
         return elems;

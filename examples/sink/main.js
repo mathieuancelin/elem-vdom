@@ -14,6 +14,7 @@ export const Showcase = require('./showcase');
 export const Counter = require('./counter');
 export const FPS = require('./fps');
 export const JSX = require('./jsx');
+export const ThirdParty = require('./thirdparty');
 export const StatefulCounter = require('./stateful/app');
 
 const SinkPerfMonitoring = require('../../src/devtools/perfmonitor');

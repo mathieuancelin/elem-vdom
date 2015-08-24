@@ -15,5 +15,3 @@ const tests = [
   require('./store.spec.js'),
   require('./devtools.spec.js')
 ];
-
-// TODO : more devtools
