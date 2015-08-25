@@ -7,4 +7,6 @@ tests-es5
 examples
 small-lib
 .imdone
-/chrome-devtools
+chrome-devtools
+pics
+small.sh
