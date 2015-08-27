@@ -13,5 +13,6 @@ const tests = [
   require('./stylesheet.spec.js'),
   require('./universal.spec.js'),
   require('./store.spec.js'),
-  require('./devtools.spec.js')
+  require('./devtools.spec.js'),
+  require('./component.spec.js'),
 ];

@@ -150,7 +150,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   children = newChildren;
   let oldThisContext = currentThisContext;
   if (Utils.isFunction(name) && !name.isElemComponentFactory) {
-    let funKey = `Elem.function.${name.name || '<anonymous function>'}.tree`;
+    let funKey = `Elem.function.${name.componentName || name.name || '<anonymous function>'}.tree`;
     Perf.markStart(funKey);
     let props = {...attrs};
     props.children = children;
@@ -202,7 +202,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
       subTree.inspectorContext = {
         node: `[data-inspector-selector="${selectorId}"]`,
         type: 'function',
-        name: name.name || '<anonymous function>',
+        name: name.componentName || name.name || '<anonymous function>',
         state: functionContext.state,
         props: attrs,
         setState: functionContext.setState,
@@ -354,6 +354,7 @@ function createComponentContext(refresh, renderNode, refs = {}) {
       return renderNode;
     }
   };
+  context.__isInitialized = () => initialized && initialized;
   context.__initialized = () => {
     initialized = true;
     initializedCtx = true;
@@ -404,7 +405,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   let node = selectorOrNode;
   let tree = elementOrFunction;
   if (Utils.isFunction(tree)) {
-    let funKey = `Elem.${tree.name ? 'function' : 'render'}.${tree.name || ''}.tree`;
+    let funKey = `Elem.${tree.name ? 'function' : 'render'}.${tree.componentName || tree.name || ''}.tree`;
     Perf.markStart(funKey);
     // Perf.markStart('Elem.render.tree');
     let functionAsComponentContext = {
@@ -451,7 +452,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
         }
         if (InspectorAPI.isEnabled() && !(props.__inspectorSilent || false)) {
           let id = selectorOrNode.id || selectorOrNode;
-          let funcName = elementOrFunction.name || '<anonymous function>';
+          let funcName = elementOrFunction.componentName || elementOrFunction.name || '<anonymous function>';
           const inspectChild = (n, children, rank) => {
             if (n && n.inspectorContext) {
               let currentNode = {...n.inspectorContext, children: [], rank: rank + 1};
@@ -626,4 +627,32 @@ export function jsx(type, attributes, ...children) {
     return internalEl(type, attrs, children || [], attrs.key || undefined, svgNS);
   }
   return internalEl(type, attrs, children || [], attrs.key || undefined, undefined);
+}
+
+export function createComponent(options) {
+  if (!options.render) {
+    throw new Error('A component should have at least one render function');
+  }
+  function ElemComponent(ctx, props) {
+    let initialized = ctx.__isInitialized();
+    if (options.getDefaultProps) {
+      this.withDefaultProps(options.getDefaultProps.bind(this)(ctx, props));
+    }
+    if (!initialized && options.getInitialState) {
+      let state = ctx.withInitialState(options.getInitialState.bind(this)(ctx, props));
+      ctx.state = state;
+      this.state = state;
+    }
+    if (!initialized && options.getParentContext) {
+      let context = ctx.withInitialContext(options.getParentContext.bind(this)(ctx, props));
+      ctx.context = context;
+      this.context = context;
+    }
+    if (!initialized && options.init) {
+      options.init.bind(this)(ctx, props);
+    }
+    return options.render.bind(this)(ctx, props);
+  }
+  ElemComponent.componentName = options.name || 'ElemComponent';
+  return ElemComponent;
 }

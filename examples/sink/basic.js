@@ -9,9 +9,47 @@ Showcase.registerTile('Hello World example', container => {
 Showcase.registerTile('Fix #9', container => {
   let MyAwesomeNodes = [
     Elem.el('h1', 'Hello World!'),
-    Elem.el('h2', 'Goodbye World!')
+    Elem.el('h2', 'Goodbye World!'),
+    Elem.el('a', { href: 'http://www.google.fr', target: '_blank' }, 'google'),
   ];
   Elem.render(MyAwesomeNodes, container);
+});
+
+Showcase.registerTile('component', container => {
+  let initCounter = 0;
+  let propsCounter = 0;
+  let stateCounter = 0;
+  let contextCounter = 0;
+  const Component = Elem.createComponent({
+    name: 'MyAwesomeComponent',
+    init() {
+      initCounter = initCounter + 1;
+    },
+    getInitialState() {
+      stateCounter = stateCounter + 1;
+      return { state1: 'state1' };
+    },
+    getDefaultProps() {
+      propsCounter = propsCounter + 1;
+      return { props1: 'props1' };
+    },
+    getParentContext() {
+      contextCounter = contextCounter + 1;
+      return { ctx: 'ctx' };
+    },
+    render() {
+      return (
+        <div>
+          <span id="props1">{this.props.props1}</span>
+          <span id="props2">{this.props.props2}</span>
+          <span id="state1">{this.state.state1}</span>
+          <span id="ctx">{this.context.ctx}</span>
+          <button type="button" onClick={this.redraw}>Click</button>
+        </div>
+      );
+    }
+  });
+  Elem.render(Component, container, { props2: 'props2' });
 });
 
 Showcase.registerTile('Deep example', container => {

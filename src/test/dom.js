@@ -24,8 +24,8 @@ export function nodes(of) {
   return document.querySelectorAll(of);
 }
 
-export function renderComponent(c) {
-  return Elem.render(c, app);
+export function renderComponent(c, props = {}) {
+  return Elem.render(c, app, props);
 }
 
 export function cleanup() {
