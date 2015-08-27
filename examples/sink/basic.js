@@ -1,5 +1,6 @@
 const Showcase = require('./showcase');
 const Elem = require('../../src/main');
+import * as TestComponent from './testcomponent';
 
 Showcase.registerTile('Hello World example', container => {
   let MyAwesomeNode = Elem.el('h1', 'Hello World!');
@@ -16,39 +17,7 @@ Showcase.registerTile('Fix #9', container => {
 });
 
 Showcase.registerTile('component', container => {
-  let initCounter = 0;
-  let propsCounter = 0;
-  let stateCounter = 0;
-  let contextCounter = 0;
-  const Component = Elem.createComponent({
-    name: 'MyAwesomeComponent',
-    init() {
-      initCounter = initCounter + 1;
-    },
-    getInitialState() {
-      stateCounter = stateCounter + 1;
-      return { state1: 'state1' };
-    },
-    getDefaultProps() {
-      propsCounter = propsCounter + 1;
-      return { props1: 'props1' };
-    },
-    getParentContext() {
-      contextCounter = contextCounter + 1;
-      return { ctx: 'ctx' };
-    },
-    render() {
-      return (
-        <div>
-          <span id="props1">{this.props.props1}</span>
-          <span id="props2">{this.props.props2}</span>
-          <span id="state1">{this.state.state1}</span>
-          <span id="ctx">{this.context.ctx}</span>
-          <button type="button" onClick={this.redraw}>Click</button>
-        </div>
-      );
-    }
-  });
+  const Component = Elem.createComponent(TestComponent);
   Elem.render(Component, container, { props2: 'props2' });
 });
 
