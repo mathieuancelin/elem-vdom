@@ -14,7 +14,7 @@ export function getDefaultProps() {
   return { props1: 'props1' };
 }
 
-export function getParentContext() {
+export function getRootContext() {
   return { ctx: 'ctx' };
 }
 

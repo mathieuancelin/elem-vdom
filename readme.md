@@ -323,6 +323,109 @@ function Parent() {
 Elem.render(Parent, document.getElementById('app'));
 ```
 
+Really, there is no 'actual' component API ?
+---------------------------------------
+
+Actually, there is one
+
+```javascript
+const Clicker = Elem.createComponent({
+  name: 'Clicker',
+  init() {
+    // do whatever you want here
+  },
+  getInitialState() {
+    return {
+      count: 0
+    };
+  },
+  getDefaultProps() {
+    return {
+      text: 'You clicked'
+    };
+  },
+  getRootContext() {
+    return {
+      clickerService: ClickerService.create(API_KEY)
+    };
+  },
+  render() {
+    const click = () => {
+      this.context.clickerService.click();
+      this.setState({ state: this.state.count + 1 });
+    };
+    return (
+      <div>
+        <span>{this.props.text} : {this.state.count}</span>
+        <button type="button" onClick={click}>Click</button>
+      </div>
+    );
+  }
+});
+
+Elem.render(Clicker, container);
+
+// or
+
+Elem.render(<div><Clicker text="Vous avez cliqué" /></div>, container);
+```
+
+you can also use module syntax
+
+```javascript
+export const name = 'Clicker';
+
+export function init() {
+  // do whatever you want here
+}
+
+export function getInitialState() {
+  return {
+    count: 0
+  };
+}
+
+export function getDefaultProps() {
+  return {
+    text: 'You clicked'
+  };
+}
+
+export function getRootContext() {
+  return {
+    clickerService: ClickerService.create(API_KEY)
+  };
+}
+
+function click() {
+  this.context.clickerService.click();
+  this.setState({ state: this.state.count + 1 });
+}
+
+export function render() {
+  return (
+    <div>
+      <span>{this.props.text} : {this.state.count}</span>
+      <button type="button" onClick={click}>Click</button>
+    </div>
+  );
+}
+```
+
+to use it
+
+```javascript
+import * as ClickerComponent from './clicker';
+
+const Clicker = Elem.createComponent(ClickerComponent);
+
+Elem.render(Elem.createComponent(ClickerComponent), container);
+
+// or
+
+Elem.render(<div><Clicker text="Vous avez cliqué" /></div>, container);
+```
+
 But, how can I get an actual DOM node from inside my component ?
 ---------------------------------------
 

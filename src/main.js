@@ -174,6 +174,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         }
         setGlobalState({ [`substateof-${key}`]: newState }, cb);
       };
+      functionContext.__isInitialized = () => typeof globalState[`substateof-${key}`] !== 'undefined';
       functionContext.withInitialState = (is) => {
         if (!globalState[`substateof-${key}`]) {
           let initialState = Utils.isFunction(is) ? is() : is;
@@ -354,7 +355,8 @@ function createComponentContext(refresh, renderNode, refs = {}) {
       return renderNode;
     }
   };
-  context.__isInitialized = () => initialized && initialized;
+  context.__parentIsInitialized = () => initialized && initializedCtx;
+  context.__isInitialized = context.__parentIsInitialized;
   context.__initialized = () => {
     initialized = true;
     initializedCtx = true;
@@ -633,8 +635,12 @@ export function createComponent(options) {
   if (!options.render) {
     throw new Error('A component should have at least one render function');
   }
+  if (!options.name) {
+    console.warn('A component should have a name');
+  }
   function ElemComponent(ctx, props) {
     let initialized = ctx.__isInitialized();
+    let pinitialized = ctx.__parentIsInitialized();
     if (options.getDefaultProps) {
       this.withDefaultProps(options.getDefaultProps.bind(this)(ctx, props));
     }
@@ -643,8 +649,8 @@ export function createComponent(options) {
       ctx.state = state;
       this.state = state;
     }
-    if (!initialized && options.getParentContext) {
-      let context = ctx.withInitialContext(options.getParentContext.bind(this)(ctx, props));
+    if (!pinitialized && !props.key && options.getRootContext) {
+      let context = ctx.withInitialContext(options.getRootContext.bind(this)(ctx, props));
       ctx.context = context;
       this.context = context;
     }
