@@ -240,7 +240,7 @@ The `Elem.render` context
 
 Stateless functions as components is the key pattern of `elem-vdom`. In fact, it's better if your components are dumb and just need some props to work, the application data being provided by an external store. But sometimes you need more.
 
-Each time you call `Elem.render` with a component function as first parameter, an application context will be created and passed to the component function and all the sub component function. The context is available as `this` or as a function parameter.
+Each time you call `Elem.render` with a component function as first parameter, an application context will be created and passed to the component function and all the sub component function. The context is available as `this` or as a function parameter. The context will also be attached to any event handler (using `this`) attached by `elem-vdom`. 
 
 ```javascript
 function MyComponent(ctx, props) { // app context as parameter
