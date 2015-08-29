@@ -235,25 +235,46 @@ function Clock() {
 Elem.render(Clock, container);
 ```
 
-The whole context of the components are also available on `this`. Props are different for each components instance (each function call), the context is the same for the whole tree. The context contains the following.
-
-```javascript
-props: 'props of the current element',
-refs: 'refs of DOM nodes inside the current render tree'
-state: 'mutable state of the current render tree'
-refresh or redraw: 'rerender the current function at the same place'
-setState: 'mutate the state with diff and trigger a refresh'
-replaceState: 'mutate the whole state and trigger a refresh'
-getDOMNode: 'return root DOM node of the current render tree'
-context: 'a multipurpose object shared by all the components in the tree'
-```
-
-What about state and functions
+The `Elem.render` context
 ------------------
 
-Stateless functions as components is the key pattern of `elem-vdom`, but sometimes you need more.
-When you render a function using `elem-vdom` with `Elem.render(Function, container)`, the function owns a context including a state.
-This state will trigger a rendering of the root function each time it is changed with `setState` and `replaceState`. The state is common to the whole component tree. If you want a component (a function) to get its own state, you just have to assign a key to it.
+Stateless functions as components is the key pattern of `elem-vdom`. In fact, it's better if your components are dumb and just need some props to work, the application data being provided by an external store. But sometimes you need more.
+
+Each time you call `Elem.render` with a component function as first parameter, an application context will be created and passed to the component function and all the sub component function. The context is available as `this` or as a function parameter.
+
+```javascript
+function MyComponent(ctx, props) { // app context as parameter
+  this. .... // app context as this
+}
+```
+
+The context is unique for the root component function (and all the sub functions) and will be common to the whole component tree. This context contains everything needed to trigger a redraw of the root component function (and the whole sub tree), and different ways to attach data to the tree. These ways are :
+
+* `props`
+* `state`
+* `context`
+
+The `props` are just properties passed to components (functions). These properties can change for each render, but are considered immutable during the calls. Each component function have its own `props`, and these are not shared with the whole sub tree.
+
+The `state` is an object that will contains mutable data that represent internal state of the whole component (created with `Elem.render`). You can read data directly on the object but to mutate it, you have to call `setState(diff)` or `replaceState(newState)`. Each call to these function will trigger a redraw of the root component and its sub tree.
+
+The `context` is a simple object that you can manipulate the way you want. It's a good way to provide common services to a component tree.
+
+The API of the `Elem.render` context is the following :
+
+* `props`: props of the current component function
+* `refs`: refs of DOM nodes inside the current render tree
+* `state`: mutable state of the current render tree
+* `refresh()` or `redraw()`: rerender the current function at the same place
+* `setState(diff)`: mutate the state with diff and trigger a refresh
+* `replaceState(newState)`: mutate the whole state and trigger a refresh
+* `getDOMNode()`: return root DOM node of the current render tree
+* `context`: a multipurpose object shared by all the components in the tree
+* `withInitialState(function)` : define an initial state value, the arg function will be called once
+* `withDefaultProps(function)` : define default props values, the arg function will be called once
+* `withInitialContext(function)` : define an context, the arg function will be called once
+
+If you want a component (a function) to get its own state, you just have to assign a key to it.
 
 ```javascript
 Elem.el(MyButton, { key: "button1" })

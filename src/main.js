@@ -642,15 +642,15 @@ export function createComponent(options) {
     let initialized = ctx.__isInitialized();
     let pinitialized = ctx.__parentIsInitialized();
     if (options.getDefaultProps) {
-      this.withDefaultProps(options.getDefaultProps.bind(this)(ctx, props));
+      this.withDefaultProps(() => options.getDefaultProps.bind(this)(ctx, props));
     }
     if (!initialized && options.getInitialState) {
-      let state = ctx.withInitialState(options.getInitialState.bind(this)(ctx, props));
+      let state = ctx.withInitialState(() => options.getInitialState.bind(this)(ctx, props));
       ctx.state = state;
       this.state = state;
     }
     if (!pinitialized && !props.key && options.getRootContext) {
-      let context = ctx.withInitialContext(options.getRootContext.bind(this)(ctx, props));
+      let context = ctx.withInitialContext(() => options.getRootContext.bind(this)(ctx, props));
       ctx.context = context;
       this.context = context;
     }
