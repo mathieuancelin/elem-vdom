@@ -406,6 +406,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   Perf.markStart('Elem.render');
   let node = selectorOrNode;
   let tree = elementOrFunction;
+  let returnApi = {};
   if (Utils.isFunction(tree)) {
     let funKey = `Elem.${tree.name ? 'function' : 'render'}.${tree.componentName || tree.name || ''}.tree`;
     Perf.markStart(funKey);
@@ -498,6 +499,9 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     tree = reTree();
     functionAsComponentContext.context.__initialized();
     // Perf.markStop('Elem.render.tree');
+    returnApi.redraw = functionAsComponentContext.context.redraw;
+    returnApi.setState = functionAsComponentContext.context.setState;
+    returnApi.replaceState = functionAsComponentContext.context.replaceState;
     Perf.markStop(funKey);
   } else if (Utils.isArray(tree)) {
     tree = el('span', tree);
@@ -542,6 +546,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   }
   Perf.markStop('Elem.render');
   return {
+    ...returnApi,
     unmount() {
       delete node.rootId;
       clearNode(node);

@@ -1,6 +1,8 @@
 const Showcase = require('./showcase');
 const Elem = require('../../src/main');
 
+let interval;
+
 Showcase.registerTile('ThirdParty integration example', container => {
 
   function Something() {
@@ -9,7 +11,7 @@ Showcase.registerTile('ThirdParty integration example', container => {
 
   function showThirdParty() {
     this.setState({ showSomething: false });
-    document.getElementById('integration').innerHTML = '<span>ThirdParty : ' + Date.now() + '</span>';
+    document.getElementById('integration').innerHTML = '<p>ThirdParty : ' + Date.now() + '</p>';
   }
 
   function showSomething() {
@@ -17,12 +19,17 @@ Showcase.registerTile('ThirdParty integration example', container => {
   }
 
   function ThirdParty() {
-    this.withInitialState({ showSomething: true });
+    this.withInitialState(() => {
+      interval = setInterval(this.redraw, 200);
+      return { showSomething: true };
+    });
     return (
       <div>
         {
           this.state.showSomething ? <Something /> : <div id="integration"></div>
         }
+        <span>{Date.now()}</span>
+        <br/>
         <button type="button" onClick={showThirdParty}>Third party</button>
         <button type="button" onClick={showSomething}>Something</button>
       </div>
@@ -30,4 +37,6 @@ Showcase.registerTile('ThirdParty integration example', container => {
   }
 
   Elem.render(ThirdParty, container);
+}, () => {
+  clearInterval(interval);
 });
