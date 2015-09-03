@@ -89,7 +89,7 @@ function prepareObject(source, destination = {}) {
 const initialProps = { filter: [], update: 200 };
 const defaultState = { edit: false };
 
-// TODO : better display for objects
+// TODO : better display for objects like react-devtools
 // TODO : show component context ???
 function StateDisplay() {
   let element = this.props.element || { state: {}};
