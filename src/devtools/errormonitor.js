@@ -9,7 +9,7 @@ export default function ErrorMonitor(wrapped) {
   return (ctx, props) => {
     try {
       return Elem.el(wrapped, props);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
       return Redbox(e);
     }

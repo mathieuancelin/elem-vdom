@@ -6,6 +6,7 @@
     "node": true
   },
   "rules": {
+    "id-length": 0,
     "no-else-return": 0,
     "no-console": 0,
     "no-new-func": 1,

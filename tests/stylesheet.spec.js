@@ -1,3 +1,5 @@
+/* eslint no-unused-vars:0, no-undef:0, no-unused-expressions:0 */
+
 const chai = require('chai');
 const Elem = require('../src/main');
 const DOM = require('../src/test/dom');

@@ -44,7 +44,7 @@ function eventHandlerWrapper(handler) {
     try {
       // TODO : add devtools integration here
       return handler.apply(ctx, args);
-    } catch(e) {
+    } catch (e) {
       errorCallback(e);
     }
   };

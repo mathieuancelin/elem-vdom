@@ -59,7 +59,7 @@ Showcase.registerTile('Redux like example', container => {
   function CounterWrapper() {
     return Elem.el(Store.Provider, {
       store,
-      render: () =>  Elem.el('span', Elem.el(Store.Selector, { selector: CounterSelector, actions: { increment, decrement }, render: Counter }))
+      render: () => Elem.el('span', Elem.el(Store.Selector, { selector: CounterSelector, actions: { increment, decrement }, render: Counter }))
     });
   }
 

@@ -1,3 +1,5 @@
+/* eslint no-unused-expressions:0 */
+
 import * as Elem from '../main';
 import * as Utils from '../utils';
 import * as InspectorAPI from './inspectorapi';
@@ -104,7 +106,7 @@ function StateDisplay() {
       let newJson = JSON.parse(this.context.json);
       Elem.unmount(this.getDOMNode());
       this.props.element.replaceState(newJson);
-    } catch(ex) {
+    } catch (ex) {
       console.log(ex);
     }
   };

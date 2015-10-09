@@ -1,3 +1,5 @@
+/* eslint no-unused-expressions:0 */
+
 const Elem = require('../../src/main');
 const simulant = require('simulant');
 const chai = require('chai');

@@ -1,3 +1,5 @@
+/* eslint no-unused-expressions:0 */
+
 const chai = require('chai');
 const DOM = require('./dom');
 const expect = chai.expect;
