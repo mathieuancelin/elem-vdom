@@ -121,7 +121,7 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
 }
 
 function isNode(item) {
-  return item instanceof HTMLElement || item instanceof Text || item.__isHTMLElement;
+  return item instanceof HTMLElement || item instanceof Text || item instanceof SVGElement || item.__isHTMLElement;
 }
 
 function makeNode(name, attrs, children, elemkey, namespace) {
@@ -495,7 +495,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
               if (n.__children) {
                 n.__children.forEach(c => inspectChild(c, currentNode.__children, rank + 1));
               }
-              children.push(currentNode);
+              if (children) children.push(currentNode);
               return currentNode;
             } else if (n && n.__children) {
               n.__children.forEach(c => inspectChild(c, children, rank));
