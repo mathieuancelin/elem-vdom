@@ -4,12 +4,6 @@ import * as Perf from './devtools/perfs';
 import * as WebComponents from './webcomponents';
 import * as InspectorAPI from './devtools/inspectorapi';
 
-import diff from 'virtual-dom/diff';
-import patch from 'virtual-dom/patch';
-import VDOMCreateElement from 'virtual-dom/create-element';
-import VNode from 'virtual-dom/vnode/vnode';
-import VText from 'virtual-dom/vnode/vtext';
-
 export const svgNS = 'http://www.w3.org/2000/svg';
 export const registerWebComponent = WebComponents.registerWebComponent;
 export const stylesheet = Utils.stylesheet;
@@ -126,10 +120,47 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
   return context;
 }
 
+function isNode(item) {
+  return item instanceof HTMLElement || item instanceof Text || item.__isHTMLElement;
+}
+
+function makeNode(name, attrs, children, key, namespace) {
+  const doc = Utils.getGlobalObject().document || Docs.createJsonDocument();
+  const node = namespace ? doc.createElementNS(namespace, Utils.escape(name)) : doc.createElement(Utils.escape(name));
+  if (key) {
+    node.setAttribute('data-key', key);
+  }
+  for (let key in attrs) {
+    const value = attrs[key];
+    if (key === 'attributes') {
+      for (let k in attrs.attributes) {
+        const v = attrs.attributes[k];
+        node.setAttribute(Utils.dasherize(k), v);
+      }
+    } else if (key.startsWith('on')) {
+      node.addEventListener(key.replace('on', ''), value);
+    } else if (key === 'innerHTML') {
+      node.innerHTML = value;
+    } else if (key === 'value' && name === 'input') {
+      node.value = value;
+    } else if (key === 'indeterminate' && name === 'input') {
+      node.indeterminate = value;
+    } else {
+      node.setAttribute(Utils.dasherize(key), value);
+    }
+  }
+  for (let idx in children) {
+    const child = children[idx];
+    node.appendChild(child);
+  }
+  return node;
+}
+
 function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   let innerHTML;
   let children = [].concat.apply([], childrenArray); // perf issue hint : replace with childrenArray;
   let newChildren = [];
+  const doc = Utils.getGlobalObject().document;
   for (let i in children) {
     let item = children[i];
     if (item) {
@@ -137,12 +168,12 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         item = item();
       }
       if (item) {
-        if (item instanceof VNode) newChildren.push(item);
+        if (isNode(item)) newChildren.push(item);
         else if (Utils.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
-          newChildren.push(new VText(''));
+          //newChildren.push(doc.createTextNode(''));
         } else {
-          newChildren.push(new VText(item + ''));
+          newChildren.push(doc.createTextNode(Utils.escape(item + '')));
         }
       }
     }
@@ -231,7 +262,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   if (innerHTML) {
     finalAttrs.innerHTML = innerHTML;
   }
-  return new VNode(name, finalAttrs, children, attrs.key, namespace);
+  return makeNode(name, finalAttrs, children, attrs.key, namespace);
 }
 
 export function el(tagName, ...args) {
@@ -243,7 +274,7 @@ export function el(tagName, ...args) {
       // el('div', 'Lorem Ipsum')
       return internalEl(name, {}, [args[0]], undefined, undefined);
     }
-    if (argsLength === 1 && (args[0] instanceof VNode)) {
+    if (argsLength === 1 && isNode(args[0])) {
       // el('div', Elem.el(...))
       return internalEl(name, {}, [args[0]], undefined, undefined);
     }
@@ -269,7 +300,7 @@ export function el(tagName, ...args) {
       // el('div', {...}, 'lorem ipsum')
       return internalEl(name, args[0], [args[1]], args[0].key, undefined);
     }
-    if (argsLength === 2 && Utils.isObject(args[0]) && args[1] instanceof VNode) {
+    if (argsLength === 2 && Utils.isObject(args[0]) && isNode(args[1])) {
       // el('div', {...}, Elem.el(...))
       return internalEl(name, args[0], [args[1]], args[0].key, undefined);
     }
@@ -299,7 +330,7 @@ export function el(tagName, ...args) {
       // el('div', ns, {...}, 'lorem ipsum')
       return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
     }
-    if (argsLength === 3 && (Utils.isUndefined(args[0]) || Utils.isString(args[0])) && Utils.isObject(args[1]) && args[2] instanceof VNode) {
+    if (argsLength === 3 && (Utils.isUndefined(args[0]) || Utils.isString(args[0])) && Utils.isObject(args[1]) && isNode(args[2])) {
       // el('div', ns, {...}, Elem.el(...))
       return internalEl(name, args[1], [args[2]], args[1].key, args[0]);
     }
@@ -516,33 +547,12 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
   let rootId;
   if (node !== null) {
     rootId = node.rootId;
-    if (!rootId) {
-      rootId = Utils.uniqueId('data-rootid-');
-      node.rootId = rootId;
-    }
-    let oldDom = treeCache[rootId];
-    if (!oldDom) {
-      Perf.markStart('Elem.render.create');
-      let rootNode = VDOMCreateElement(tree);
-      clearNode(node);
-      node.appendChild(rootNode);
-      treeCache[rootId] = {
-        tree: tree,
-        rootNode: rootNode
-      };
-      Perf.markStop('Elem.render.create');
-    } else {
-      Perf.markStart('Elem.render.diff');
-      let patches = diff(oldDom.tree, tree);
-      Perf.markStop('Elem.render.diff');
-      Perf.markStart('Elem.render.patch');
-      let rootNode = patch(oldDom.rootNode, patches);
-      treeCache[rootId] = {
-        tree: tree,
-        rootNode: rootNode
-      };
-      Perf.markStop('Elem.render.patch');
-    }
+    Perf.markStart('Elem.render.clear');
+    clearNode(node);
+    Perf.markStop('Elem.render.clear');
+    Perf.markStart('Elem.render.append');
+    node.appendChild(tree);
+    Perf.markStop('Elem.render.append');
   }
   Perf.markStop('Elem.render');
   return {
@@ -591,8 +601,7 @@ export function renderToJson(elementOrFunction, props = {}) {
     let thisContext = {...componentContext, props};
     tree = tree.bind(thisContext)(componentContext, props);
   }
-  let rootNode = VDOMCreateElement(tree, { document: Docs.createJsonDocument() });
-  let str = rootNode.render();
+  let str = JSON.parse(JSON.stringify(tree.render()));
   Perf.markStop('Elem.renderToJson');
   return str;
 }
@@ -607,8 +616,7 @@ export function renderToString(elementOrFunction, props = {}) {
     let thisContext = {...componentContext, props};
     tree = tree.bind(thisContext)(componentContext, props);
   }
-  let rootNode = VDOMCreateElement(tree, { document: Docs.createStringDocument() });
-  let str = rootNode.render();
+  let str = tree.renderToHtml();
   Perf.markStop('Elem.renderToString');
   return str;
 }
