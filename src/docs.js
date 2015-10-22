@@ -70,24 +70,6 @@ export function createJsonDocument() {
       appendChild(child) {
         children.push(child);
       },
-      renderToHtml() {
-        if (this.innerHTML) {
-          let html = this.innerHTML;
-          children.push({
-            render() {
-              return html;
-            }
-          });
-        }
-        attrs = attrs.map(attr => {
-          let key = attr.key;
-          let value = attr.value;
-          return `${key}="${value}"`;
-        });
-        let selfCloseTag = children.length === 0;
-        if (selfCloseTag) return `<${name} ${attrs.join(' ')} />`;
-        return `<${name}${attrs.length > 0 ? ' ' : ''}${attrs.join(' ')}>${children.map(child => child.renderToHtml()).join('')}</${name}>`;
-      },
       render() {
         if (this.innerHTML) {
           let html = this.innerHTML;
@@ -98,7 +80,6 @@ export function createJsonDocument() {
           }];
         }
         return {
-          __isHTMLElement: true,
           name,
           attrs,
           children: children.map(child => child.render())
@@ -117,9 +98,6 @@ export function createJsonDocument() {
 
   function createTextNode(str) {
     return {
-      renderToHtml() {
-        return str;
-      },
       render() {
         return str;
       }

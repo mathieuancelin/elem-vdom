@@ -124,11 +124,11 @@ function isNode(item) {
   return item instanceof HTMLElement || item instanceof Text || item.__isHTMLElement;
 }
 
-function makeNode(name, attrs, children, key, namespace) {
+function makeNode(name, attrs, children, elemkey, namespace) {
   const doc = Utils.getGlobalObject().document || Docs.createJsonDocument();
   const node = namespace ? doc.createElementNS(namespace, Utils.escape(name)) : doc.createElement(Utils.escape(name));
-  if (key) {
-    node.setAttribute('data-key', key);
+  if (elemkey) {
+    node.setAttribute('data-key', elemkey);
   }
   for (let key in attrs) {
     const value = attrs[key];
@@ -153,6 +153,9 @@ function makeNode(name, attrs, children, key, namespace) {
     const child = children[idx];
     node.appendChild(child);
   }
+  if (InspectorAPI.isEnabled()) {
+    node.__children = children;
+  }
   return node;
 }
 
@@ -171,9 +174,8 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         if (isNode(item)) newChildren.push(item);
         else if (Utils.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
-          //newChildren.push(doc.createTextNode(''));
         } else {
-          newChildren.push(doc.createTextNode(Utils.escape(item + '')));
+          newChildren.push(doc.createTextNode(item + ''));
         }
       }
     }
@@ -197,7 +199,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
       functionContext.setGlobalState = setGlobalState;
       functionContext.replaceGlobalState = replaceGlobalState;
       functionContext.state = globalState[`substateof-${key}`] || {};
-      functionContext.replaceState = (state, cb) => setGlobalState({ [`substateof-${key}`]: diff }, cb);
+      functionContext.replaceState = (state, cb) => setGlobalState({ [`substateof-${key}`]: state }, cb);
       functionContext.setState = (diffState, cb) => {
         let newState = globalState[`substateof-${key}`] || {};
         for (let k in diffState) {
@@ -230,7 +232,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     currentThisContext = oldThisContext;
     if (InspectorAPI.isEnabled()) {
       let selectorId = Math.random().toString(15).slice(10, 20) + '';
-      subTree.properties.attributes['data-inspector-selector'] = selectorId;
+      subTree.setAttribute('data-inspector-selector', selectorId);
       subTree.inspectorContext = {
         node: `[data-inspector-selector="${selectorId}"]`,
         type: 'function',
@@ -490,18 +492,18 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
           const inspectChild = (n, children, rank) => {
             if (n && n.inspectorContext) {
               let currentNode = {...n.inspectorContext, children: [], rank: rank + 1};
-              if (n.children) {
-                n.children.forEach(c => inspectChild(c, currentNode.children, rank + 1));
+              if (n.__children) {
+                n.__children.forEach(c => inspectChild(c, currentNode.__children, rank + 1));
               }
               children.push(currentNode);
               return currentNode;
-            } else if (n && n.children) {
-              n.children.forEach(c => inspectChild(c, children, rank));
+            } else if (n && n.__children) {
+              n.__children.forEach(c => inspectChild(c, children, rank));
             }
           };
           let exposeName = `${id} > ${funcName}`;
           let selectorId = Math.random().toString(15).slice(10, 20) + '';
-          elems.properties.attributes['data-inspector-selector'] = selectorId;
+          elems.setAttribute('data-inspector-selector', selectorId);
           let root = {
             name: funcName,
             node: node,

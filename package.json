@@ -20,8 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "babel-runtime": "^5.8.25",
-    "error-stack-parser": "^1.2.3",
-    "virtual-dom": "^2.1.1"
+    "error-stack-parser": "^1.2.3"
   },
   "devDependencies": {
     "babel": "^5.8.23",
