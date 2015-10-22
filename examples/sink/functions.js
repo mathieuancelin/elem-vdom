@@ -203,8 +203,8 @@ Showcase.registerTile('Todo app', container => {
             Elem.el('input', {
               ref: 'taskInput',
               onchange: storeName,
-              onkeyup: storeName,
-              onkeydown: storeName,
+              //onkeypress: storeName,
+              //onkeydown: storeName,
               value: state.text,
               placeholder: 'What do you have to do ?',
               type: 'text',
