@@ -559,7 +559,7 @@ Then in you test file, you can test the behavior of your components :
 
 ```javascript
 import { expect } from 'chai';
-import Elem from 'elem-vdom';
+import Elem from 'elem-vdom-vanilla-experiment';
 import DOM from 'elem-vdom/lib/test/dom';
 import { it } from 'elem-vdom/lib/test/desc';
 

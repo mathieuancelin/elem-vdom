@@ -1,5 +1,5 @@
 {
-  "name": "elem-vdom",
+  "name": "elem-vdom-vanilla-experiment",
   "description": "Simple tool to build UIs",
   "version": "0.0.17",
   "main": "lib/main.js",
