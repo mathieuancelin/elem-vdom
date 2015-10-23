@@ -1,5 +1,4 @@
 import * as Utils from './utils';
-import * as Docs from './docs';
 import * as Perf from './devtools/perfs';
 import * as WebComponents from './webcomponents';
 import * as InspectorAPI from './devtools/inspectorapi';
@@ -121,49 +120,78 @@ function transformAttrs(attrs, attributesHash, handlersHash) {
 }
 
 function isNode(item) {
-  return item instanceof HTMLElement || item instanceof Text || item instanceof SVGElement || item.__isHTMLElement;
+  return item.__isHTMLElement;
 }
 
 function makeNode(name, attrs, children, elemkey, namespace) {
-  const doc = Utils.getGlobalObject().document || Docs.createJsonDocument();
-  const node = namespace ? doc.createElementNS(namespace, Utils.escape(name)) : doc.createElement(Utils.escape(name));
-  if (elemkey) {
-    node.setAttribute('data-key', elemkey);
-  }
-  for (let key in attrs) {
-    const value = attrs[key];
-    if (key === 'attributes') {
-      for (let k in attrs.attributes) {
-        const v = attrs.attributes[k];
-        node.setAttribute(Utils.dasherize(k), v);
+  return {
+    name,
+    attrs,
+    children,
+    key: elemkey,
+    namespace,
+    __isHTMLElement: true,
+    renderToString() {
+      if (attrs.innerHTML) {
+        children.push({
+          renderToString() {
+            return attrs.innerHTML;
+          }
+        });
       }
-    } else if (key.startsWith('on')) {
-      node.addEventListener(key.replace('on', ''), value);
-    } else if (key === 'innerHTML') {
-      node.innerHTML = value;
-    } else if (key === 'value' && name === 'input') {
-      node.value = value;
-    } else if (key === 'indeterminate' && name === 'input') {
-      node.indeterminate = value;
-    } else {
-      node.setAttribute(Utils.dasherize(key), value);
+      const styledAttrs = [];
+      for (let key in attrs) {
+        let value = attrs[key];
+        if (key === 'attributes') {
+          for (let k in value) {
+            styledAttrs.push(`${k}="${value[k]}"`);
+          }
+        } else {
+          styledAttrs.push(`${key}="${value}"`);
+        }
+      }
+      let selfCloseTag = children.length === 0;
+      if (selfCloseTag) return `<${name} ${styledAttrs.join(' ')} />`;
+      return `<${name}${styledAttrs.length > 0 ? ' ' : ''}${styledAttrs.join(' ')}>${children.map(child => child.renderToString()).join('')}</${name}>`;
+    },
+    renderToDOM() {
+      const doc = Utils.getGlobalObject().document;
+      const node = namespace ? doc.createElementNS(namespace, Utils.escape(name)) : doc.createElement(Utils.escape(name));
+      if (elemkey) {
+        node.setAttribute('data-key', elemkey);
+      }
+      for (let key in attrs) {
+        const value = attrs[key];
+        if (key === 'attributes') {
+          for (let k in attrs.attributes) {
+            const v = attrs.attributes[k];
+            node.setAttribute(Utils.dasherize(k), v);
+          }
+        } else if (key.startsWith('on')) {
+          node.addEventListener(key.replace('on', ''), value);
+        } else if (key === 'innerHTML') {
+          node.innerHTML = value;
+        } else if (key === 'value' && name === 'input') {
+          node.value = value;
+        } else if (key === 'indeterminate' && name === 'input') {
+          node.indeterminate = value;
+        } else {
+          node.setAttribute(Utils.dasherize(key), value);
+        }
+      }
+      for (let idx in children) {
+        const child = children[idx];
+        node.appendChild(child.renderToDOM());
+      }
+      return node;
     }
-  }
-  for (let idx in children) {
-    const child = children[idx];
-    node.appendChild(child);
-  }
-  if (InspectorAPI.isEnabled()) {
-    node.__children = children;
-  }
-  return node;
+  };
 }
 
 function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   let innerHTML;
   let children = [].concat.apply([], childrenArray); // perf issue hint : replace with childrenArray;
   let newChildren = [];
-  const doc = Utils.getGlobalObject().document;
   for (let i in children) {
     let item = children[i];
     if (item) {
@@ -175,7 +203,15 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         else if (Utils.isObject(item) && item.__asHtml) {
           innerHTML = item.__asHtml;
         } else {
-          newChildren.push(doc.createTextNode(item + ''));
+          newChildren.push({
+            __isHTMLElement: true,
+            renderToString() {
+              return item + '';
+            },
+            renderToDOM() {
+              return Utils.getGlobalObject().document.createTextNode(item + '');
+            }
+          });
         }
       }
     }
@@ -232,7 +268,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     currentThisContext = oldThisContext;
     if (InspectorAPI.isEnabled()) {
       let selectorId = Math.random().toString(15).slice(10, 20) + '';
-      subTree.setAttribute('data-inspector-selector', selectorId);
+      subTree.attrs.attributes['data-inspector-selector'] = selectorId;
       subTree.inspectorContext = {
         node: `[data-inspector-selector="${selectorId}"]`,
         type: 'function',
@@ -492,18 +528,18 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
           const inspectChild = (n, children, rank) => {
             if (n && n.inspectorContext) {
               let currentNode = {...n.inspectorContext, children: [], rank: rank + 1};
-              if (n.__children) {
-                n.__children.forEach(c => inspectChild(c, currentNode.__children, rank + 1));
+              if (n.children) {
+                n.children.forEach(c => inspectChild(c, currentNode.children, rank + 1));
               }
               if (children) children.push(currentNode);
               return currentNode;
-            } else if (n && n.__children) {
-              n.__children.forEach(c => inspectChild(c, children, rank));
+            } else if (n && n.children) {
+              n.children.forEach(c => inspectChild(c, children, rank));
             }
           };
           let exposeName = `${id} > ${funcName}`;
           let selectorId = Math.random().toString(15).slice(10, 20) + '';
-          elems.setAttribute('data-inspector-selector', selectorId);
+          elems.attrs.attributes['data-inspector-selector'] = selectorId;
           let root = {
             name: funcName,
             node: node,
@@ -553,7 +589,7 @@ export function render(elementOrFunction, selectorOrNode, props = {}) {
     clearNode(node);
     Perf.markStop('Elem.render.clear');
     Perf.markStart('Elem.render.append');
-    node.appendChild(tree);
+    node.appendChild(tree.renderToDOM());
     Perf.markStop('Elem.render.append');
   }
   Perf.markStop('Elem.render');
@@ -603,9 +639,8 @@ export function renderToJson(elementOrFunction, props = {}) {
     let thisContext = {...componentContext, props};
     tree = tree.bind(thisContext)(componentContext, props);
   }
-  let str = JSON.parse(JSON.stringify(tree.render()));
   Perf.markStop('Elem.renderToJson');
-  return str;
+  return tree;
 }
 
 export function renderToString(elementOrFunction, props = {}) {
@@ -618,7 +653,7 @@ export function renderToString(elementOrFunction, props = {}) {
     let thisContext = {...componentContext, props};
     tree = tree.bind(thisContext)(componentContext, props);
   }
-  let str = tree.renderToHtml();
+  let str = tree.renderToString();
   Perf.markStop('Elem.renderToString');
   return str;
 }
