@@ -1,3 +1,5 @@
+// Some default reducers to use with stores
+
 export default {
   Logger: store => next => action => {
     console.group(action.type);

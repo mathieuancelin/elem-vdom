@@ -1,6 +1,5 @@
 export const basic = require('./basic');
 export const children = require('./children');
-export const component = require('./component');
 export const functions = require('./functions');
 export const injection = require('./injection');
 export const main = require('./main');
