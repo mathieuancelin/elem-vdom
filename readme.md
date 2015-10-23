@@ -21,7 +21,7 @@ npm install elem-vdom --save
 Build
 ---------
 
-If you want to build the project yourself, you need to install io.js and do the following :
+If you want to build the project yourself, you need to install `Node 4` and do the following :
 
 ```
 git clone https://github.com/mathieuancelin/elem-vdom.git elem-vdom
@@ -532,7 +532,7 @@ Just use `Elem.registerWebComponent(name-with-a-dash, component)` and use it lik
 How can I test my components
 ---------------------------------
 
-We recommand to write your tests with `mocha` and `chai` with a headless browser named `jsdom`. You will need to use `io.js` instead of `node` because `jsdom` requires it. First, install everything :
+We recommand to write your tests with `mocha` and `chai` with a headless browser named `jsdom`. You will need to use `Node 4` instead of `node` because `jsdom` requires it. First, install everything :
 
 ```
 npm install --save-dev mocha chai jsdom simulant
