@@ -1,9 +1,9 @@
-elem-vdom
+elem-vdom-vanilla-experiment
 ================
 
-Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom is just a quick and dirty experiment to avoid string templates, string concat and manual mutations when modifying the DOM. `elem-vdom` is written in using ES2015 syntax.
+Simple and idiotic lib to build UI components. It's a component library promoting functional composition with the full expressiveness of JavaScript and support for all existing JavaScript libraries. elem-vdom-vanilla-experiment is just a quick and dirty experiment to avoid string templates, string concat and manual mutations when modifying the DOM. `elem-vdom-vanilla-experiment` is written in using ES2015 syntax.
 
-*This branch is an experiment to only use pure DOM API. No VDOM here*
+*This branch is an experiment to only use pure DOM API. No virtual DOM technique here*
 
 [![build status][1]][2]
 [![NPM version][3]][4]
@@ -17,17 +17,19 @@ Install
 with npm do :
 
 ```
-npm install elem-vdom --save
+npm install elem-vdom-vanilla-experiment --save
 ```
 
 Build
 ---------
 
-If you want to build the project yourself, you need to install io.js and do the following :
+If you want to build the project yourself, you need to install `Node 4` and do the following :
 
 ```
-git clone https://github.com/mathieuancelin/elem-vdom.git elem-vdom
-cd elem-vdom
+git clone https://github.com/mathieuancelin/elem-vdom.git elem-vdom-vanilla-experiment
+cd elem-vdom-vanilla-experiment
+git fetch --all
+git checkout puredom
 npm install
 npm run build
 ```
@@ -38,8 +40,10 @@ Examples
 If you want to run examples, just clone the project then :
 
 ```
-git clone https://github.com/mathieuancelin/elem-vdom.git elem-vdom
-cd elem-vdom
+git clone https://github.com/mathieuancelin/elem-vdom.git elem-vdom-vanilla-experiment
+cd elem-vdom-vanilla-experiment
+git fetch --all
+git checkout puredom
 npm install
 npm start
 open http://localhost:8080/examples
@@ -68,12 +72,12 @@ A few other APIs are also available but none are mandatory to use :
 Dependencies
 -------------
 
-elem-vdom depends on `babel-runtime` and `error-stack-parser` but these dependencies are bundled in the distribution package.
+elem-vdom-vanilla-experiment depends on `babel-runtime` and `error-stack-parser` but these dependencies are bundled in the distribution package.
 
 How can I use elem-vdom ?
 ----------------------------
 
-First imports `Elem.min.js` in your page. Then you will be able to build your first node
+First imports `elem.js` in your page. Then you will be able to build your first node
 
 ```javascript
 const MyAwesomeNode = Elem.el('h1', 'Hello World!');
@@ -168,7 +172,7 @@ change input submit focus blur keydown keypress keyup copy cut paste
 SVG
 -------
 
-You can also simply use SVG with elem-vdom, using the dedicated API :
+You can also simply use SVG with elem-vdom-vanilla-experiment, using the dedicated API :
 
 ```javascript
 function svg() {
@@ -240,9 +244,9 @@ Elem.render(Clock, container);
 The `Elem.render` context
 ------------------
 
-Stateless functions as components is the key pattern of `elem-vdom`. In fact, it's better if your components are dumb and just need some props to work, the application data being provided by an external store. But sometimes you need more.
+Stateless functions as components is the key pattern of `elem-vdom-vanilla-experiment`. In fact, it's better if your components are dumb and just need some props to work, the application data being provided by an external store. But sometimes you need more.
 
-Each time you call `Elem.render` with a component function as first parameter, an application context will be created and passed to the component function and all the sub component function. The context is available as `this` or as a function parameter. The context will also be attached to any event handler (using `this`) attached by `elem-vdom`.
+Each time you call `Elem.render` with a component function as first parameter, an application context will be created and passed to the component function and all the sub component function. The context is available as `this` or as a function parameter. The context will also be attached to any event handler (using `this`) attached by `elem-vdom-vanilla-experiment`.
 
 ```javascript
 function MyComponent(ctx, props) { // app context as parameter
@@ -282,7 +286,7 @@ If you want a component (a function) to get its own state, you just have to assi
 Elem.el(MyButton, { key: "button1" })
 ```
 
-Then the `this.state` passed to the function `MyButton` will be its own. You just have to be careful to assign the same key to the same component each time you render the tree so `elem-vdom` can track down the right sub state and pass it to the component.
+Then the `this.state` passed to the function `MyButton` will be its own. You just have to be careful to assign the same key to the same component each time you render the tree so `elem-vdom-vanilla-experiment` can track down the right sub state and pass it to the component.
 
 You can also specify an initialState to the sub-state of a component
 
@@ -319,6 +323,7 @@ https://github.com/mathieuancelin/elem-vdom/blob/master/webpack.config.js#L53
 then you can write stuff like :
 
 ```javascript
+import Elem from 'elem-vdom-vanilla-experiment';
 
 function Bordered() {
   return (
@@ -534,7 +539,7 @@ Just use `Elem.registerWebComponent(name-with-a-dash, component)` and use it lik
 How can I test my components
 ---------------------------------
 
-We recommand to write your tests with `mocha` and `chai` with a headless browser named `jsdom`. You will need to use `io.js` instead of `node` because `jsdom` requires it. First, install everything :
+We recommand to write your tests with `mocha` and `chai` with a headless browser named `jsdom`. You will need to use `Node 4` instead of `node` because `jsdom` requires it. First, install everything :
 
 ```
 npm install --save-dev mocha chai jsdom simulant
@@ -543,7 +548,7 @@ npm install --save-dev mocha chai jsdom simulant
 then create a folder for your tests and create a main file that will run all the tests
 
 ```javascript
-const env = require('elem-vdom/lib/test/env');
+const env = require('elem-vdom-vanilla-experiment/lib/test/env');
 
 env.setupEnv();
 
@@ -560,8 +565,8 @@ Then in you test file, you can test the behavior of your components :
 ```javascript
 import { expect } from 'chai';
 import Elem from 'elem-vdom-vanilla-experiment';
-import DOM from 'elem-vdom/lib/test/dom';
-import { it } from 'elem-vdom/lib/test/desc';
+import DOM from 'elem-vdom-vanilla-experiment/lib/test/dom';
+import { it } from 'elem-vdom-vanilla-experiment/lib/test/desc';
 
 import Clicker from '../components/clicker';
 
@@ -775,9 +780,9 @@ About Elem.Perf
 ```javascript
 const Perf = Elem.Perf;
 // or
-const Perf = require('elem-vdom/lib/devtools/perfs');
+const Perf = require('elem-vdom-vanilla-experiment/lib/devtools/perfs');
 // or
-import * as Perf from 'elem-vdom/lib/devtools/perfs';
+import * as Perf from 'elem-vdom-vanilla-experiment/lib/devtools/perfs';
 ```
 
 The API is the following :
@@ -796,9 +801,9 @@ You can use the Perf API to build great perf analysis tools like here : https://
 You can use it with
 
 ```javascript
-const Monitor = require('elem-vdom/lib/devtools/perfmonitor');
+const Monitor = require('elem-vdom-vanilla-experiment/lib/devtools/perfmonitor');
 // or
-import * as Monitor from 'elem-vdom/lib/devtools/perfmonitor';
+import * as Monitor from 'elem-vdom-vanilla-experiment/lib/devtools/perfmonitor';
 
 function PerfMonitor() {
   return Elem.el(Monitor);
@@ -818,9 +823,9 @@ Just a bunch of tools to create stores (heavily inspired by [Redux](http://rackt
 ```javascript
 const Store = Elem.Store;
 // or
-const Store = require('elem-vdom/lib/store');
+const Store = require('elem-vdom-vanilla-experiment/lib/store');
 // or
-import * as Store from 'elem-vdom/lib/store';
+import * as Store from 'elem-vdom-vanilla-experiment/lib/store';
 ```
 
 The API is the following :
@@ -947,9 +952,9 @@ You can require the plugins from
 ```javascript
 const Plugins = Elem.Store.Plugins;
 // or
-const Devtools = require('elem-vdom/lib/storeplugins');
+const Devtools = require('elem-vdom-vanilla-experiment/lib/storeplugins');
 // or
-import * as Devtools from 'elem-vdom/lib/storeplugins';
+import * as Devtools from 'elem-vdom-vanilla-experiment/lib/storeplugins';
 ```
 
 A simple example is action logging
@@ -971,17 +976,17 @@ Just a bunch of tools for DX available through
 ```javascript
 const Devtools = Elem.Devtools;
 // or
-const Devtools = require('elem-vdom/lib/devtools');
+const Devtools = require('elem-vdom-vanilla-experiment/lib/devtools');
 // or
-import * as Devtools from 'elem-vdom/lib/devtools';
+import * as Devtools from 'elem-vdom-vanilla-experiment/lib/devtools';
 ```
 
 The API is the following :
 
 * `Elem.Devtools.Perf`: the perf API as explained in [About Elem.Perf](#about-elemperf)
-* `Elem.Devtools.PerfMonitor`: the perf monitor as explained in [About Elem.Perf](#about-elemperf). Also available at `elem-vdom/lib/devtools/perfmonitor`
-* `Elem.Devtools.Redbox(error)` : A component that will display a JavaScript Error in a red box. Also available at `elem-vdom/lib/devtools/redbox`
-* `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return. Also available at `elem-vdom/lib/devtools/errormonitor`
+* `Elem.Devtools.PerfMonitor`: the perf monitor as explained in [About Elem.Perf](#about-elemperf). Also available at `elem-vdom-vanilla-experiment/lib/devtools/perfmonitor`
+* `Elem.Devtools.Redbox(error)` : A component that will display a JavaScript Error in a red box. Also available at `elem-vdom-vanilla-experiment/lib/devtools/redbox`
+* `Elem.Devtools.ErrorMonitor(function)` : A function to wrap a function that can throw errors. If so, the Redbox is displayed instead of the wrapped function return. Also available at `elem-vdom-vanilla-experiment/lib/devtools/errormonitor`
 
 ```javascript
 function App() {
