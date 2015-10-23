@@ -3,7 +3,7 @@ import PerfMonitor from './perfmonitor';
 import Redbox from './redbox';
 import * as Perf from './perfs';
 import * as InspectorAPI from './inspectorapi';
-import * as Inspector from './inspector';
+import Inspector from './inspector';
 
 // TODO : dev plugin to inject ErrorMonitor, PerfMonitor, Inspector
 // TODO : show compile errors redbox style
