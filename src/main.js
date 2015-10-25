@@ -165,7 +165,13 @@ function makeNode(name, attrs, children, elemkey, namespace) {
         if (key === 'attributes') {
           for (let k in attrs.attributes) {
             const v = attrs.attributes[k];
-            node.setAttribute(Utils.dasherize(k), v);
+            if (k === 'indeterminate' && name === 'input') {
+              node.indeterminate = v;
+            } else if (k === 'value' && name === 'input') {
+              node.value = v;
+            } else {
+              node.setAttribute(Utils.dasherize(k), v);
+            }
           }
         } else if (key.startsWith('on')) {
           node.addEventListener(key.replace('on', ''), value);

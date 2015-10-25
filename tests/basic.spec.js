@@ -39,6 +39,21 @@ describe('elem-vdom simple component', () => {
 
   });
 
+  it('can produce indeterminate inputs', done => {
+
+    function SimpleComponent() {
+      return Elem.el('input', { type: 'checkbox', indeterminate: true });
+    }
+
+    DOM.cleanup();
+    let component = DOM.renderComponent(SimpleComponent);
+    let node = DOM.node('input');
+    expect(node).to.exist;
+    expect(node.indeterminate).to.be.true;
+    done();
+
+  });
+
   it('can handle click', done => {
 
     function ClickableComponent(cb) {
