@@ -125,30 +125,24 @@ function isNode(item) {
 
 function makeNode(name, attrs, children, elemkey, namespace) {
   return {
-    name,
+    name: name.toLowerCase(),
     attrs,
     children,
     key: elemkey,
     namespace,
     __isHTMLElement: true,
     renderToString() {
-      if (attrs.innerHTML) {
+      if (attrs.attributes.innerHTML) {
         children.push({
           renderToString() {
-            return attrs.innerHTML;
+            return attrs.attributes.innerHTML;
           }
         });
       }
       const styledAttrs = [];
-      for (let key in attrs) {
-        let value = attrs[key];
-        if (key === 'attributes') {
-          for (let k in value) {
-            styledAttrs.push(`${k}="${value[k]}"`);
-          }
-        } else {
-          styledAttrs.push(`${key}="${value}"`);
-        }
+      for (let key in attrs.attributes) {
+        let value = attrs.attributes[key];
+        styledAttrs.push(`${key}="${value}"`);
       }
       let selfCloseTag = children.length === 0;
       if (selfCloseTag) return `<${name} ${styledAttrs.join(' ')} />`;
@@ -160,20 +154,9 @@ function makeNode(name, attrs, children, elemkey, namespace) {
       if (elemkey) {
         node.setAttribute('data-key', elemkey);
       }
-      for (let key in attrs) {
-        const value = attrs[key];
-        if (key === 'attributes') {
-          for (let k in attrs.attributes) {
-            const v = attrs.attributes[k];
-            if (k === 'indeterminate' && name === 'input') {
-              node.indeterminate = v;
-            } else if (k === 'value' && name === 'input') {
-              node.value = v;
-            } else {
-              node.setAttribute(Utils.dasherize(k), v);
-            }
-          }
-        } else if (key.startsWith('on')) {
+      for (let key in attrs.attributes) {
+        const value = attrs.attributes[key];
+        if (key.startsWith('on')) {
           node.addEventListener(key.replace('on', ''), value);
         } else if (key === 'innerHTML') {
           node.innerHTML = value;
@@ -184,6 +167,9 @@ function makeNode(name, attrs, children, elemkey, namespace) {
         } else {
           node.setAttribute(Utils.dasherize(key), value);
         }
+      }
+      for (let key in attrs.handlers) {
+        node.addEventListener(key.replace('on', ''), attrs.handlers[key]);
       }
       for (let idx in children) {
         const child = children[idx];
@@ -211,6 +197,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
         } else {
           newChildren.push({
             __isHTMLElement: true,
+            value: item + '',
             renderToString() {
               return item + '';
             },
@@ -290,11 +277,11 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
   }
 
   let finalAttrs = {
+    handlers: {},
     attributes: {}
   };
-  let ctx = transformAttrs(attrs, finalAttrs.attributes, finalAttrs);
+  let ctx = transformAttrs(attrs, finalAttrs.attributes, finalAttrs.handlers);
   if ((name === 'input' || name === 'INPUT') && attrs.value) {
-    finalAttrs.value = attrs.value;
     finalAttrs.attributes.value = attrs.value;
     finalAttrs.attributes.defaultValue = attrs.value;
   }
@@ -304,7 +291,7 @@ function internalEl(name, attrs = {}, childrenArray = [], key, namespace) {
     globalRefs[ctx.ref] = refId;
   }
   if (innerHTML) {
-    finalAttrs.innerHTML = innerHTML;
+    finalAttrs.attributes.innerHTML = innerHTML;
   }
   return makeNode(name, finalAttrs, children, attrs.key, namespace);
 }

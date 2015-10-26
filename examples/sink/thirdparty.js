@@ -20,7 +20,7 @@ Showcase.registerTile('ThirdParty integration example', container => {
 
   function ThirdParty() {
     this.withInitialState(() => {
-      interval = setInterval(this.redraw, 200);
+      interval = setInterval(this.redraw, 800);
       return { showSomething: true };
     });
     return (
